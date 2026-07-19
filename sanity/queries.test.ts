@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
+import type { Mock } from "vitest";
 import { client } from "./client";
 import {
   getSiteSettings,
@@ -12,10 +13,14 @@ vi.mock("./client", () => ({
   client: { fetch: vi.fn() },
 }));
 
+const fetchMock = client.fetch as unknown as Mock<
+  (query: string) => Promise<unknown>
+>;
+
 describe("sanity queries", () => {
   it("getSiteSettings fetches the singleton siteSettings document", async () => {
     const mockData = { email: "info@trackway.com" };
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockData);
+    fetchMock.mockResolvedValueOnce(mockData);
     const result = await getSiteSettings();
     expect(client.fetch).toHaveBeenCalledWith(
       expect.stringContaining('_type == "siteSettings"'),
@@ -27,7 +32,7 @@ describe("sanity queries", () => {
     const mockData = {
       heroHeadline: { en: "Track everything", ar: "تتبع كل شيء" },
     };
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockData);
+    fetchMock.mockResolvedValueOnce(mockData);
     const result = await getHomePage();
     expect(client.fetch).toHaveBeenCalledWith(
       expect.stringContaining('_type == "homePage"'),
@@ -37,7 +42,7 @@ describe("sanity queries", () => {
 
   it('getFeatures fetches feature documents ordered by "order"', async () => {
     const mockData = [{ _id: "1", order: 1 }];
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockData);
+    fetchMock.mockResolvedValueOnce(mockData);
     const result = await getFeatures();
     expect(client.fetch).toHaveBeenCalledWith(
       expect.stringContaining('_type == "feature"'),
@@ -50,7 +55,7 @@ describe("sanity queries", () => {
 
   it('getHardwareProducts fetches hardwareProduct documents ordered by "order"', async () => {
     const mockData = [{ _id: "1", order: 1 }];
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockData);
+    fetchMock.mockResolvedValueOnce(mockData);
     const result = await getHardwareProducts();
     expect(client.fetch).toHaveBeenCalledWith(
       expect.stringContaining('_type == "hardwareProduct"'),
@@ -63,7 +68,7 @@ describe("sanity queries", () => {
 
   it("getAboutPage fetches the singleton aboutPage document", async () => {
     const mockData = { story: { en: "Our story", ar: "قصتنا" } };
-    vi.mocked(client.fetch).mockResolvedValueOnce(mockData);
+    fetchMock.mockResolvedValueOnce(mockData);
     const result = await getAboutPage();
     expect(client.fetch).toHaveBeenCalledWith(
       expect.stringContaining('_type == "aboutPage"'),
