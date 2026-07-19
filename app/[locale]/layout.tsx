@@ -1,7 +1,6 @@
 import "../globals.css";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { headers } from "next/headers";
 import { routing, type Locale } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import { getSiteSettings } from "@/sanity/queries";
@@ -28,17 +27,12 @@ export default async function LocaleLayout({
   const messages = await getMessages();
   const dir = typedLocale === "ar" ? "rtl" : "ltr";
   const siteSettings = await getSiteSettings();
-  const pathname = (await headers()).get("x-pathname") ?? `/${typedLocale}`;
 
   return (
     <html lang={typedLocale} dir={dir}>
       <body>
         <NextIntlClientProvider messages={messages}>
-          <Header
-            locale={typedLocale}
-            pathname={pathname}
-            logoUrl={siteSettings.logoUrl}
-          />
+          <Header locale={typedLocale} logoUrl={siteSettings.logoUrl} />
           <main>{children}</main>
           <Footer
             locale={typedLocale}

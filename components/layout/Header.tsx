@@ -1,23 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
 interface HeaderProps {
   locale: Locale;
-  pathname: string;
   logoUrl: string;
 }
 
-export function Header({
-  locale,
-  pathname,
-  logoUrl,
-}: HeaderProps): React.ReactElement {
+export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
   const t = useTranslations("nav");
+  const pathnameWithoutLocale = usePathname();
   const otherLocale: Locale = locale === "en" ? "ar" : "en";
-  const restOfPath = pathname.replace(new RegExp(`^/${locale}`), "") || "";
-  const switcherHref = `/${otherLocale}${restOfPath}`;
+  const switcherHref = `/${otherLocale}${pathnameWithoutLocale}`;
   const switcherLabel = otherLocale === "ar" ? "العربية" : "English";
 
   return (
