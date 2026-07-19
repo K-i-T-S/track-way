@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "hardware": "الأجهزة",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "contactCta": "اتصل بنا"
+  },
+  "hardware": {
+    "requestQuote": "اطلب عرض سعر"
+  },
+  "contact": {
+    "sendWhatsApp": "أرسل عبر واتساب",
+    "sendEmail": "أرسل بالبريد الإلكتروني",
+    "nameLabel": "الاسم",
+    "messageLabel": "الرسالة"
+  },
+  "footer": {
+    "quickLinks": "روابط سريعة"
+  }
+}
