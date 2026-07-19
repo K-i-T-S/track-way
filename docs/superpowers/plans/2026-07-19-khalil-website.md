@@ -1,8 +1,8 @@
-# Khalil Website Implementation Plan
+# TrackWay Website Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a bilingual (EN/AR) Next.js marketing website for Khalil (GPS hardware/software for fleets and individuals in Lebanon), backed by Sanity CMS, with no lead database — contact resolves directly to WhatsApp/email/phone.
+**Goal:** Build a bilingual (EN/AR) Next.js marketing website for TrackWay (GPS hardware/software for fleets and individuals in Lebanon), backed by Sanity CMS, with no lead database — contact resolves directly to WhatsApp/email/phone.
 
 **Architecture:** Next.js App Router with `next-intl` locale-prefixed routing (`/en`, `/ar`), Sanity as headless CMS with field-level `{en, ar}` localization on content documents, static generation with on-demand ISR revalidation triggered by a Sanity webhook, deployed on Vercel. No database, no auth, no payments.
 
@@ -102,7 +102,7 @@ Test files are colocated with the code they test (e.g. `lib/utils.test.ts` next 
 
 ```json
 {
-  "name": "khalil-website",
+  "name": "trackway-website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -993,7 +993,7 @@ vi.mock('./client', () => ({
 
 describe('sanity queries', () => {
   it('getSiteSettings fetches the singleton siteSettings document', async () => {
-    const mockData = { email: 'info@khalil.com' }
+    const mockData = { email: 'info@trackway.com' }
     vi.mocked(client.fetch).mockResolvedValueOnce(mockData)
     const result = await getSiteSettings()
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "siteSettings"'))
@@ -1122,8 +1122,8 @@ import { schemaTypes } from './sanity/schemaTypes'
 import { projectId, dataset, apiVersion } from './sanity/env'
 
 export default defineConfig({
-  name: 'khalil-studio',
-  title: 'Khalil CMS',
+  name: 'trackway-studio',
+  title: 'TrackWay CMS',
   projectId,
   dataset,
   apiVersion,
@@ -1227,9 +1227,9 @@ describe('buildWhatsAppLink', () => {
 
 describe('buildMailtoLink', () => {
   it('URL-encodes the subject and body', () => {
-    const link = buildMailtoLink('info@khalil.com', 'Quote request', 'Hi, I need a quote')
+    const link = buildMailtoLink('info@trackway.com', 'Quote request', 'Hi, I need a quote')
     expect(link).toBe(
-      'mailto:info@khalil.com?subject=Quote%20request&body=Hi%2C%20I%20need%20a%20quote',
+      'mailto:info@trackway.com?subject=Quote%20request&body=Hi%2C%20I%20need%20a%20quote',
     )
   })
 })
@@ -1714,7 +1714,7 @@ interface WhatsAppButtonProps {
 export function WhatsAppButton({ phoneNumber }: WhatsAppButtonProps) {
   const locale = useLocale()
   const isRtl = locale === 'ar'
-  const link = buildWhatsAppLink(phoneNumber, "Hi, I'd like to know more about Khalil's GPS solutions.")
+  const link = buildWhatsAppLink(phoneNumber, "Hi, I'd like to know more about TrackWay's GPS solutions.")
 
   return (
     <a
@@ -1828,7 +1828,7 @@ export function Header({ locale, pathname, logoUrl }: HeaderProps) {
   return (
     <header className="flex items-center justify-between px-6 py-4">
       <Link href={`/${locale}`}>
-        <Image src={logoUrl} alt="Khalil" width={120} height={32} />
+        <Image src={logoUrl} alt="TrackWay" width={120} height={32} />
       </Link>
       <nav className="flex items-center gap-6">
         <Link href={`/${locale}`}>{t('home')}</Link>
@@ -1867,10 +1867,10 @@ const messages = { footer: { quickLinks: 'Quick Links' } }
 const siteSettings = {
   phoneNumbers: ['+961 3 123 456'],
   whatsappNumber: '+961 3 123 456',
-  email: 'info@khalil.com',
-  socialLinks: [{ platform: 'facebook', url: 'https://facebook.com/khalil' }],
+  email: 'info@trackway.com',
+  socialLinks: [{ platform: 'facebook', url: 'https://facebook.com/trackway' }],
   addressText: 'Beirut, Lebanon',
-  footerText: 'Khalil: GPS tracking for everyone.',
+  footerText: 'TrackWay: GPS tracking for everyone.',
 }
 
 describe('Footer', () => {
@@ -1884,14 +1884,14 @@ describe('Footer', () => {
       'href',
       'tel:+961 3 123 456',
     )
-    expect(screen.getByRole('link', { name: 'info@khalil.com' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'info@trackway.com' })).toHaveAttribute(
       'href',
-      'mailto:info@khalil.com',
+      'mailto:info@trackway.com',
     )
     expect(screen.getByText('Beirut, Lebanon')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /facebook/i })).toHaveAttribute(
       'href',
-      'https://facebook.com/khalil',
+      'https://facebook.com/trackway',
     )
   })
 })
@@ -2101,7 +2101,7 @@ vi.mock('@/sanity/queries', () => ({
     heroHeadline: { en: 'Track everything that moves', ar: 'تتبع كل ما يتحرك' },
     heroSubheadline: { en: 'GPS for fleets and individuals.', ar: 'نظام تتبع للأساطيل والأفراد.' },
     marqueeKeywords: ['LIVE TRACKING', 'FLEET MANAGEMENT'],
-    aboutTeaser: { en: 'We are Khalil.', ar: 'نحن خليل.' },
+    aboutTeaser: { en: 'We are TrackWay.', ar: 'نحن TrackWay.' },
     contactCtaText: { en: 'Get in touch', ar: 'تواصل معنا' },
   }),
   getFeatures: vi.fn().mockResolvedValue([
@@ -2308,7 +2308,7 @@ import AboutPage from './page'
 
 vi.mock('@/sanity/queries', () => ({
   getAboutPage: vi.fn().mockResolvedValue({
-    story: { en: 'Khalil started to make tracking simple.', ar: 'بدأت خليل لجعل التتبع بسيطًا.' },
+    story: { en: 'TrackWay started to make tracking simple.', ar: 'بدأت TrackWay لجعل التتبع بسيطًا.' },
     imageUrl: 'https://cdn.sanity.io/about.jpg',
   }),
 }))
@@ -2317,7 +2317,7 @@ describe('AboutPage', () => {
   it('renders the localized story text', async () => {
     const jsx = await AboutPage({ params: Promise.resolve({ locale: 'en' }) })
     render(jsx)
-    expect(screen.getByText('Khalil started to make tracking simple.')).toBeInTheDocument()
+    expect(screen.getByText('TrackWay started to make tracking simple.')).toBeInTheDocument()
   })
 })
 ```
@@ -2402,7 +2402,7 @@ const messages = {
 function renderForm() {
   return render(
     <NextIntlClientProvider locale="en" messages={messages}>
-      <ContactForm whatsappNumber="+961 3 123 456" email="info@khalil.com" />
+      <ContactForm whatsappNumber="+961 3 123 456" email="info@trackway.com" />
     </NextIntlClientProvider>,
   )
 }
@@ -2425,7 +2425,7 @@ describe('ContactForm', () => {
     await user.type(screen.getByLabelText('Name'), 'Nadia')
     await user.type(screen.getByLabelText('Message'), 'I need a fleet quote')
     const link = screen.getByRole('link', { name: 'Send via Email' })
-    expect(link).toHaveAttribute('href', expect.stringContaining('mailto:info@khalil.com?subject='))
+    expect(link).toHaveAttribute('href', expect.stringContaining('mailto:info@trackway.com?subject='))
     expect(decodeURIComponent(link.getAttribute('href')!)).toContain('Nadia')
   })
 })
@@ -2508,8 +2508,8 @@ vi.mock('@/sanity/queries', () => ({
   getSiteSettings: vi.fn().mockResolvedValue({
     phoneNumbers: ['+961 3 123 456'],
     whatsappNumber: '+961 3 123 456',
-    email: 'info@khalil.com',
-    socialLinks: [{ platform: 'instagram', url: 'https://instagram.com/khalil' }],
+    email: 'info@trackway.com',
+    socialLinks: [{ platform: 'instagram', url: 'https://instagram.com/trackway' }],
     address: { en: 'Beirut, Lebanon', ar: 'بيروت، لبنان' },
   }),
 }))
@@ -2706,8 +2706,8 @@ import type { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'GPS Hardware — Khalil',
-    description: 'Explore Khalil’s GPS tracking hardware for fleets and individuals.',
+    title: 'GPS Hardware — TrackWay',
+    description: 'Explore TrackWay’s GPS tracking hardware for fleets and individuals.',
   }
 }
 ```
@@ -2781,9 +2781,9 @@ SANITY_REVALIDATE_SECRET=
 - [ ] **Step 8: Create `README.md` with setup and deployment notes**
 
 ```markdown
-# Khalil Website
+# TrackWay Website
 
-Bilingual (EN/AR) marketing site for Khalil's GPS tracking hardware and
+Bilingual (EN/AR) marketing site for TrackWay's GPS tracking hardware and
 software, built with Next.js, next-intl, and Sanity.
 
 ## Local development

@@ -1,11 +1,11 @@
-# Khalil Website — Design Spec
+# TrackWay Website — Design Spec
 
 **Date:** 2026-07-19
 **Status:** Approved by user, pending spec review sign-off
 
 ## 1. Purpose
 
-Khalil provides GPS tracking hardware and software for vehicle fleets (B2B)
+TrackWay provides GPS tracking hardware and software for vehicle fleets (B2B)
 and individuals (B2C) across Lebanon. This project is a bilingual
 (English/Arabic) marketing website whose job is to explain the service and
 hardware, build trust, and convert visitors into leads via direct contact
@@ -13,7 +13,7 @@ hardware, build trust, and convert visitors into leads via direct contact
 in a CRM.
 
 B2B and B2C are **not** treated as separate audiences with separate
-pages/toggles: Khalil's offering is essentially the same product for both,
+pages/toggles: TrackWay's offering is essentially the same product for both,
 so copy addresses both naturally within shared sections rather than
 branching content or navigation.
 
