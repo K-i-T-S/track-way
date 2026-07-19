@@ -45,6 +45,7 @@ describe("HardwarePage", () => {
       screen.getByRole("heading", { name: "TrackerX1" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Battery")).toBeInTheDocument();
+    expect(screen.getByText("Request a Quote")).toBeInTheDocument();
     expect(screen.queryByText(/\$/)).not.toBeInTheDocument();
   });
 });
