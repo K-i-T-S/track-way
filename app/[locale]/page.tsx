@@ -1,9 +1,24 @@
+import type { Metadata } from "next";
 import { getHomePage, getFeatures } from "@/sanity/queries";
 import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
 import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
 import { FeatureCard } from "@/components/ui/FeatureCard";
 import { DotGridBackground } from "@/components/ui/DotGridBackground";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const typedLocale = locale as Locale;
+  const homePage = await getHomePage();
+  return {
+    title: getLocalized(homePage.seoTitle, typedLocale),
+    description: getLocalized(homePage.seoDescription, typedLocale),
+  };
+}
 
 export default async function HomePage({
   params,

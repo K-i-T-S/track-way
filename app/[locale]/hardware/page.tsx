@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
 import { getHardwareProducts, getSiteSettings } from "@/sanity/queries";
 import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
 import { HardwareCard } from "@/components/ui/HardwareCard";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "GPS Hardware — TrackWay",
+    description:
+      "Explore TrackWay’s GPS tracking hardware for fleets and individuals.",
+  };
+}
 
 export default async function HardwarePage({
   params,
