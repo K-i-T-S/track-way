@@ -26,7 +26,7 @@ export function ContactForm({
   );
 
   return (
-    <form className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
       <label className="flex flex-col gap-1">
         {t("nameLabel")}
         <input

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { ContactForm } from "./ContactForm";
@@ -49,5 +49,21 @@ describe("ContactForm", () => {
       expect.stringContaining("mailto:info@trackway.com?subject="),
     );
     expect(decodeURIComponent(link.getAttribute("href")!)).toContain("Nadia");
+  });
+
+  it("prevents the default browser submit (GET navigation) when Enter is pressed in a field", async () => {
+    const user = userEvent.setup();
+    const { container } = renderForm();
+    await user.type(screen.getByLabelText("Name"), "Nadia");
+
+    const form = container.querySelector("form")!;
+    const submitEvent = new Event("submit", {
+      bubbles: true,
+      cancelable: true,
+    });
+    fireEvent(form, submitEvent);
+
+    expect(submitEvent.defaultPrevented).toBe(true);
+    expect(screen.getByLabelText("Name")).toHaveValue("Nadia");
   });
 });
