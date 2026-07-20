@@ -20,11 +20,12 @@ describe("schemaTypes", () => {
     const hardwareProduct = schemaTypes.find(
       (s) => s.name === "hardwareProduct",
     )!;
-    expect((feature as any).fields.some((f: any) => f.name === "order")).toBe(
-      true,
-    );
-    expect(
-      (hardwareProduct as any).fields.some((f: any) => f.name === "order"),
-    ).toBe(true);
+    if (feature.type !== "document" || hardwareProduct.type !== "document") {
+      throw new Error(
+        "Expected feature and hardwareProduct to be document schema types",
+      );
+    }
+    expect(feature.fields.some((f) => f.name === "order")).toBe(true);
+    expect(hardwareProduct.fields.some((f) => f.name === "order")).toBe(true);
   });
 });
