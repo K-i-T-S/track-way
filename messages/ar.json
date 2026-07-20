@@ -6,6 +6,11 @@
     "contact": "اتصل بنا",
     "contactCta": "اتصل بنا"
   },
+  "home": {
+    "hardwareTeaser": "استكشف أجهزة تتبع GPS المصممة للأساطيل والأفراد.",
+    "viewHardwareCta": "عرض الأجهزة",
+    "getInTouchCta": "تواصل معنا"
+  },
   "hardware": {
     "requestQuote": "اطلب عرض سعر"
   },

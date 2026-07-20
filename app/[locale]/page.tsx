@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getHomePage, getFeatures } from "@/sanity/queries";
 import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
@@ -28,9 +30,10 @@ export default async function HomePage({
   const { locale } = await params;
   const typedLocale = locale as Locale;
 
-  const [homePage, features] = await Promise.all([
+  const [homePage, features, t] = await Promise.all([
     getHomePage(),
     getFeatures(),
+    getTranslations("home"),
   ]);
 
   return (
@@ -59,6 +62,26 @@ export default async function HomePage({
         <p className="text-lg text-muted">
           {getLocalized(homePage.aboutTeaser, typedLocale)}
         </p>
+      </section>
+      <section className="px-6 py-16">
+        <p className="text-lg text-muted">{t("hardwareTeaser")}</p>
+        <Link
+          href={`/${locale}/hardware`}
+          className="mt-4 inline-block text-accent font-bold"
+        >
+          {t("viewHardwareCta")}
+        </Link>
+      </section>
+      <section className="px-6 py-16">
+        <p className="text-lg text-muted">
+          {getLocalized(homePage.contactCtaText, typedLocale)}
+        </p>
+        <Link
+          href={`/${locale}/contact`}
+          className="mt-4 inline-block text-accent font-bold"
+        >
+          {t("getInTouchCta")}
+        </Link>
       </section>
     </div>
   );

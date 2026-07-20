@@ -6,6 +6,11 @@
     "contact": "Contact",
     "contactCta": "Contact Us"
   },
+  "home": {
+    "hardwareTeaser": "Explore our GPS tracking hardware built for fleets and individuals.",
+    "viewHardwareCta": "View Hardware",
+    "getInTouchCta": "Get in Touch"
+  },
   "hardware": {
     "requestQuote": "Request a Quote"
   },
