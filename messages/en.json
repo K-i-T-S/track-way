@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "home": "Home",
+    "hardware": "Hardware",
+    "about": "About",
+    "contact": "Contact",
+    "contactCta": "Contact Us"
+  },
+  "home": {
+    "hardwareTeaser": "Explore our GPS tracking hardware built for fleets and individuals.",
+    "viewHardwareCta": "View Hardware",
+    "getInTouchCta": "Get in Touch"
+  },
+  "hardware": {
+    "requestQuote": "Request a Quote"
+  },
+  "contact": {
+    "sendWhatsApp": "Send via WhatsApp",
+    "sendEmail": "Send via Email",
+    "nameLabel": "Name",
+    "messageLabel": "Message"
+  },
+  "footer": {
+    "quickLinks": "Quick Links"
+  }
+}

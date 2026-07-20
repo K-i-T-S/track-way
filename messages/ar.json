@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "hardware": "الأجهزة",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "contactCta": "اتصل بنا"
+  },
+  "home": {
+    "hardwareTeaser": "استكشف أجهزة تتبع GPS المصممة للأساطيل والأفراد.",
+    "viewHardwareCta": "عرض الأجهزة",
+    "getInTouchCta": "تواصل معنا"
+  },
+  "hardware": {
+    "requestQuote": "اطلب عرض سعر"
+  },
+  "contact": {
+    "sendWhatsApp": "أرسل عبر واتساب",
+    "sendEmail": "أرسل بالبريد الإلكتروني",
+    "nameLabel": "الاسم",
+    "messageLabel": "الرسالة"
+  },
+  "footer": {
+    "quickLinks": "روابط سريعة"
+  }
+}
