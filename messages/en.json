@@ -92,5 +92,27 @@
     "body": "Online booking is coming soon. In the meantime, message us on WhatsApp and our team will schedule your installation directly.",
     "whatsappCta": "Continue on WhatsApp",
     "whatsappMessage": "Hi, I'd like to book a GPS installation."
+  },
+  "booking": {
+    "pageTitle": "Book an Installation",
+    "pageIntro": "Tell us about your company, fleet, and preferred installation date. Our team will confirm your appointment.",
+    "confirmationNotice": "Submitting a preferred date does not automatically confirm the appointment.",
+    "fullNameLabel": "Full Name",
+    "companyNameLabel": "Company Name",
+    "phoneLabel": "Phone Number",
+    "emailLabel": "Email Address",
+    "customerTypeLabel": "Customer Type",
+    "numVehiclesLabel": "Number of Vehicles",
+    "vehicleTypeLabel": "Vehicle Type",
+    "preferredAreaLabel": "Preferred Installation Area",
+    "preferredDateLabel": "Preferred Date",
+    "messageLabel": "Additional Message",
+    "selectPlaceholder": "Select an option",
+    "privacyNoticePrefix": "By submitting this form, you agree to our",
+    "continueWhatsApp": "Continue on WhatsApp",
+    "sendByEmail": "Send Request by Email",
+    "whatsappSuccess": "Your request has been saved. We've opened WhatsApp with your details pre-filled — please tap send to reach our team.",
+    "emailSuccess": "Your request has been received. Your preferred date is not yet confirmed. TrackWay will contact you through WhatsApp to confirm your appointment.",
+    "genericError": "We couldn't process your request. Please try again."
   }
 }
