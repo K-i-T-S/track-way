@@ -85,6 +85,6 @@ describe("HomePage", () => {
       name: "Live Tracking",
     });
     const card = featureHeading.closest("div.group");
-    expect(card?.querySelector("svg")).not.toBeNull();
+    expect(card?.querySelector("svg.h-8")).not.toBeNull();
   });
 });
