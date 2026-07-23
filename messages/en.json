@@ -21,6 +21,12 @@
     "messageLabel": "Message"
   },
   "footer": {
-    "quickLinks": "Quick Links"
+    "quickLinks": "Quick Links",
+    "servingLebanon": "Serving customers throughout Lebanon.",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "body": "TrackWay's full Privacy Policy is being finalized and will be published here shortly. For questions about how your information is handled, please contact us via WhatsApp or email."
   }
 }

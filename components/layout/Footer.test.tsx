@@ -3,7 +3,13 @@ import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { Footer } from "./Footer";
 
-const messages = { footer: { quickLinks: "Quick Links" } };
+const messages = {
+  footer: {
+    quickLinks: "Quick Links",
+    servingLebanon: "Serving customers throughout Lebanon.",
+    privacyPolicy: "Privacy Policy",
+  },
+};
 
 const siteSettings = {
   phoneNumbers: ["+961 3 123 456"],
@@ -32,5 +38,19 @@ describe("Footer", () => {
       "href",
       "https://facebook.com/trackway",
     );
+  });
+
+  it("renders the Lebanon service line and a link to the Privacy Policy page", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer locale="en" siteSettings={siteSettings} />
+      </NextIntlClientProvider>,
+    );
+    expect(
+      screen.getByText("Serving customers throughout Lebanon."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Privacy Policy" }),
+    ).toHaveAttribute("href", "/en/privacy");
   });
 });
