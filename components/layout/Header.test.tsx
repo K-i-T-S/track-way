@@ -64,4 +64,22 @@ describe("Header", () => {
       screen.getByRole("link", { name: /العربية|arabic/i }),
     ).toHaveAttribute("href", "/ar/hardware");
   });
+
+  it("shows both language labels, marks the current one, and links to the other", () => {
+    renderHeader("en", "/hardware");
+    expect(screen.getByText("EN")).toHaveAttribute("aria-current", "true");
+    expect(screen.getByRole("link", { name: "العربية" })).toHaveAttribute(
+      "href",
+      "/ar/hardware",
+    );
+  });
+
+  it("marks Arabic as current on the Arabic site and links back to English", () => {
+    renderHeader("ar", "/hardware");
+    expect(screen.getByText("العربية")).toHaveAttribute("aria-current", "true");
+    expect(screen.getByRole("link", { name: "EN" })).toHaveAttribute(
+      "href",
+      "/en/hardware",
+    );
+  });
 });
