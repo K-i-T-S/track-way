@@ -28,6 +28,7 @@ export interface Feature {
   order: number;
   title: LocalizedString;
   description: LocalizedString;
+  icon?: string;
 }
 
 export interface HardwareSpec {

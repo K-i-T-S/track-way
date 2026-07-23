@@ -36,7 +36,8 @@ export async function getFeatures(): Promise<Feature[]> {
     _id,
     order,
     title,
-    description
+    description,
+    icon
   }`);
 }
 

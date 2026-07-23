@@ -50,6 +50,7 @@ describe("sanity queries", () => {
     expect(client.fetch).toHaveBeenCalledWith(
       expect.stringContaining("order(order asc)"),
     );
+    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining("icon"));
     expect(result).toEqual(mockData);
   });
 
