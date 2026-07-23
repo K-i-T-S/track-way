@@ -49,7 +49,7 @@ export default async function HomePage({
         </p>
       </section>
       <MarqueeTicker items={homePage.marqueeKeywords} />
-      <section className="grid grid-cols-1 gap-6 px-6 py-16 md:grid-cols-3">
+      <section className="px-6 py-16">
         {features.map((feature, i) => (
           <FeatureCard
             key={feature._id}
