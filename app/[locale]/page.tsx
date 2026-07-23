@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { getHomePage, getFeatures } from "@/sanity/queries";
 import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
+import type { CapabilityIconName } from "@/components/ui/CapabilityIcon";
 import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
 import { FeatureCard } from "@/components/ui/FeatureCard";
 import { DotGridBackground } from "@/components/ui/DotGridBackground";
@@ -55,6 +56,7 @@ export default async function HomePage({
             number={String(i + 1).padStart(2, "0")}
             title={getLocalized(feature.title, typedLocale)}
             description={getLocalized(feature.description, typedLocale)}
+            icon={feature.icon as CapabilityIconName | undefined}
           />
         ))}
       </section>

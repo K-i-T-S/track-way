@@ -38,6 +38,7 @@ vi.mock("@/sanity/queries", () => ({
         en: "Real-time location.",
         ar: "الموقع في الوقت الفعلي.",
       },
+      icon: "live-tracking",
     },
   ]),
 }));
@@ -71,5 +72,19 @@ describe("HomePage", () => {
     expect(screen.getByText("Get in touch")).toBeInTheDocument();
     const contactLink = screen.getByRole("link", { name: "Get in Touch" });
     expect(contactLink).toHaveAttribute("href", "/en/contact");
+  });
+
+  it("renders the capability icon for each feature that has one", async () => {
+    const jsx = await HomePage({ params: Promise.resolve({ locale: "en" }) });
+    render(
+      <NextIntlClientProvider locale="en" messages={{}}>
+        {jsx}
+      </NextIntlClientProvider>,
+    );
+    const featureHeading = screen.getByRole("heading", {
+      name: "Live Tracking",
+    });
+    const card = featureHeading.closest("div.group");
+    expect(card?.querySelector("svg")).not.toBeNull();
   });
 });
