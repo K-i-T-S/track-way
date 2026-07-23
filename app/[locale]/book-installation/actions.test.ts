@@ -130,4 +130,19 @@ describe("submitBookingRequest", () => {
     expect(result.success).toBe(false);
     expect(result.error).toContain("saved");
   });
+
+  it("returns { success: false } instead of throwing when an unexpected error occurs (e.g. missing Supabase env vars)", async () => {
+    fromMock.mockImplementationOnce(() => {
+      throw new Error("supabaseUrl is required.");
+    });
+
+    const { submitBookingRequest } = await import("./actions");
+
+    await expect(
+      submitBookingRequest(INPUT, "whatsapp", "en"),
+    ).resolves.toEqual({
+      success: false,
+      error: expect.any(String),
+    });
+  });
 });
