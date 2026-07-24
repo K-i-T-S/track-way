@@ -68,5 +68,11 @@
   "privacy": {
     "title": "Privacy Policy",
     "body": "TrackWay's full Privacy Policy is being finalized and will be published here shortly. For questions about how your information is handled, please contact us via WhatsApp or email."
+  },
+  "bookInstallationStub": {
+    "title": "Book an Installation",
+    "body": "Online booking is coming soon. In the meantime, message us on WhatsApp and our team will schedule your installation directly.",
+    "whatsappCta": "Continue on WhatsApp",
+    "whatsappMessage": "Hi, I'd like to book a GPS installation."
   }
 }
