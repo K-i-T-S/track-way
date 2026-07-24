@@ -9,7 +9,6 @@ import {
   BEIRUT,
   ROUTES,
   LABELS,
-  clamp,
   lerp,
   smoothstep,
   easeOutCubic,
