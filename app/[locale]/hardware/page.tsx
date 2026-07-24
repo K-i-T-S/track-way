@@ -5,11 +5,16 @@ import type { Locale } from "@/i18n/routing";
 import { HardwareCard } from "@/components/ui/HardwareCard";
 import { getTranslations } from "next-intl/server";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  await params;
+  const t = await getTranslations("hardware");
   return {
-    title: "GPS Hardware — TrackWay",
-    description:
-      "Explore TrackWay’s GPS tracking hardware for fleets and individuals.",
+    title: t("metaTitle"),
+    description: t("metaDescription"),
   };
 }
 

@@ -211,7 +211,9 @@ git commit -m "feat: add custom illustrations for FMC920 and FMC130 hardware car
 
 Not a code task — done in Sanity Studio (`/studio` route) against the project from `sanity/env.ts`. No test/commit cycle. Replace whatever placeholder `hardwareProduct` documents currently exist (per project memory, 2 were seeded with dev/placeholder copy) with these two, in this order (`order: 1`, `order: 2`):
 
-- [ ] **FMC920** (`order: 1`)
+> **Deviation from this task's original plan (2026-07-24):** Task 2's custom-SVG-illustration approach was superseded per explicit user decision — real Teltonika product renders (screenshotted/downloaded from teltonika-gps.com, self-hosted as Sanity image assets, not hotlinked) were used instead. `design-assets/hardware/*.svg` were never created; skip Task 2. Content below was populated directly via the Sanity API (one-off script using `SANITY_API_TOKEN`), not manually through Studio — both `hardware-1` (FMC920) and `hardware-2` (FMC130) documents now hold real spec data and real photos. **Still unlicensed** — these are not official press-kit assets; swap for licensed photography via an official Teltonika distributor relationship before launch, same caveat that applied to the illustration approach.
+
+- [x] **FMC920** (`order: 1`)
   - `name.en`: "FMC920"
   - `name.ar`: "FMC920"
   - `description.en`: "A compact, best-selling 4G tracker built for straightforward vehicle and personal-vehicle tracking. Slim enough to fit tight installation spaces, with Bluetooth support for optional external sensors."
@@ -228,7 +230,7 @@ Not a code task — done in Sanity Studio (`/studio` route) against the project 
     | Remote control / التحكم عن بُعد | Remote engine block via app / إيقاف تشغيل المحرك عن بُعد عبر التطبيق |
     | Best fit / الأنسب لـ | Private vehicles, light fleets, motorcycles / المركبات الخاصة، الأساطيل الصغيرة، الدراجات النارية |
 
-- [ ] **FMC130** (`order: 2`)
+- [x] **FMC130** (`order: 2`)
   - `name.en`: "FMC130"
   - `name.ar`: "FMC130"
   - `description.en`: "An advanced 4G tracker with CAN bus support for reading real vehicle data — odometer and fuel level — directly from the engine, plus precise fuel-flow metering. Built for serious fleet operations."
@@ -245,8 +247,8 @@ Not a code task — done in Sanity Studio (`/studio` route) against the project 
     | Remote control / التحكم عن بُعد | Remote engine block via app / إيقاف تشغيل المحرك عن بُعد عبر التطبيق |
     | Best fit / الأنسب لـ | Trucks, transportation/delivery fleets, construction, heavy equipment / الشاحنات، أساطيل النقل والتوصيل، الإنشاءات، المعدات الثقيلة |
 
-- [ ] Delete any other placeholder `hardwareProduct` documents so only these two remain.
-- [ ] After publishing, confirm the Sanity webhook (`app/api/revalidate/route.ts`, already built) fires and `/en/hardware` and `/ar/hardware` show the updated content without a redeploy.
+- [x] Delete any other placeholder `hardwareProduct` documents so only these two remain. (Only `hardware-1`/`hardware-2` existed; both were updated in place via `createOrReplace`, so no extras to delete.)
+- [ ] After publishing, confirm the Sanity webhook (`app/api/revalidate/route.ts`, already built) fires and `/en/hardware` and `/ar/hardware` show the updated content without a redeploy. (Verified locally via `npm run dev` — not yet checked against a deployed environment.)
 
 ---
 

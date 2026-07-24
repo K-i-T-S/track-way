@@ -52,7 +52,9 @@
     "getInTouchCta": "Get in Touch"
   },
   "hardware": {
-    "requestQuote": "Request a Quote"
+    "requestQuote": "Request a Quote",
+    "metaTitle": "GPS Hardware — TrackWay",
+    "metaDescription": "Explore TrackWay's GPS tracking hardware for fleets and individuals."
   },
   "contact": {
     "sendWhatsApp": "Send via WhatsApp",

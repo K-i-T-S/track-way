@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import HardwarePage from "./page";
+import HardwarePage, { generateMetadata } from "./page";
 
 // next-intl/server's getTranslations relies on Next.js' RSC request context
 // (AsyncLocalStorage), which doesn't exist under Vitest's jsdom environment.
@@ -9,6 +9,9 @@ vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => {
     const translations: Record<string, string> = {
       requestQuote: "Request a Quote",
+      metaTitle: "GPS Hardware — TrackWay",
+      metaDescription:
+        "Explore TrackWay's GPS tracking hardware for fleets and individuals.",
     };
     return translations[key] ?? key;
   }),
@@ -47,5 +50,15 @@ describe("HardwarePage", () => {
     expect(screen.getByText("Battery")).toBeInTheDocument();
     expect(screen.getByText("Request a Quote")).toBeInTheDocument();
     expect(screen.queryByText(/\$/)).not.toBeInTheDocument();
+  });
+
+  it("returns locale-aware metadata instead of a hardcoded English title", async () => {
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ locale: "en" }),
+    });
+    expect(metadata.title).toBe("GPS Hardware — TrackWay");
+    expect(metadata.description).toBe(
+      "Explore TrackWay's GPS tracking hardware for fleets and individuals.",
+    );
   });
 });

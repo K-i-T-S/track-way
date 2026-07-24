@@ -52,7 +52,9 @@
     "getInTouchCta": "تواصل معنا"
   },
   "hardware": {
-    "requestQuote": "اطلب عرض سعر"
+    "requestQuote": "اطلب عرض سعر",
+    "metaTitle": "أجهزة تتبع GPS — TrackWay",
+    "metaDescription": "تعرّفوا على أجهزة تتبع GPS من TrackWay المخصصة للأساطيل والأفراد."
   },
   "contact": {
     "sendWhatsApp": "أرسل عبر واتساب",
