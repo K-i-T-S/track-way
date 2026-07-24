@@ -1,21 +1,14 @@
 "use client";
 
-import { useRef } from "react";
-import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Radio, ArrowRight, PlayCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
 import { DotGridBackground } from "@/components/ui/DotGridBackground";
-
-const GlobeHeroBackground = dynamic(
-  () =>
-    import("@/components/home/GlobeHeroBackground").then(
-      (mod) => mod.GlobeHeroBackground,
-    ),
-  { ssr: false },
-);
+import { LebanonGlobeZoom } from "@/components/home/LebanonGlobeZoom";
+import { BackgroundAnimation } from "@/components/home/BackgroundAnimation";
 
 interface HeroSectionProps {
   locale: Locale;
@@ -30,23 +23,11 @@ export function HeroSection({
 }: HeroSectionProps): React.ReactElement {
   const t = useTranslations("homepage");
   const reduceMotion = useReducedMotion();
-  const trackRef = useRef<HTMLElement>(null);
 
   return (
-    <section
-      ref={trackRef}
-      className="relative flex min-h-[100svh] items-center overflow-hidden"
-    >
-      {/* GlobeHeroBackground must stay a direct child of this <section>, never nested
-          inside a motion.* element — a CSS transform on an ancestor would break the
-          `position: fixed` it switches to for the post-hero ambient phase. GSAP's
-          own ScrollTrigger `pin: true` (set up inside GlobeHeroBackground, pinning
-          this <section> itself) handles holding the whole hero on screen for the
-          scroll-driven globe animation — no extra CSS height or position:sticky
-          needed here, so the section is just a plain min-h-[100svh] block. */}
-      <GlobeHeroBackground trackRef={trackRef} />
-
+    <section className="relative flex min-h-[100svh] items-center overflow-hidden">
       <DotGridBackground variant="world" />
+      <BackgroundAnimation />
       <div className="pointer-events-none absolute -left-40 top-20 h-[500px] w-[500px] rounded-full bg-accent/10 blur-[120px]" />
       <div className="pointer-events-none absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-accentWarm/10 blur-[120px]" />
 
@@ -112,6 +93,9 @@ export function HeroSection({
           transition={{ duration: 1, delay: 0.2 }}
           className="relative mx-auto h-[340px] w-[340px] sm:h-[420px] sm:w-[420px] lg:h-[500px] lg:w-[500px]"
         >
+          <div className="absolute inset-0 rounded-full bg-accent/10 blur-3xl" />
+          <LebanonGlobeZoom />
+
           {!reduceMotion && (
             <>
               <motion.div

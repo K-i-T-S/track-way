@@ -69,7 +69,7 @@ export function Footer({
     <footer className="border-t border-white/10 px-6 py-10">
       <Link href={`/${locale}`} className="mb-6 inline-block">
         <Image
-          src="/brand/svg/trackway-logo-primary.svg"
+          src="/brand/svg/trackway-logo-reversed.svg"
           alt="TrackWay"
           width={140}
           height={38}

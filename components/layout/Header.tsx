@@ -14,7 +14,7 @@ interface HeaderProps {
   logoUrl: string;
 }
 
-const FALLBACK_LOGO = "/brand/svg/trackway-logo-primary-no-tagline.svg";
+const FALLBACK_LOGO = "/brand/svg/trackway-logo-reversed.svg";
 
 export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
   const logoSrc = logoUrl || FALLBACK_LOGO;

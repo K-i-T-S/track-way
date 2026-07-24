@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://trackwaylb.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: {
     default: "TrackWay | GPS Tracking & Fleet Management in Lebanon",
     template: "%s | TrackWay",
