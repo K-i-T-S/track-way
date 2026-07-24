@@ -35,7 +35,7 @@ export function HeroSection({
   return (
     <section
       ref={trackRef}
-      className="relative min-h-[100svh] overflow-hidden motion-safe:md:min-h-[calc(100svh+180vh)]"
+      className="relative min-h-[100svh] overflow-hidden motion-safe:md:min-h-[calc(100svh_+_180vh)]"
     >
       {/* GlobeHeroBackground must stay a direct child of this <section>, never nested
           inside a motion.* element — a CSS transform on an ancestor would break the
