@@ -103,7 +103,7 @@ export interface GeoJsonFeature {
   };
   geometry: {
     type: "Polygon" | "MultiPolygon";
-    coordinates: number[][][] | number[][][][];
+    coordinates: [number, number][][] | [number, number][][][];
   } | null;
 }
 
@@ -122,14 +122,14 @@ export const isMena = (f: GeoJsonFeature): boolean =>
 
 export function eachRing(
   feature: GeoJsonFeature,
-  cb: (ring: number[][], feature: GeoJsonFeature) => void,
+  cb: (ring: [number, number][], feature: GeoJsonFeature) => void,
 ): void {
   const geom = feature.geometry;
   if (!geom) return;
   if (geom.type === "Polygon") {
-    (geom.coordinates as number[][][]).forEach((r) => cb(r, feature));
+    (geom.coordinates as [number, number][][]).forEach((r) => cb(r, feature));
   } else if (geom.type === "MultiPolygon") {
-    (geom.coordinates as number[][][][]).forEach((poly) =>
+    (geom.coordinates as [number, number][][][]).forEach((poly) =>
       poly.forEach((r) => cb(r, feature)),
     );
   }
