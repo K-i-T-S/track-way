@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { createPortal } from "react-dom";
 import { useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -904,14 +905,7 @@ export function GlobeHeroBackground({
     };
   }, [trackRef, reducedMotion]);
 
-  return (
-    // trackRef (passed in) is the single wrapper HeroSection.tsx pins via
-    // GSAP's own `pin: true` — this div is a normal child of it, so while
-    // pinned it's simply `absolute inset-0` and rides along with whatever
-    // GSAP does to its parent (which becomes position:fixed for the pin's
-    // duration). Once the pin ends, this div switches to `fixed inset-0` on
-    // its own to keep rendering as the low-opacity ambient background,
-    // independent of its now-unpinned parent scrolling away normally.
+  const content = (
     <div
       ref={wrapperRef}
       data-testid="globe-hero-background"
@@ -919,8 +913,8 @@ export function GlobeHeroBackground({
       aria-hidden="true"
       className={
         mode === "pinned"
-          ? "absolute inset-0 z-0 overflow-hidden"
-          : "fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
+          ? "pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          : "pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
       }
       style={{
         background:
@@ -944,4 +938,17 @@ export function GlobeHeroBackground({
       />
     </div>
   );
+
+  // While pinned, this renders as a normal child of trackRef (absolute
+  // inset-0, riding along with whatever GSAP does to its parent during the
+  // pin). Once the pin ends and mode flips to "ambient", it's portaled to
+  // document.body instead of just switching to `position: fixed` in place —
+  // GSAP's pin leaves the pinned <section> with a lingering CSS transform
+  // even after unpinning (confirmed live: `pin:true` simulates pinning via
+  // transform, not literal position:fixed, and doesn't fully clear it on
+  // release), and a transform on any ancestor becomes the containing block
+  // for position:fixed descendants. That silently broke "fixed inset-0"
+  // (it was resolving against the transformed section instead of the
+  // viewport). Portaling to body sidesteps the whole ancestor chain.
+  return mode === "ambient" ? createPortal(content, document.body) : content;
 }
