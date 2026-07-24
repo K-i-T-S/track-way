@@ -25,6 +25,7 @@ const messages = {
     about: "About",
     contact: "Contact",
     contactCta: "Contact Us",
+    bookInstallation: "Book an Installation",
   },
 };
 
@@ -81,5 +82,12 @@ describe("Header", () => {
       "href",
       "/en/hardware",
     );
+  });
+
+  it("renders a prominent Book an Installation CTA linking to /book-installation", () => {
+    renderHeader("en", "/");
+    expect(
+      screen.getByRole("link", { name: "Book an Installation" }),
+    ).toHaveAttribute("href", "/en/book-installation");
   });
 });

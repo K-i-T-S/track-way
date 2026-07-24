@@ -8,6 +8,7 @@ import { getLocalized } from "@/lib/i18n-utils";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { ScrollProgressBar } from "@/components/home/ScrollProgressBar";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -32,8 +33,9 @@ export default async function LocaleLayout({
     <html lang={typedLocale} dir={dir}>
       <body>
         <NextIntlClientProvider messages={messages}>
+          <ScrollProgressBar />
           <Header locale={typedLocale} logoUrl={siteSettings.logoUrl} />
-          <main>{children}</main>
+          <main className="pt-20">{children}</main>
           <Footer
             locale={typedLocale}
             siteSettings={{

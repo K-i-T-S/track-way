@@ -7,7 +7,12 @@ import type { Locale } from "@/i18n/routing";
 import type { CapabilityIconName } from "@/components/ui/CapabilityIcon";
 import { MarqueeTicker } from "@/components/ui/MarqueeTicker";
 import { FeatureCard } from "@/components/ui/FeatureCard";
-import { DotGridBackground } from "@/components/ui/DotGridBackground";
+import { HeroSection } from "@/components/home/HeroSection";
+import { CoreValueSection } from "@/components/home/CoreValueSection";
+import { IndustriesSection } from "@/components/home/IndustriesSection";
+import { ControlRoomSection } from "@/components/home/ControlRoomSection";
+import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { FinalCtaSection } from "@/components/home/FinalCtaSection";
 
 export async function generateMetadata({
   params,
@@ -39,52 +44,51 @@ export default async function HomePage({
 
   return (
     <div className="relative">
-      <DotGridBackground variant="world" />
-      <section className="relative px-6 py-24">
-        <h1 className="text-5xl font-bold text-foreground">
-          {getLocalized(homePage.heroHeadline, typedLocale)}
-        </h1>
-        <p className="mt-4 text-xl text-muted">
-          {getLocalized(homePage.heroSubheadline, typedLocale)}
-        </p>
-      </section>
+      <HeroSection
+        locale={typedLocale}
+        headline={getLocalized(homePage.heroHeadline, typedLocale)}
+        subheadline={getLocalized(homePage.heroSubheadline, typedLocale)}
+      />
       <MarqueeTicker items={homePage.marqueeKeywords} />
-      <section className="px-6 py-16">
-        {features.map((feature, i) => (
-          <FeatureCard
-            key={feature._id}
-            number={String(i + 1).padStart(2, "0")}
-            title={getLocalized(feature.title, typedLocale)}
-            description={getLocalized(feature.description, typedLocale)}
-            icon={feature.icon as CapabilityIconName | undefined}
-          />
-        ))}
+      <CoreValueSection />
+      <section className="px-6 py-16 lg:px-10">
+        <div className="mx-auto max-w-3xl">
+          {features.map((feature, i) => (
+            <FeatureCard
+              key={feature._id}
+              number={String(i + 1).padStart(2, "0")}
+              title={getLocalized(feature.title, typedLocale)}
+              description={getLocalized(feature.description, typedLocale)}
+              icon={feature.icon as CapabilityIconName | undefined}
+            />
+          ))}
+        </div>
       </section>
-      <section className="px-6 py-16">
-        <p className="text-lg text-muted">
-          {getLocalized(homePage.aboutTeaser, typedLocale)}
-        </p>
+      <IndustriesSection />
+      <ControlRoomSection />
+      <HowItWorksSection />
+      <section className="px-6 py-16 lg:px-10">
+        <div className="mx-auto max-w-3xl">
+          <p className="text-lg text-muted">
+            {getLocalized(homePage.aboutTeaser, typedLocale)}
+          </p>
+        </div>
       </section>
-      <section className="px-6 py-16">
-        <p className="text-lg text-muted">{t("hardwareTeaser")}</p>
-        <Link
-          href={`/${locale}/hardware`}
-          className="mt-4 inline-block text-accent font-bold"
-        >
-          {t("viewHardwareCta")}
-        </Link>
+      <section className="px-6 py-16 lg:px-10">
+        <div className="mx-auto max-w-3xl">
+          <p className="text-lg text-muted">{t("hardwareTeaser")}</p>
+          <Link
+            href={`/${locale}/hardware`}
+            className="mt-4 inline-block text-accent font-bold"
+          >
+            {t("viewHardwareCta")}
+          </Link>
+        </div>
       </section>
-      <section className="px-6 py-16">
-        <p className="text-lg text-muted">
-          {getLocalized(homePage.contactCtaText, typedLocale)}
-        </p>
-        <Link
-          href={`/${locale}/contact`}
-          className="mt-4 inline-block text-accent font-bold"
-        >
-          {t("getInTouchCta")}
-        </Link>
-      </section>
+      <FinalCtaSection
+        locale={typedLocale}
+        body={getLocalized(homePage.contactCtaText, typedLocale)}
+      />
     </div>
   );
 }
