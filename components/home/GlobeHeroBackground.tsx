@@ -905,7 +905,39 @@ export function GlobeHeroBackground({
     };
   }, [trackRef, reducedMotion]);
 
-  const content = (
+  // Always position:fixed, always portaled to #ambient-bg-root (a dedicated
+  // node kept as <body>'s first child — see app/[locale]/layout.tsx), in
+  // BOTH modes — never conditionally switching between direct-render and
+  // createPortal(), and never toggling the position/parent structure. Only
+  // opacity (and the internal frame-rate throttle, handled in the effect)
+  // changes between "pinned" and "ambient". This is deliberate: earlier
+  // versions toggled between rendering this <div> directly vs. via
+  // createPortal depending on mode, which meant React saw a different
+  // element type at this position on every mode change and
+  // unmounted/remounted the whole subtree — including the <canvas>. The
+  // running rAF loop's closures (canvas, ctx) were captured once in the
+  // effect below and kept pointing at the now-detached original canvas, so
+  // drawing continued invisibly forever while the new canvas never received
+  // a single frame (confirmed live: exactly the "pops, then never
+  // reappears" bug). A stable, always-portaled, always-fixed node means the
+  // same canvas/context lives for the component's entire lifetime — only
+  // its opacity changes.
+  //
+  // This also incidentally fixes the "pinned" positioning: since a fixed,
+  // inset-0 canvas already covers the full viewport, it naturally aligns
+  // with the hero section for as long as ScrollTrigger's `pin: true` holds
+  // that section fixed at the viewport top too — no separate absolute/sticky
+  // logic needed for the pinned case at all.
+  //
+  // Portaling specifically to #ambient-bg-root rather than document.body
+  // directly matters too: React appends portaled content to the END of its
+  // target, and during the pin GSAP's transform on <section> makes it (and
+  // its z-10 content) a single stacking-context unit — CSS then breaks the
+  // resulting stacking tie by DOM order, later wins. Portaling straight to
+  // document.body landed us after the whole app, so the globe rendered on
+  // TOP of the hero text (confirmed live). #ambient-bg-root is kept as the
+  // first node in <body>, so this always loses that tiebreak instead.
+  return createPortal(
     <div
       ref={wrapperRef}
       data-testid="globe-hero-background"
@@ -913,7 +945,7 @@ export function GlobeHeroBackground({
       aria-hidden="true"
       className={
         mode === "pinned"
-          ? "pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          ? "pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-100 transition-opacity duration-700"
           : "pointer-events-none fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
       }
       style={{
@@ -936,19 +968,7 @@ export function GlobeHeroBackground({
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E\")",
         }}
       />
-    </div>
+    </div>,
+    document.getElementById("ambient-bg-root") ?? document.body,
   );
-
-  // While pinned, this renders as a normal child of trackRef (absolute
-  // inset-0, riding along with whatever GSAP does to its parent during the
-  // pin). Once the pin ends and mode flips to "ambient", it's portaled to
-  // document.body instead of just switching to `position: fixed` in place —
-  // GSAP's pin leaves the pinned <section> with a lingering CSS transform
-  // even after unpinning (confirmed live: `pin:true` simulates pinning via
-  // transform, not literal position:fixed, and doesn't fully clear it on
-  // release), and a transform on any ancestor becomes the containing block
-  // for position:fixed descendants. That silently broke "fixed inset-0"
-  // (it was resolving against the transformed section instead of the
-  // viewport). Portaling to body sidesteps the whole ancestor chain.
-  return mode === "ambient" ? createPortal(content, document.body) : content;
 }

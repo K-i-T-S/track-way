@@ -32,6 +32,15 @@ export default async function LocaleLayout({
   return (
     <html lang={typedLocale} dir={dir}>
       <body>
+        {/* Dedicated portal target for GlobeHeroBackground's ambient layer.
+            Must stay the very first child of <body> — React portals append
+            to their target in DOM order, and CSS stacking ties (e.g. against
+            a transformed/pinned section elsewhere on the page) are broken by
+            DOM order, later wins. Keeping this node first guarantees the
+            ambient globe always loses that tiebreak and renders behind the
+            rest of the page, regardless of where else it briefly outranks
+            in z-index. */}
+        <div id="ambient-bg-root" />
         <NextIntlClientProvider messages={messages}>
           <ScrollProgressBar />
           <Header locale={typedLocale} logoUrl={siteSettings.logoUrl} />
