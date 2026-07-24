@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<title id="title">TrackWay App Icon — Fleet Blade</title>
+<desc id="desc">TrackWay app icon with black rounded square and teal fleet blade mark.</desc>
+<defs>
+  <filter id="tealGlow" x="-25%" y="-35%" width="150%" height="170%">
+    <feGaussianBlur stdDeviation="9" result="blur"/>
+    <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0 0 0 0 0 0.898 0 0 0 0 0.831 0 0 0 0.48 0" result="glow"/>
+    <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<rect x="48" y="48" width="416" height="416" rx="104" fill="#000000"/>
+<g id="mark" transform="translate(57 112) scale(1.58)" filter="url(#tealGlow)">
+  <path d="M34 47H114" stroke="#00E5D4" stroke-width="14" stroke-linecap="round" opacity="0.58"/>
+  <path d="M18 145H104" stroke="#00E5D4" stroke-width="14" stroke-linecap="round" opacity="0.58"/>
+  <path d="M54 96L222 20L160 96L222 172L54 96Z" fill="#00E5D4"/>
+  <path d="M96 96L178 61L144 96L178 131L96 96Z" fill="#000000"/>
+  <path d="M124 96L159 82L145 96L159 110L124 96Z" fill="#00E5D4" opacity="0.9"/>
+</g>
+</svg>

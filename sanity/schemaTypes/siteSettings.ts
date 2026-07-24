@@ -5,7 +5,12 @@ export const siteSettings = defineType({
   title: "Site Settings",
   type: "document",
   fields: [
-    defineField({ name: "logo", title: "Logo", type: "image" }),
+    defineField({
+      name: "logo",
+      title: "Logo",
+      type: "image",
+      description: "Upload the TrackWay logo (SVG preferred). Fallback: /brand/svg/trackway-logo-primary-no-tagline.svg",
+    }),
     defineField({
       name: "phoneNumbers",
       title: "Phone Numbers",

@@ -27,11 +27,14 @@ import {
 gsap.registerPlugin(ScrollTrigger);
 
 const GEO_DATA_URL = "/data/world-110m.json";
-// How much extra scroll room counts as "a real pin", in pixels. Not tied to
-// HeroSection.tsx's 180vh figure by anything other than 180vh always being
-// comfortably larger than this at any real viewport height — no shared
-// constant is needed between the two files.
-const MIN_RUNWAY_PX = 100;
+// Desired scroll distance the hero stays pinned for, in viewport-heights.
+// Passed to ScrollTrigger as a pixel distance (window.innerHeight * this) —
+// GSAP's own `pin` creates its own spacer sized to exactly this distance,
+// so there's no leftover "dead" scroll space the way a hand-rolled tall
+// CSS section + position:sticky would need (sticky requires the container
+// to be pinDistance + elementHeight tall, which leaves one viewport-height
+// of unused space after the pin ends; `pin:true` doesn't have that tax).
+const PIN_DISTANCE_VH = 1.8;
 // Ambient opacity (0.08) is a literal in the JSX className below, not a
 // constant here — Tailwind's JIT scanner needs the arbitrary value to
 // appear as source text to generate the class.
@@ -839,13 +842,16 @@ export function GlobeHeroBackground({
     if (reducedMotion) {
       drawOneFrame(performance.now());
     } else {
-      const runway = trigger.offsetHeight - window.innerHeight;
-      const usePin = runway > MIN_RUNWAY_PX;
-      if (usePin) {
+      const isMobile = window.matchMedia(
+        "(max-width: 767px), (pointer: coarse)",
+      ).matches;
+      if (!isMobile) {
         scrollTrigger = ScrollTrigger.create({
           trigger,
+          pin: true,
+          pinSpacing: true,
           start: "top top",
-          end: "bottom bottom",
+          end: `+=${window.innerHeight * PIN_DISTANCE_VH}`,
           scrub: true,
           onUpdate: (self) => {
             target = self.progress;
@@ -899,47 +905,43 @@ export function GlobeHeroBackground({
   }, [trackRef, reducedMotion]);
 
   return (
-    // Outer layer spans the tall <section> exactly (via inset-0, relative to
-    // the section's own `position: relative`) and stays out of document flow
-    // entirely — this is what stops the inner box from pushing the sibling
-    // hero-content wrapper down the page. A sticky/fixed element sitting
-    // directly here as a *sibling* of the content still occupies its own box
-    // in normal flow (sticky doesn't remove it from flow), which is what
-    // caused the globe and the hero content to stack sequentially instead of
-    // overlapping. The inner div is the one that actually toggles between
-    // sticky (pinned) and fixed (ambient).
-    <div className="absolute inset-0">
+    // trackRef (passed in) is the single wrapper HeroSection.tsx pins via
+    // GSAP's own `pin: true` — this div is a normal child of it, so while
+    // pinned it's simply `absolute inset-0` and rides along with whatever
+    // GSAP does to its parent (which becomes position:fixed for the pin's
+    // duration). Once the pin ends, this div switches to `fixed inset-0` on
+    // its own to keep rendering as the low-opacity ambient background,
+    // independent of its now-unpinned parent scrolling away normally.
+    <div
+      ref={wrapperRef}
+      data-testid="globe-hero-background"
+      data-motion-mode={reducedMotion ? "static" : "animated"}
+      aria-hidden="true"
+      className={
+        mode === "pinned"
+          ? "absolute inset-0 z-0 overflow-hidden"
+          : "fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
+      }
+      style={{
+        background:
+          "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.22), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.18), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.12), transparent 25%), linear-gradient(135deg,#030712 0%,#071426 43%,#03101d 100%)",
+      }}
+    >
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
       <div
-        ref={wrapperRef}
-        data-testid="globe-hero-background"
-        data-motion-mode={reducedMotion ? "static" : "animated"}
-        aria-hidden="true"
-        className={
-          mode === "pinned"
-            ? "sticky top-0 z-0 h-[100svh] w-full overflow-hidden"
-            : "fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
-        }
+        className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.22), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.18), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.12), transparent 25%), linear-gradient(135deg,#030712 0%,#071426 43%,#03101d 100%)",
+            "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(1,5,12,.42) 76%, rgba(0,0,0,.84) 100%)",
         }}
-      >
-        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(1,5,12,.42) 76%, rgba(0,0,0,.84) 100%)",
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E\")",
-          }}
-        />
-      </div>
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E\")",
+        }}
+      />
     </div>
   );
 }

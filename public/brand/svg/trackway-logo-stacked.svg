@@ -1,0 +1,21 @@
+<svg width="640" height="620" viewBox="0 0 640 620" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<title id="title">TrackWay Stacked Logo — Fleet Blade</title>
+<desc id="desc">Stacked TrackWay logo lockup with Fleet Blade mark.</desc>
+<defs>
+  <filter id="tealGlow" x="-25%" y="-35%" width="150%" height="170%">
+    <feGaussianBlur stdDeviation="7" result="blur"/>
+    <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0 0 0 0 0 0.898 0 0 0 0 0.831 0 0 0 0.38 0" result="glow"/>
+    <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<g id="mark" transform="translate(192 78) scale(1.15)" filter="url(#tealGlow)">
+  <path d="M34 47H114" stroke="#00E5D4" stroke-width="14" stroke-linecap="round" opacity="0.58"/>
+  <path d="M18 145H104" stroke="#00E5D4" stroke-width="14" stroke-linecap="round" opacity="0.58"/>
+  <path d="M54 96L222 20L160 96L222 172L54 96Z" fill="#00E5D4"/>
+  <path d="M96 96L178 61L144 96L178 131L96 96Z" fill="#000000"/>
+  <path d="M124 96L159 82L145 96L159 110L124 96Z" fill="#00E5D4" opacity="0.9"/>
+</g>
+<text x="320" y="393" text-anchor="middle" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="76" font-weight="950" letter-spacing="-4.6" fill="#000000">TRACK<tspan fill="#00E5D4">WAY</tspan></text>
+<path d="M136 421H504" stroke="#00E5D4" stroke-width="6" stroke-linecap="round"/>
+<text x="320" y="467" text-anchor="middle" font-family="Inter, Montserrat, Arial, sans-serif" font-size="23" font-weight="800" fill="#000000" opacity="0.72">Know Every Move.</text>
+</svg>

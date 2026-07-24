@@ -14,7 +14,10 @@ interface HeaderProps {
   logoUrl: string;
 }
 
+const FALLBACK_LOGO = "/brand/svg/trackway-logo-primary-no-tagline.svg";
+
 export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
+  const logoSrc = logoUrl || FALLBACK_LOGO;
   const t = useTranslations("nav");
   const pathnameWithoutLocale = usePathname();
   const enHref = `/en${pathnameWithoutLocale}`;
@@ -42,7 +45,7 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
         <Link href={`/${locale}`} className="shrink-0">
-          <Image src={logoUrl} alt="TrackWay" width={120} height={32} />
+          <Image src={logoSrc} alt="TrackWay" width={120} height={32} />
         </Link>
         <div className="hidden items-center gap-6 md:flex">
           <Link

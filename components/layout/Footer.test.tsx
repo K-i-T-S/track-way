@@ -15,7 +15,11 @@ const siteSettings = {
   phoneNumbers: ["+961 3 123 456"],
   whatsappNumber: "+961 3 123 456",
   email: "info@trackway.com",
-  socialLinks: [{ platform: "facebook", url: "https://facebook.com/trackway" }],
+  socialLinks: [
+    { platform: "facebook", url: "https://facebook.com/trackway" },
+    { platform: "instagram", url: "https://instagram.com/trackway" },
+    { platform: "linkedin", url: "https://linkedin.com/company/trackway" },
+  ],
   addressText: "Beirut, Lebanon",
   footerText: "TrackWay: GPS tracking for everyone.",
 };
