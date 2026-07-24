@@ -19,12 +19,23 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
-  const typedLocale = locale as Locale;
-  const homePage = await getHomePage();
+  await params;
+  
   return {
-    title: getLocalized(homePage.seoTitle, typedLocale),
-    description: getLocalized(homePage.seoDescription, typedLocale),
+    title: "TrackWay | GPS Tracking & Fleet Management in Lebanon",
+    description: "TrackWay provides GPS tracking hardware and fleet management software for businesses and asset owners in Lebanon. Know every move with live tracking, alerts, reports, and fleet control.",
+    openGraph: {
+      title: "TrackWay | GPS Tracking & Fleet Management in Lebanon",
+      description: "TrackWay provides GPS tracking hardware and fleet management software for businesses and asset owners in Lebanon. Know every move with live tracking, alerts, reports, and fleet control.",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "TrackWay - GPS Tracking & Fleet Management",
+        },
+      ],
+    },
   };
 }
 
@@ -46,8 +57,8 @@ export default async function HomePage({
     <div className="relative">
       <HeroSection
         locale={typedLocale}
-        headline={getLocalized(homePage.heroHeadline, typedLocale)}
-        subheadline={getLocalized(homePage.heroSubheadline, typedLocale)}
+        headline="GPS tracking and fleet management that keeps you in control."
+        subheadline="TrackWay combines reliable GPS hardware with smart fleet management software, giving you live vehicle visibility, alerts, reports, and operational control from one connected platform."
       />
       <MarqueeTicker items={homePage.marqueeKeywords} />
       <CoreValueSection />

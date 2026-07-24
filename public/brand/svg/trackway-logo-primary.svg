@@ -16,7 +16,7 @@
   <path d="M124 96L159 82L145 96L159 110L124 96Z" fill="#00E5D4" opacity="0.9"/>
 </g>
 <g id="wordmark">
-  <text x="300" y="111" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="72" font-weight="950" letter-spacing="-4.4" fill="#000000">TRACK</text>
+  <text x="300" y="111" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="72" font-weight="950" letter-spacing="-4.4" fill="#FFFFFF">TRACK</text>
   <text x="558" y="111" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="72" font-weight="950" letter-spacing="-4.4" fill="#00E5D4">WAY</text>
   <path d="M302 132H704" stroke="#00E5D4" stroke-width="6" stroke-linecap="round" opacity="0.92"/>
   <text x="302" y="168" font-family="Inter, Montserrat, Arial, sans-serif" font-size="21" font-weight="800" letter-spacing="0.2" fill="#000000" opacity="0.72">Know Every Move.</text>

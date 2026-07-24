@@ -31,6 +31,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={typedLocale} dir={dir}>
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <body>
         {/* Dedicated portal target for GlobeHeroBackground's ambient layer.
             Must stay the very first child of <body> — React portals append
@@ -43,7 +46,7 @@ export default async function LocaleLayout({
         <div id="ambient-bg-root" />
         <NextIntlClientProvider messages={messages}>
           <ScrollProgressBar />
-          <Header locale={typedLocale} logoUrl={siteSettings.logoUrl} />
+          <Header locale={typedLocale} logoUrl="/brand/svg/trackway-logo-primary-no-tagline.svg" />
           <main className="pt-20">{children}</main>
           <Footer
             locale={typedLocale}

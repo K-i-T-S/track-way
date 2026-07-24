@@ -16,7 +16,7 @@
   <path d="M124 96L159 82L145 96L159 110L124 96Z" fill="#00E5D4" opacity="0.9"/>
 </g>
 <g id="wordmark">
-  <text x="300" y="115" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="76" font-weight="950" letter-spacing="-4.6" fill="#000000">TRACK</text>
+  <text x="300" y="115" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="76" font-weight="950" letter-spacing="-4.6" fill="#FFFFFF">TRACK</text>
   <text x="573" y="115" font-family="Sora, Montserrat, Inter, Arial, sans-serif" font-size="76" font-weight="950" letter-spacing="-4.6" fill="#00E5D4">WAY</text>
 </g>
 </svg>
