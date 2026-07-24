@@ -899,36 +899,47 @@ export function GlobeHeroBackground({
   }, [trackRef, reducedMotion]);
 
   return (
-    <div
-      ref={wrapperRef}
-      data-testid="globe-hero-background"
-      data-motion-mode={reducedMotion ? "static" : "animated"}
-      aria-hidden="true"
-      className={
-        mode === "pinned"
-          ? "sticky top-0 z-0 h-[100svh] w-full overflow-hidden"
-          : "fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
-      }
-      style={{
-        background:
-          "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.22), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.18), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.12), transparent 25%), linear-gradient(135deg,#030712 0%,#071426 43%,#03101d 100%)",
-      }}
-    >
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+    // Outer layer spans the tall <section> exactly (via inset-0, relative to
+    // the section's own `position: relative`) and stays out of document flow
+    // entirely — this is what stops the inner box from pushing the sibling
+    // hero-content wrapper down the page. A sticky/fixed element sitting
+    // directly here as a *sibling* of the content still occupies its own box
+    // in normal flow (sticky doesn't remove it from flow), which is what
+    // caused the globe and the hero content to stack sequentially instead of
+    // overlapping. The inner div is the one that actually toggles between
+    // sticky (pinned) and fixed (ambient).
+    <div className="absolute inset-0">
       <div
-        className="pointer-events-none absolute inset-0"
+        ref={wrapperRef}
+        data-testid="globe-hero-background"
+        data-motion-mode={reducedMotion ? "static" : "animated"}
+        aria-hidden="true"
+        className={
+          mode === "pinned"
+            ? "sticky top-0 z-0 h-[100svh] w-full overflow-hidden"
+            : "fixed inset-0 z-0 overflow-hidden opacity-[0.08] transition-opacity duration-700"
+        }
         style={{
           background:
-            "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(1,5,12,.42) 76%, rgba(0,0,0,.84) 100%)",
+            "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.22), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.18), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.12), transparent 25%), linear-gradient(135deg,#030712 0%,#071426 43%,#03101d 100%)",
         }}
-      />
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E\")",
-        }}
-      />
+      >
+        <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(1,5,12,.42) 76%, rgba(0,0,0,.84) 100%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-screen"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E\")",
+          }}
+        />
+      </div>
     </div>
   );
 }
