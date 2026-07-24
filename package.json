@@ -13,8 +13,6 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@react-three/drei": "^9.122.0",
-    "@react-three/fiber": "^8.18.0",
     "@sanity/client": "^6.21.0",
     "@sanity/image-url": "^1.0.2",
     "@sanity/vision": "^3.57.0",

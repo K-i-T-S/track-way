@@ -1,10 +1,20 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
+// Deliberately NOT using @react-three/fiber here: its react-reconciler
+// dependency reads React's internal shared-state singletons
+// (ReactCurrentOwner/ReactCurrentBatchConfig), and Next.js 15's App Router
+// always substitutes its own internally-vendored React build for the
+// browser bundle — a React-19-shaped build, regardless of the version
+// declared in package.json — which react-reconciler@0.27.0 (built for
+// React 18's internals shape) cannot read. Driving three.js imperatively
+// via a plain ref sidesteps React's reconciler entirely, so this class of
+// bug can't happen here.
+
 const NODE_COUNT = 22;
+const MAX_DPR = 1.75;
 
 function randomPointInSphere(radius: number): THREE.Vector3 {
   const u = Math.random();
@@ -19,90 +29,110 @@ function randomPointInSphere(radius: number): THREE.Vector3 {
   );
 }
 
-function Nodes({ points }: { points: THREE.Vector3[] }) {
-  const ref = useRef<THREE.Group>(null);
-
-  useFrame(({ clock }) => {
-    if (!ref.current) return;
-    ref.current.children.forEach((child, i) => {
-      const s = 1 + Math.sin(clock.getElapsedTime() * 1.6 + i) * 0.25;
-      child.scale.setScalar(s);
+function buildRouteLineGeometry(points: THREE.Vector3[]): THREE.BufferGeometry {
+  const positions: number[] = [];
+  // Connect each node to its two nearest neighbors for a sparse network,
+  // not a dense mesh — keeps draw calls and visual noise low.
+  points.forEach((p, i) => {
+    const distances = points
+      .map((q, j) => ({ j, d: i === j ? Infinity : p.distanceTo(q) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 2);
+    distances.forEach(({ j }) => {
+      const neighbor = points[j];
+      if (!neighbor) return;
+      positions.push(p.x, p.y, p.z, neighbor.x, neighbor.y, neighbor.z);
     });
   });
-
-  return (
-    <group ref={ref}>
-      {points.map((p, i) => (
-        <mesh key={i} position={p}>
-          <sphereGeometry args={[0.045, 12, 12]} />
-          <meshBasicMaterial color="#00E5D4" />
-        </mesh>
-      ))}
-    </group>
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(positions, 3),
   );
+  return geometry;
 }
 
-function RouteLines({ points }: { points: THREE.Vector3[] }) {
-  const geometry = useMemo(() => {
-    const positions: number[] = [];
-    // Connect each node to its two nearest neighbors for a sparse network,
-    // not a dense mesh — keeps draw calls and visual noise low.
-    points.forEach((p, i) => {
-      const distances = points
-        .map((q, j) => ({ j, d: i === j ? Infinity : p.distanceTo(q) }))
-        .sort((a, b) => a.d - b.d)
-        .slice(0, 2);
-      distances.forEach(({ j }) => {
-        const neighbor = points[j];
-        if (!neighbor) return;
-        positions.push(p.x, p.y, p.z, neighbor.x, neighbor.y, neighbor.z);
-      });
-    });
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(positions, 3),
+export default function FleetNetworkScene(): React.ReactElement {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 0, 6);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+    const pointLight = new THREE.PointLight(0x00e5d4, 40);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
+    const rig = new THREE.Group();
+    scene.add(rig);
+
+    const points = Array.from({ length: NODE_COUNT }, () =>
+      randomPointInSphere(2.1),
     );
-    return geo;
-  }, [points]);
 
-  return (
-    <lineSegments geometry={geometry}>
-      <lineBasicMaterial color="#00E5D4" transparent opacity={0.25} />
-    </lineSegments>
-  );
-}
+    const lineGeometry = buildRouteLineGeometry(points);
+    const lineMaterial = new THREE.LineBasicMaterial({
+      color: 0x00e5d4,
+      transparent: true,
+      opacity: 0.25,
+    });
+    rig.add(new THREE.LineSegments(lineGeometry, lineMaterial));
 
-function RotatingRig() {
-  const ref = useRef<THREE.Group>(null);
-  const points = useMemo(
-    () => Array.from({ length: NODE_COUNT }, () => randomPointInSphere(2.1)),
-    [],
-  );
+    const nodeGeometry = new THREE.SphereGeometry(0.045, 12, 12);
+    const nodeMaterial = new THREE.MeshBasicMaterial({ color: 0x00e5d4 });
+    const nodeMeshes = points.map((p) => {
+      const mesh = new THREE.Mesh(nodeGeometry, nodeMaterial);
+      mesh.position.copy(p);
+      rig.add(mesh);
+      return mesh;
+    });
 
-  useFrame((_, delta) => {
-    if (ref.current) ref.current.rotation.y += delta * 0.12;
-  });
+    function resize() {
+      if (!container) return;
+      const { clientWidth: width, clientHeight: height } = container;
+      if (width === 0 || height === 0) return;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+    resize();
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(container);
 
-  return (
-    <group ref={ref}>
-      <RouteLines points={points} />
-      <Nodes points={points} />
-    </group>
-  );
-}
+    const clock = new THREE.Clock();
+    let frameId: number;
+    function animate() {
+      frameId = requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+      rig.rotation.y += clock.getDelta() * 0.12;
+      nodeMeshes.forEach((mesh, i) => {
+        const s = 1 + Math.sin(elapsed * 1.6 + i) * 0.25;
+        mesh.scale.setScalar(s);
+      });
+      renderer.render(scene, camera);
+    }
+    animate();
 
-export default function FleetNetworkScene() {
-  return (
-    <Canvas
-      camera={{ position: [0, 0, 6], fov: 45 }}
-      className="!touch-none"
-      gl={{ antialias: true, alpha: true }}
-      dpr={[1, 1.75]}
-    >
-      <ambientLight intensity={1.2} />
-      <pointLight position={[5, 5, 5]} intensity={40} color="#00E5D4" />
-      <RotatingRig />
-    </Canvas>
-  );
+    return () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      lineGeometry.dispose();
+      lineMaterial.dispose();
+      nodeGeometry.dispose();
+      nodeMaterial.dispose();
+      renderer.dispose();
+      container.removeChild(renderer.domElement);
+    };
+  }, []);
+
+  return <div ref={containerRef} className="h-full w-full touch-none" />;
 }
