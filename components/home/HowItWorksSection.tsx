@@ -1,19 +1,28 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
-import {
-  CheckIcon,
-  DocumentIcon,
-  MessageIcon,
-  TruckIcon,
-} from "@/components/ui/PremiumIcons";
+
+function stepImage(src: string, key: string) {
+  return (
+    <Image
+      key={key}
+      src={src}
+      alt=""
+      aria-hidden="true"
+      width={24}
+      height={24}
+      className="h-6 w-6"
+    />
+  );
+}
 
 const STEP_ICONS: ReactNode[] = [
-  <DocumentIcon key="doc" className="h-6 w-6" />,
-  <MessageIcon key="chat" className="h-6 w-6" />,
-  <CheckIcon key="check" className="h-6 w-6" />,
+  stepImage("/images/step-submit.png", "submit"),
+  stepImage("/images/step-communication.png", "communication"),
+  stepImage("/images/step-confirm.png", "confirm"),
 ];
 
 export function HowItWorksSection(): React.ReactElement {
@@ -95,7 +104,14 @@ export function HowItWorksSection(): React.ReactElement {
               className="absolute start-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-background shadow-[0_0_30px_rgba(0,229,212,0.5)]">
-                <TruckIcon className="h-6 w-6 text-accent" />
+                <Image
+                  src="/images/step-truck.png"
+                  alt=""
+                  aria-hidden="true"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6"
+                />
               </div>
             </motion.div>
           </div>

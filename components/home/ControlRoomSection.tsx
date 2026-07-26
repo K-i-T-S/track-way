@@ -4,25 +4,41 @@ import { useRef } from "react";
 import Image from "next/image";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { MapPinIcon, ShieldAlertIcon } from "@/components/ui/PremiumIcons";
 
-function GaugeImage({ className }: { className?: string }) {
-  return (
-    <Image
-      src="/images/badge-gauge.png"
-      alt=""
-      aria-hidden="true"
-      width={24}
-      height={24}
-      className={className}
-    />
-  );
+function badgeImage(src: string) {
+  return function BadgeImage({ className }: { className?: string }) {
+    return (
+      <Image
+        src={src}
+        alt=""
+        aria-hidden="true"
+        width={24}
+        height={24}
+        className={className}
+      />
+    );
+  };
 }
 
 const CARDS = [
-  { icon: GaugeImage, top: "18%", start: "12%", delay: 0 },
-  { icon: MapPinIcon, top: "55%", start: "62%", delay: 0.4 },
-  { icon: ShieldAlertIcon, top: "32%", start: "78%", delay: 0.8 },
+  {
+    icon: badgeImage("/images/badge-gauge.png"),
+    top: "18%",
+    start: "12%",
+    delay: 0,
+  },
+  {
+    icon: badgeImage("/images/badge-map-pin.png"),
+    top: "55%",
+    start: "62%",
+    delay: 0.4,
+  },
+  {
+    icon: badgeImage("/images/badge-shield-alert.png"),
+    top: "32%",
+    start: "78%",
+    delay: 0.8,
+  },
 ];
 
 const RING_SIZES = [320, 240, 160, 80];
