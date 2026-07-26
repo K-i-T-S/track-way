@@ -5,7 +5,9 @@
     "about": "About",
     "contact": "Contact",
     "contactCta": "Contact Us",
-    "bookInstallation": "Book an Installation"
+    "bookInstallation": "Book an Installation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "homepage": {
     "heroBadge": "Know Every Move.",

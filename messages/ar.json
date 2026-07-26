@@ -5,7 +5,9 @@
     "about": "من نحن",
     "contact": "اتصل بنا",
     "contactCta": "اتصل بنا",
-    "bookInstallation": "احجز موعد تركيب"
+    "bookInstallation": "احجز موعد تركيب",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "homepage": {
     "heroBadge": "اعرف كل حركة.",
