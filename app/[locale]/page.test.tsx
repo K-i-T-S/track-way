@@ -3,21 +3,6 @@ import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import HomePage from "./page";
 
-// next-intl/server's getTranslations relies on Next.js' RSC request context
-// (AsyncLocalStorage), which doesn't exist under Vitest's jsdom environment.
-// Mock it the same way the hardware page test mocks it.
-vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn().mockResolvedValue((key: string) => {
-    const translations: Record<string, string> = {
-      hardwareTeaser:
-        "Explore our GPS tracking hardware built for fleets and individuals.",
-      viewHardwareCta: "View Hardware",
-      getInTouchCta: "Get in Touch",
-    };
-    return translations[key] ?? key;
-  }),
-}));
-
 vi.mock("@/sanity/queries", () => ({
   getHomePage: vi.fn().mockResolvedValue({
     heroHeadline: { en: "Track everything that moves", ar: "تتبع كل ما يتحرك" },
@@ -66,6 +51,9 @@ const homepageMessages = {
   industriesDelivery: "Delivery Fleets",
   industriesSchool: "School Transportation",
   industriesPrivate: "Private Vehicles",
+  servicesEyebrow: "What We Offer",
+  servicesTitle: "Powering Your Fleet",
+  servicesSubtitle: "Services subtitle.",
   controlRoomEyebrow: "Fleet Control",
   controlRoomTitle: "Your fleet, watched over around the clock",
   controlRoomBody: "Control room body.",
@@ -82,13 +70,21 @@ const homepageMessages = {
   finalCtaTitle: "Ready to take control of your vehicles?",
   finalCtaPrimary: "Book an Installation",
   finalCtaSecondary: "Talk to Us",
+  aboutBadge: "Established in Lebanon",
+};
+
+const homeMessages = {
+  hardwareTeaser:
+    "Explore our GPS tracking hardware built for fleets and individuals.",
+  viewHardwareCta: "View Hardware",
+  getInTouchCta: "Get in Touch",
 };
 
 function renderHomePage(jsx: React.ReactElement) {
   return render(
     <NextIntlClientProvider
       locale="en"
-      messages={{ homepage: homepageMessages }}
+      messages={{ homepage: homepageMessages, home: homeMessages }}
     >
       {jsx}
     </NextIntlClientProvider>,
