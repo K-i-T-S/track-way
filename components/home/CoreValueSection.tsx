@@ -1,19 +1,14 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import {
-  SatelliteDish,
-  LayoutDashboard,
-  Wrench,
-  type LucideIcon,
-} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 const RING_COLORS = ["#00E5D4", "#FB923C", "#F4FFFE"] as const;
 
 interface CoreValueCardProps {
-  icon: LucideIcon;
+  image: string;
   title: string;
   desc: string;
   index: number;
@@ -21,7 +16,7 @@ interface CoreValueCardProps {
 }
 
 function CoreValueCard({
-  icon: Icon,
+  image,
   title,
   desc,
   index,
@@ -78,7 +73,7 @@ function CoreValueCard({
           rotateY: springY,
           transformStyle: "preserve-3d",
         }}
-        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-7 backdrop-blur transition-colors hover:border-white/20"
+        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur transition-colors hover:border-white/20"
       >
         {/* animated border-trace ring, revealed on hover */}
         <svg
@@ -102,32 +97,49 @@ function CoreValueCard({
         <motion.div
           style={{ background }}
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         />
         <motion.div
           style={{ background: glare }}
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         />
 
         <div
-          style={{ transform: "translateZ(50px)" }}
-          className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent"
-        >
-          <Icon className="h-6 w-6" aria-hidden="true" />
-        </div>
-        <h3
-          style={{ transform: "translateZ(40px)" }}
-          className="relative mt-5 text-lg font-semibold text-foreground"
-        >
-          {title}
-        </h3>
-        <p
           style={{ transform: "translateZ(30px)" }}
-          className="relative mt-2 text-sm leading-relaxed text-muted"
+          className="relative aspect-[16/10] w-full overflow-hidden"
         >
-          {desc}
-        </p>
+          <Image
+            src={image}
+            alt={title}
+            fill
+            sizes="(min-width: 640px) 33vw, 100vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            style={{ filter: "brightness(0.9) contrast(1.05)" }}
+          />
+          {/* bottom gradient for text legibility */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-16"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(10,10,10,0.95) 0%, transparent 100%)",
+            }}
+          />
+          {/* accent top-line */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-px opacity-70"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${ring}80, transparent)`,
+            }}
+          />
+        </div>
+
+        <div style={{ transform: "translateZ(20px)" }} className="relative p-7">
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted">{desc}</p>
+        </div>
 
         {/* floating decorative orb */}
         <div
@@ -156,16 +168,20 @@ export function CoreValueSection(): React.ReactElement {
 
   const items = [
     {
-      icon: SatelliteDish,
+      image: "/images/why-trackway-hardware.png",
       title: t("coreValue1Title"),
       desc: t("coreValue1Desc"),
     },
     {
-      icon: LayoutDashboard,
+      image: "/images/why-trackway-software.png",
       title: t("coreValue2Title"),
       desc: t("coreValue2Desc"),
     },
-    { icon: Wrench, title: t("coreValue3Title"), desc: t("coreValue3Desc") },
+    {
+      image: "/images/why-trackway-support.png",
+      title: t("coreValue3Title"),
+      desc: t("coreValue3Desc"),
+    },
   ];
 
   return (
