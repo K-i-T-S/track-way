@@ -8,6 +8,7 @@ import { CoreValueSection } from "@/components/home/CoreValueSection";
 import { IndustriesSection } from "@/components/home/IndustriesSection";
 import { ControlRoomSection } from "@/components/home/ControlRoomSection";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
+import { ServicesFeatureList } from "@/components/home/ServicesFeatureList";
 import { AboutTeaserSection } from "@/components/home/AboutTeaserSection";
 import { HardwareTeaserSection } from "@/components/home/HardwareTeaserSection";
 import { FinalCtaSection } from "@/components/home/FinalCtaSection";
@@ -64,6 +65,7 @@ export default async function HomePage({
       <IndustriesSection />
       <ControlRoomSection />
       <HowItWorksSection />
+      <ServicesFeatureList features={features} locale={typedLocale} />
       <AboutTeaserSection
         body={getLocalized(homePage.aboutTeaser, typedLocale)}
       />

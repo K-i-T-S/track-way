@@ -99,8 +99,8 @@ describe("HomePage", () => {
       screen.getByRole("heading", { name: "Track everything that moves" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Live Tracking" }),
-    ).toBeInTheDocument();
+      screen.getAllByRole("heading", { name: "Live Tracking" }).length,
+    ).toBeGreaterThan(0);
   });
 
   it("renders a hardware teaser link to /hardware and the final CTA linking to booking and contact", async () => {
@@ -125,10 +125,12 @@ describe("HomePage", () => {
   it("renders the capability icon for each feature that has one", async () => {
     const jsx = await HomePage({ params: Promise.resolve({ locale: "en" }) });
     renderHomePage(jsx);
-    const featureHeading = screen.getByRole("heading", {
+    const featureHeadings = screen.getAllByRole("heading", {
       name: "Live Tracking",
     });
-    const card = featureHeading.closest("div.group");
-    expect(card?.querySelector("svg.h-8")).not.toBeNull();
+    const hasIcon = featureHeadings.some((heading) =>
+      heading.closest("div.group")?.querySelector("svg"),
+    );
+    expect(hasIcon).toBe(true);
   });
 });

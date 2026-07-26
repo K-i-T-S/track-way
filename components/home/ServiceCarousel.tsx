@@ -151,7 +151,7 @@ function ServiceCard({
           bg-gradient-to-br ${palette.gradient}
           p-5 text-center backdrop-blur-xl
           transition-all duration-500 ease-out
-          ${isFrontFacing ? `shadow-2xl ${palette.glow} scale-105` : "shadow-lg scale-95 opacity-70"}
+          ${isFrontFacing ? `shadow-2xl ${palette.glow} scale-105` : "shadow-lg scale-95 opacity-85"}
           ${isHovered && isFrontFacing ? "brightness-125 !scale-110" : ""}
         `}
         style={{
