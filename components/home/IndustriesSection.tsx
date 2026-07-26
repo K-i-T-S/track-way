@@ -1,14 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
-import {
-  Truck,
-  Car,
-  Package,
-  Bus,
-  UserRound,
-  type LucideIcon,
-} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 /* Cycled across cards instead of one hue per industry — keeps the section on
@@ -17,12 +10,12 @@ import { useTranslations } from "next-intl";
 const PALETTE = ["#00E5D4", "#FB923C", "#F4FFFE"] as const;
 
 interface IndustryCardProps {
-  icon: LucideIcon;
+  image: string;
   title: string;
   index: number;
 }
 
-function IndustryCard({ icon: Icon, title, index }: IndustryCardProps) {
+function IndustryCard({ image, title, index }: IndustryCardProps) {
   const color = PALETTE[index % PALETTE.length]!;
   const isEven = index % 2 === 0;
 
@@ -48,39 +41,55 @@ function IndustryCard({ icon: Icon, title, index }: IndustryCardProps) {
         }}
       >
         <div
-          className="relative flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-8 text-center backdrop-blur-sm transition-all duration-500 group-hover:border-white/25 group-hover:bg-white/[0.06]"
+          className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm transition-all duration-500 group-hover:border-white/25 group-hover:bg-white/[0.06]"
           style={{ transformStyle: "preserve-3d", transform: "rotateX(4deg)" }}
         >
-          {/* top face glow */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 -top-px h-px rounded-full opacity-50"
-            style={{
-              background: `linear-gradient(90deg, transparent, ${color}66, transparent)`,
-            }}
-          />
-
-          {/* hover spotlight */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-            style={{
-              background: `radial-gradient(200px circle at 50% 30%, ${color}15, transparent 70%)`,
-            }}
-          />
-
-          {/* icon with glow */}
-          <div
-            className="relative flex h-14 w-14 items-center justify-center rounded-xl transition-all duration-500 group-hover:scale-110"
-            style={{
-              background: `linear-gradient(135deg, ${color}20, ${color}08)`,
-              color,
-            }}
-          >
-            <Icon className="h-6 w-6" aria-hidden="true" />
+          {/* image area */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+            {/* gradient overlay for readability */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent 40%, rgba(10,10,10,0.95) 100%)",
+              }}
+            />
+            {/* accent top-line */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 top-0 h-px opacity-60"
+              style={{
+                background: `linear-gradient(90deg, transparent, ${color}66, transparent)`,
+              }}
+            />
+            {/* hover spotlight */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              style={{
+                background: `radial-gradient(200px circle at 50% 30%, ${color}15, transparent 70%)`,
+              }}
+            />
+            {/* corner glow */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -top-12 right-0 h-24 w-24 rounded-full opacity-40 blur-2xl transition-all duration-500 group-hover:scale-150 group-hover:opacity-60"
+              style={{ background: color }}
+            />
           </div>
 
-          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {/* text area */}
+          <div className="relative px-4 py-5 text-center">
+            <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          </div>
 
           {/* bottom shadow platform */}
           <div
@@ -116,11 +125,20 @@ export function IndustriesSection(): React.ReactElement {
   const t = useTranslations("homepage");
 
   const items = [
-    { icon: Truck, title: t("industriesFleets") },
-    { icon: Car, title: t("industriesRental") },
-    { icon: Package, title: t("industriesDelivery") },
-    { icon: Bus, title: t("industriesSchool") },
-    { icon: UserRound, title: t("industriesPrivate") },
+    {
+      image: "/images/who-we-serve-transportation.png",
+      title: t("industriesFleets"),
+    },
+    { image: "/images/who-we-serve-rental.png", title: t("industriesRental") },
+    {
+      image: "/images/who-we-serve-delivery.png",
+      title: t("industriesDelivery"),
+    },
+    { image: "/images/who-we-serve-school.png", title: t("industriesSchool") },
+    {
+      image: "/images/who-we-serve-private.png",
+      title: t("industriesPrivate"),
+    },
   ];
 
   return (
