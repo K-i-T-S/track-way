@@ -177,8 +177,8 @@ function ServiceCard({
         }}
       >
         {/* icon */}
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-          <CapabilityImage name={card.icon} size={32} className="h-8 w-8" />
+        <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+          <CapabilityImage name={card.icon} size={56} className="h-14 w-14" />
         </div>
 
         {/* title */}
@@ -293,7 +293,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
       lastTimeRef.current = time;
 
       setRotation((prev) => {
-        const targetSpeed = hoveredIndex !== null ? 0.004 : 0.02;
+        const targetSpeed = hoveredIndex !== null ? 0.004 : 0.013;
         /* smoothly interpolate speed */
         speedRef.current += (targetSpeed - speedRef.current) * 0.05;
         return prev + speedRef.current * delta * spinDirection;
