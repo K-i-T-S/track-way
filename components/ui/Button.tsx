@@ -197,7 +197,7 @@ export function Button({
               strokeWidth="1.5"
               strokeDasharray="40 280"
               strokeLinecap="round"
-              className="animate-btn-trace [stroke:var(--btn-ring)]"
+              className="animate-btn-trace [animation-play-state:paused] [stroke:var(--btn-ring)] group-hover/btn:[animation-play-state:running]"
             />
           </svg>
         </>
