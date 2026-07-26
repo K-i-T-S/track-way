@@ -2,53 +2,18 @@
 
 import { useRef, type ReactNode } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
+import {
+  CheckIcon,
+  DocumentIcon,
+  MessageIcon,
+  TruckIcon,
+} from "@/components/ui/PremiumIcons";
 
 const STEP_ICONS: ReactNode[] = [
-  <svg
-    key="doc"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-6 w-6"
-    aria-hidden="true"
-  >
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="16" y1="13" x2="8" y2="13" />
-    <line x1="16" y1="17" x2="8" y2="17" />
-  </svg>,
-  <svg
-    key="chat"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-6 w-6"
-    aria-hidden="true"
-  >
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>,
-  <svg
-    key="check"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="h-6 w-6"
-    aria-hidden="true"
-  >
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-    <polyline points="22 4 12 14.01 9 11.01" />
-  </svg>,
+  <DocumentIcon key="doc" className="h-6 w-6" />,
+  <MessageIcon key="chat" className="h-6 w-6" />,
+  <CheckIcon key="check" className="h-6 w-6" />,
 ];
 
 export function HowItWorksSection(): React.ReactElement {
@@ -130,7 +95,7 @@ export function HowItWorksSection(): React.ReactElement {
               className="absolute start-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-background shadow-[0_0_30px_rgba(0,229,212,0.5)]">
-                <Truck className="h-6 w-6 text-accent" />
+                <TruckIcon className="h-6 w-6 text-accent" />
               </div>
             </motion.div>
           </div>

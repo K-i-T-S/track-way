@@ -1,14 +1,28 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { Gauge, MapPin, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { MapPinIcon, ShieldAlertIcon } from "@/components/ui/PremiumIcons";
+
+function GaugeImage({ className }: { className?: string }) {
+  return (
+    <Image
+      src="/images/badge-gauge.png"
+      alt=""
+      aria-hidden="true"
+      width={24}
+      height={24}
+      className={className}
+    />
+  );
+}
 
 const CARDS = [
-  { icon: Gauge, top: "18%", start: "12%", delay: 0 },
-  { icon: MapPin, top: "55%", start: "62%", delay: 0.4 },
-  { icon: ShieldAlert, top: "32%", start: "78%", delay: 0.8 },
+  { icon: GaugeImage, top: "18%", start: "12%", delay: 0 },
+  { icon: MapPinIcon, top: "55%", start: "62%", delay: 0.4 },
+  { icon: ShieldAlertIcon, top: "32%", start: "78%", delay: 0.8 },
 ];
 
 const RING_SIZES = [320, 240, 160, 80];
