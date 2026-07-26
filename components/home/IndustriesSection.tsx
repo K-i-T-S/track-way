@@ -10,9 +10,33 @@ import { useTranslations } from "next-intl";
 const PALETTE = ["#00E5D4", "#FB923C", "#F4FFFE"] as const;
 
 interface IndustryCardProps {
-  image: string;
+  image?: string;
   title: string;
   index: number;
+}
+
+/* Placeholder icon shown until a matching photo is sourced for this
+   industry — same visual slot as the photo (aspect-[4/3] box, same
+   overlay/glow treatment) so the card reads consistently with the rest. */
+function ConstructionIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="h-10 w-10"
+    >
+      <path d="M2 20h20" />
+      <path d="M4 20V10l6-4v14" />
+      <path d="M10 8l8 4v8" />
+      <path d="M14 20v-4h4v4" />
+      <circle cx="17" cy="10" r="1" />
+    </svg>
+  );
 }
 
 function IndustryCard({ image, title, index }: IndustryCardProps) {
@@ -45,14 +69,23 @@ function IndustryCard({ image, title, index }: IndustryCardProps) {
           style={{ transformStyle: "preserve-3d", transform: "rotateX(4deg)" }}
         >
           {/* image area */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden">
-            <Image
-              src={image}
-              alt={title}
-              fill
-              sizes="(min-width: 1024px) 20vw, (min-width: 640px) 33vw, 50vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-110"
-            />
+          <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white/[0.02]">
+            {image ? (
+              <Image
+                src={image}
+                alt={title}
+                fill
+                sizes="(min-width: 1024px) 16vw, (min-width: 640px) 33vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+            ) : (
+              <span
+                className="relative flex h-16 w-16 items-center justify-center rounded-xl transition-transform duration-500 group-hover:scale-110"
+                style={{ background: `${color}15`, color }}
+              >
+                <ConstructionIcon />
+              </span>
+            )}
             {/* gradient overlay for readability */}
             <div
               aria-hidden="true"
@@ -86,8 +119,9 @@ function IndustryCard({ image, title, index }: IndustryCardProps) {
             />
           </div>
 
-          {/* text area */}
-          <div className="relative px-4 py-5 text-center">
+          {/* text area — fixed min-height so 1- and 2-line names keep every
+              card the same overall height regardless of wrap */}
+          <div className="relative flex min-h-[4.5rem] items-center justify-center px-4 py-3 text-center">
             <h3 className="text-sm font-semibold text-foreground">{title}</h3>
           </div>
 
@@ -139,6 +173,12 @@ export function IndustriesSection(): React.ReactElement {
       image: "/images/who-we-serve-private.png",
       title: t("industriesPrivate"),
     },
+    {
+      // TODO: swap in a real photo once one is generated — see
+      // ConstructionIcon fallback in IndustryCard above.
+      image: undefined,
+      title: t("industriesConstruction"),
+    },
   ];
 
   return (
@@ -170,7 +210,7 @@ export function IndustriesSection(): React.ReactElement {
           </h2>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
           {items.map((item, i) => (
             <IndustryCard key={item.title} {...item} index={i} />
           ))}
