@@ -58,7 +58,10 @@
   "hardware": {
     "requestQuote": "اطلب عرض سعر",
     "metaTitle": "أجهزة تتبع GPS — TrackWay",
-    "metaDescription": "تعرّفوا على أجهزة تتبع GPS من TrackWay المخصصة للأساطيل والأفراد."
+    "metaDescription": "تعرّفوا على أجهزة تتبع GPS من TrackWay المخصصة للأساطيل والأفراد.",
+    "heroBadge": "أجهزة بمعايير Teltonika",
+    "heroTitle": "أجهزة تتبع GPS",
+    "heroSubtitle": "أجهزة تتبع GPS احترافية مصممة للعمل المستمر في جميع أنحاء لبنان — من المركبات الخاصة إلى الأساطيل الثقيلة."
   },
   "contact": {
     "sendWhatsApp": "أرسل عبر واتساب",

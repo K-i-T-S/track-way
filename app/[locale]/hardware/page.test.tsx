@@ -1,19 +1,24 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
 import HardwarePage, { generateMetadata } from "./page";
 
 // next-intl/server's getTranslations relies on Next.js' RSC request context
 // (AsyncLocalStorage), which doesn't exist under Vitest's jsdom environment.
 // Mock it the same way the Sanity client is mocked below.
+const hardwareMessages = {
+  requestQuote: "Request a Quote",
+  metaTitle: "GPS Hardware — TrackWay",
+  metaDescription:
+    "Explore TrackWay's GPS tracking hardware for fleets and individuals.",
+  heroBadge: "Teltonika-Grade Devices",
+  heroTitle: "GPS Tracking Hardware",
+  heroSubtitle: "Professional-grade GPS trackers.",
+};
+
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn().mockResolvedValue((key: string) => {
-    const translations: Record<string, string> = {
-      requestQuote: "Request a Quote",
-      metaTitle: "GPS Hardware — TrackWay",
-      metaDescription:
-        "Explore TrackWay's GPS tracking hardware for fleets and individuals.",
-    };
-    return translations[key] ?? key;
+    return hardwareMessages[key as keyof typeof hardwareMessages] ?? key;
   }),
 }));
 
@@ -38,12 +43,23 @@ vi.mock("@/sanity/queries", () => ({
     .mockResolvedValue({ whatsappNumber: "+961 3 123 456" }),
 }));
 
+function renderHardwarePage(jsx: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider
+      locale="en"
+      messages={{ hardware: hardwareMessages }}
+    >
+      {jsx}
+    </NextIntlClientProvider>,
+  );
+}
+
 describe("HardwarePage", () => {
-  it("renders one HardwareCard per product with no price text", async () => {
+  it("renders one product showcase per Sanity product with no price text", async () => {
     const jsx = await HardwarePage({
       params: Promise.resolve({ locale: "en" }),
     });
-    render(jsx);
+    renderHardwarePage(jsx);
     expect(
       screen.getByRole("heading", { name: "TrackerX1" }),
     ).toBeInTheDocument();

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getHardwareProducts, getSiteSettings } from "@/sanity/queries";
-import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
-import { HardwareCard } from "@/components/ui/HardwareCard";
+import { HardwareHero } from "@/components/hardware/HardwareHero";
+import { HardwareProductShowcase } from "@/components/hardware/HardwareProductShowcase";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
@@ -33,21 +33,14 @@ export default async function HardwarePage({
   ]);
 
   return (
-    <section className="grid grid-cols-1 gap-6 px-6 py-16 md:grid-cols-3">
-      {products.map((product) => (
-        <HardwareCard
-          key={product._id}
-          name={getLocalized(product.name, typedLocale)}
-          description={getLocalized(product.description, typedLocale)}
-          images={product.images}
-          specs={product.specs.map((spec) => ({
-            label: getLocalized(spec.label, typedLocale),
-            value: getLocalized(spec.value, typedLocale),
-          }))}
-          whatsappNumber={siteSettings.whatsappNumber}
-          requestQuoteLabel={t("requestQuote")}
-        />
-      ))}
-    </section>
+    <div className="relative">
+      <HardwareHero />
+      <HardwareProductShowcase
+        products={products}
+        locale={typedLocale}
+        whatsappNumber={siteSettings.whatsappNumber}
+        requestQuoteLabel={t("requestQuote")}
+      />
+    </div>
   );
 }
