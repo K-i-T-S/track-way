@@ -1,10 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  CapabilityIcon,
-  type CapabilityIconName,
-} from "@/components/ui/CapabilityIcon";
+import type { CapabilityIconName } from "@/components/ui/CapabilityIcon";
+import { CapabilityImage } from "@/components/ui/CapabilityImage";
 import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
 import type { Feature } from "@/sanity/types";
@@ -55,13 +53,13 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
 
         {/* floating icon */}
         <div
-          className="relative shrink-0 text-accent"
+          className="relative shrink-0"
           style={{
             transform: "translateZ(50px)",
             animation: `icon-float 3s ease-in-out ${index * 0.3}s infinite`,
           }}
         >
-          <CapabilityIcon name={row.icon} className="h-7 w-7" />
+          <CapabilityImage name={row.icon} size={28} className="h-7 w-7" />
         </div>
 
         {/* text content */}

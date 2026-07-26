@@ -3,10 +3,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useReducedMotion } from "framer-motion";
-import {
-  CapabilityIcon,
-  type CapabilityIconName,
-} from "@/components/ui/CapabilityIcon";
+import type { CapabilityIconName } from "@/components/ui/CapabilityIcon";
+import { CapabilityImage } from "@/components/ui/CapabilityImage";
 import { getLocalized } from "@/lib/i18n-utils";
 import type { Locale } from "@/i18n/routing";
 import type { Feature } from "@/sanity/types";
@@ -179,8 +177,8 @@ function ServiceCard({
         }}
       >
         {/* icon */}
-        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 text-foreground backdrop-blur-sm">
-          <CapabilityIcon name={card.icon} className="h-8 w-8" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+          <CapabilityImage name={card.icon} size={32} className="h-8 w-8" />
         </div>
 
         {/* title */}

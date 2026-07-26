@@ -67,11 +67,11 @@ describe("ServiceCarousel", () => {
     );
   });
 
-  it("renders a decorative, non-interactive icon for each card", () => {
+  it("renders a decorative, non-interactive icon image for each card", () => {
     renderCarousel("en");
     const heading = screen.getByRole("heading", { name: "Live Tracking" });
     const card = heading.closest("div.group");
-    const icon = card?.querySelector("svg[aria-hidden='true']");
+    const icon = card?.querySelector("img[aria-hidden='true']");
     expect(icon).not.toBeNull();
   });
 
