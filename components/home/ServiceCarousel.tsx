@@ -36,16 +36,34 @@ const PALETTE = [
 
 /* ─────────────────── floating particles ─────────────────── */
 
+/* Deterministic pseudo-random in [0, 1), seeded by index — using
+   Math.random() here would differ between the server-rendered HTML and
+   the client's first render before hydration, causing a hydration
+   mismatch (the same bug fixed in IndustriesSection's card scatter). */
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+// Rounded to a fixed precision: the browser re-serializes inline style
+// attributes (e.g. "92.16903898159217%" -> "92.169%") when parsing
+// server-rendered HTML, so an unrounded float still trips a hydration
+// mismatch even once the value itself is deterministic.
+function round(n: number, decimals = 3): number {
+  const factor = 10 ** decimals;
+  return Math.round(n * factor) / factor;
+}
+
 function Particles({ count }: { count: number }) {
   const particles = useRef(
     Array.from({ length: count }, (_, i) => ({
       id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      duration: Math.random() * 12 + 8,
-      delay: Math.random() * -20,
-      opacity: Math.random() * 0.4 + 0.1,
+      x: round(pseudoRandom(i * 4 + 1) * 100),
+      y: round(pseudoRandom(i * 4 + 2) * 100),
+      size: round(pseudoRandom(i * 4 + 3) * 3 + 1),
+      duration: round(pseudoRandom(i * 4 + 4) * 12 + 8),
+      delay: round(pseudoRandom(i * 4 + 1.5) * -20),
+      opacity: round(pseudoRandom(i * 4 + 2.5) * 0.4 + 0.1),
     })),
   ).current;
 
