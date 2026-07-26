@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { Gauge, MapPin, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -9,6 +9,16 @@ const CARDS = [
   { icon: Gauge, top: "18%", start: "12%", delay: 0 },
   { icon: MapPin, top: "55%", start: "62%", delay: 0.4 },
   { icon: ShieldAlert, top: "32%", start: "78%", delay: 0.8 },
+];
+
+const RING_SIZES = [320, 240, 160, 80];
+
+const ORBIT_DOTS = [
+  { size: 10, orbit: 140, speed: 8, color: "#00E5D4" },
+  { size: 8, orbit: 100, speed: 12, color: "#FB923C" },
+  { size: 6, orbit: 200, speed: 15, color: "#F4FFFE" },
+  { size: 7, orbit: 170, speed: 10, color: "#00E5D4" },
+  { size: 5, orbit: 260, speed: 20, color: "#FB923C" },
 ];
 
 export function ControlRoomSection(): React.ReactElement {
@@ -19,6 +29,7 @@ export function ControlRoomSection(): React.ReactElement {
     offset: ["start end", "end start"],
   });
   const gridY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const radarInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
     <section
@@ -34,6 +45,92 @@ export function ControlRoomSection(): React.ReactElement {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[140px]"
       />
+
+      {/* radar rings + orbiting vehicle dots */}
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        aria-hidden="true"
+      >
+        <div
+          className="relative"
+          style={{ perspective: "600px", perspectiveOrigin: "50% 50%" }}
+        >
+          {RING_SIZES.map((size, i) => (
+            <div
+              key={size}
+              className="absolute left-1/2 top-1/2 rounded-full border border-accent/10"
+              style={{
+                width: size,
+                height: size,
+                marginLeft: -size / 2,
+                marginTop: -size / 2,
+                transform: `rotateX(70deg) scale(${radarInView ? 1 : 0.3})`,
+                opacity: radarInView ? 1 - i * 0.2 : 0,
+                transition: `transform 1.2s cubic-bezier(0.16,1,0.3,1) ${i * 0.15}s, opacity 0.8s ease ${i * 0.15}s`,
+              }}
+            />
+          ))}
+
+          <div
+            className="absolute left-1/2 top-1/2"
+            style={{
+              width: 320,
+              height: 320,
+              marginLeft: -160,
+              marginTop: -160,
+              transform: `rotateX(70deg) ${radarInView ? "scale(1)" : "scale(0.3)"}`,
+              opacity: radarInView ? 1 : 0,
+              transition:
+                "transform 1.2s cubic-bezier(0.16,1,0.3,1), opacity 0.8s ease",
+            }}
+          >
+            <div
+              className="h-full w-full rounded-full"
+              style={{
+                animation: radarInView
+                  ? "radar-sweep 4s linear infinite"
+                  : "none",
+                background:
+                  "conic-gradient(from 0deg, transparent 0deg, rgba(0,229,212,0.15) 40deg, transparent 80deg)",
+              }}
+            />
+          </div>
+
+          {ORBIT_DOTS.map((dot, i) => (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2"
+              style={{
+                width: dot.orbit * 2,
+                height: dot.orbit * 2,
+                marginLeft: -dot.orbit,
+                marginTop: -dot.orbit,
+                transform: `rotateX(70deg) ${radarInView ? "scale(1)" : "scale(0.3)"}`,
+                opacity: radarInView ? 1 : 0,
+                transition: `transform 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.1}s, opacity 0.8s ease ${0.3 + i * 0.1}s`,
+              }}
+            >
+              <div
+                className="orbit-dot absolute rounded-full"
+                style={{
+                  width: dot.size,
+                  height: dot.size,
+                  background: dot.color,
+                  boxShadow: `0 0 ${dot.size * 2}px ${dot.color}80`,
+                  top: "50%",
+                  left: "50%",
+                  marginTop: -dot.size / 2,
+                  marginLeft: -dot.size / 2,
+                  animation: radarInView
+                    ? `vehicle-orbit ${dot.speed}s linear infinite`
+                    : "none",
+                  ["--orbit-radius" as string]: `${dot.orbit}px`,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
       {CARDS.map(({ icon: Icon, top, start, delay }, i) => (
         <motion.div
@@ -82,6 +179,26 @@ export function ControlRoomSection(): React.ReactElement {
           {t("controlRoomBody")}
         </motion.p>
       </div>
+
+      <style jsx global>{`
+        @keyframes radar-sweep {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes vehicle-orbit {
+          from {
+            transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg) translateX(var(--orbit-radius))
+              rotate(-360deg);
+          }
+        }
+      `}</style>
     </section>
   );
 }
