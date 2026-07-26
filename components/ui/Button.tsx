@@ -177,14 +177,21 @@ export function Button({
                 filled ? "via-white/70" : "via-white/40",
               )}
             />
-            {/* sheen sweep, fired once per hover */}
-            <span className="absolute inset-y-0 left-0 w-1/3 -translate-x-[150%] bg-[linear-gradient(90deg,transparent,var(--btn-sheen),transparent)] group-hover/btn:animate-btn-sheen" />
+            {/* ambient sheen sweep -- runs continuously at low intensity;
+                a faster/brighter one-shot fires on hover as the distinct
+                hover boost (both transform+opacity only, compositor-cheap) */}
+            <span className="absolute inset-y-0 left-0 w-1/3 -translate-x-[150%] bg-[linear-gradient(90deg,transparent,var(--btn-sheen),transparent)] motion-safe:animate-btn-sheen-loop motion-safe:group-hover/btn:animate-btn-sheen" />
           </span>
 
-          {/* animated border-trace ring, revealed on hover */}
+          {/* animated border-trace ring -- always visible at low opacity,
+              brightens on hover. See tailwind.config.ts's btn-trace comment:
+              this animates stroke-dashoffset, a real (if modest) scroll-jank
+              contributor when many buttons run it at once -- dial back to
+              hover-only (motion-safe:group-hover/btn:animate-btn-trace
+              [animation-play-state:paused]...) first if jank reappears. */}
           <svg
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
+            className="pointer-events-none absolute inset-0 h-full w-full opacity-40 transition-opacity duration-500 group-hover/btn:opacity-100"
           >
             <rect
               x="0.75"
@@ -197,7 +204,7 @@ export function Button({
               strokeWidth="1.5"
               strokeDasharray="40 280"
               strokeLinecap="round"
-              className="animate-btn-trace [animation-play-state:paused] [stroke:var(--btn-ring)] group-hover/btn:[animation-play-state:running]"
+              className="motion-safe:animate-btn-trace [stroke:var(--btn-ring)]"
             />
           </svg>
         </>

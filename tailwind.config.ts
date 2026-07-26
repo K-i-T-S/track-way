@@ -44,12 +44,32 @@ const config: Config = {
           from: { transform: "translateX(0)" },
           to: { transform: "translateX(50%)" },
         },
-        // Button border-trace: a short "comet" running the pill outline,
-        // echoing the CoreValueSection card ring.
+        // Button border-trace: a comet circling the pill outline, echoing
+        // the CoreValueSection card ring. Deliberately animates
+        // stroke-dashoffset (not a compositor-only property like
+        // transform -- rotating the whole SVG via transform would look
+        // right on a circle but visibly tumbles a wide pill shape, since
+        // it spins the rigid rectangle instead of moving a dash along its
+        // path). This is a real, known scroll-jank contributor when many
+        // buttons animate it simultaneously -- if that returns, dial this
+        // back to hover-only again rather than adding more effects on top.
         "btn-trace": {
           to: { strokeDashoffset: "-320" },
         },
-        // Button sheen: a single diagonal light sweep fired on hover.
+        // Button sheen: a diagonal light sweep. The "-loop" variant runs
+        // ambiently (mostly idle, brief sweep); the hover variant is
+        // faster/brighter as the distinct hover boost.
+        "btn-sheen-loop": {
+          "0%, 15%": {
+            transform: "translateX(-150%) skewX(-18deg)",
+            opacity: "0",
+          },
+          "35%": { opacity: "0.7" },
+          "55%, 100%": {
+            transform: "translateX(420%) skewX(-18deg)",
+            opacity: "0",
+          },
+        },
         "btn-sheen": {
           "0%": { transform: "translateX(-150%) skewX(-18deg)", opacity: "0" },
           "20%": { opacity: "1" },
@@ -60,7 +80,8 @@ const config: Config = {
         "marquee-ltr": "marquee-ltr 20s linear infinite",
         "marquee-rtl": "marquee-rtl 20s linear infinite",
         "btn-trace": "btn-trace 3s linear infinite",
-        "btn-sheen": "btn-sheen 0.9s ease-out",
+        "btn-sheen-loop": "btn-sheen-loop 3.5s ease-in-out infinite",
+        "btn-sheen": "btn-sheen 0.6s ease-out",
       },
     },
   },
