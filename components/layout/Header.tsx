@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface HeaderProps {
   locale: Locale;
@@ -99,12 +100,14 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
             {t("contactCta")}
           </Link>
         </div>
-        <Link
+        <Button
           href={`/${locale}/book-installation`}
-          className="shrink-0 rounded-full bg-accent px-5 py-2.5 text-sm font-bold text-background shadow-lg shadow-accent/20 transition-transform hover:scale-105"
+          variant="primary"
+          size="sm"
+          className="shrink-0"
         >
           {t("bookInstallation")}
-        </Link>
+        </Button>
       </nav>
     </motion.header>
   );

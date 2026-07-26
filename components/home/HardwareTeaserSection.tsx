@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
+import { Button } from "@/components/ui/Button";
 
 export function HardwareTeaserSection({
   locale,
@@ -103,27 +103,29 @@ export function HardwareTeaserSection({
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <Link
+              <Button
                 href={`/${locale}/hardware`}
-                className="group mt-4 inline-flex items-center gap-2 text-accent font-bold transition-all hover:gap-3"
+                variant="link"
+                className="mt-4"
+                iconTrailing={
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M5 12h14" />
+                    <path d="m12 5 7 7-7 7" />
+                  </svg>
+                }
               >
                 {t("viewHardwareCta")}
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                  className="transition-transform rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
-                >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
-                </svg>
-              </Link>
+              </Button>
             </motion.div>
           </div>
         </div>

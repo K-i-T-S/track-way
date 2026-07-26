@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
+import { Button } from "@/components/ui/Button";
 
 /* ─── brand-only orbit palette (teal / warm orange / neutral ice) ─── */
 const ORBIT_PARTICLES = [
@@ -160,22 +160,18 @@ export function FinalCtaSection({
             transition={{ duration: 0.6, delay: 0.55 }}
             className="relative mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <Link
+            <Button
               href={`/${locale}/book-installation`}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-bold text-background shadow-lg shadow-accent/25 transition-all hover:scale-105 hover:shadow-accent/40"
+              variant="primary"
+              iconTrailing={
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              }
             >
               {t("finalCtaPrimary")}
-              <ArrowRight
-                className="h-4 w-4 transition-transform rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
-                aria-hidden="true"
-              />
-            </Link>
-            <Link
-              href={`/${locale}/contact`}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-white/10"
-            >
+            </Button>
+            <Button href={`/${locale}/contact`} variant="secondary">
               {t("finalCtaSecondary")}
-            </Link>
+            </Button>
           </motion.div>
         </motion.div>
       </div>

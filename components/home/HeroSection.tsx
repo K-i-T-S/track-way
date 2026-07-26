@@ -2,12 +2,12 @@
 
 import { useRef } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Radio, ArrowRight, PlayCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
 import { DotGridBackground } from "@/components/ui/DotGridBackground";
+import { Button } from "@/components/ui/Button";
 
 const GlobeHeroBackground = dynamic(
   () =>
@@ -86,23 +86,25 @@ export function HeroSection({
             transition={{ duration: 0.7, delay: 0.3 }}
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start"
           >
-            <Link
+            <Button
               href={`/${locale}/book-installation`}
-              className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-bold text-background shadow-xl shadow-accent/25 transition-transform hover:scale-105"
+              variant="primary"
+              iconTrailing={
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              }
             >
               {t("heroCtaPrimary")}
-              <ArrowRight
-                className="h-4 w-4 transition-transform rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
-                aria-hidden="true"
-              />
-            </Link>
-            <a
+            </Button>
+            <Button
               href="#how-it-works"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-foreground backdrop-blur transition-colors hover:bg-white/10"
+              external
+              variant="secondary"
+              iconLeading={
+                <PlayCircle className="h-4 w-4" aria-hidden="true" />
+              }
             >
-              <PlayCircle className="h-4 w-4" aria-hidden="true" />
               {t("heroCtaSecondary")}
-            </a>
+            </Button>
           </motion.div>
         </div>
 
@@ -111,36 +113,7 @@ export function HeroSection({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
           className="relative mx-auto h-[340px] w-[340px] sm:h-[420px] sm:w-[420px] lg:h-[500px] lg:w-[500px]"
-        >
-          {!reduceMotion && (
-            <>
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                aria-hidden="true"
-                className="absolute start-0 top-6 rounded-xl border border-white/10 bg-background/80 px-3 py-2 text-xs text-foreground shadow-xl backdrop-blur"
-              >
-                {t("heroFloatingA")}
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                aria-hidden="true"
-                className="absolute bottom-8 end-0 rounded-xl border border-white/10 bg-background/80 px-3 py-2 text-xs text-foreground shadow-xl backdrop-blur"
-              >
-                {t("heroFloatingB")}
-              </motion.div>
-            </>
-          )}
-        </motion.div>
+        />
       </div>
 
       <motion.div

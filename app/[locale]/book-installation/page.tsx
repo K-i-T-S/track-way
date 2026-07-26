@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { getSiteSettings } from "@/sanity/queries";
 import { buildWhatsAppLink } from "@/lib/contact-links";
+import { Button } from "@/components/ui/Button";
 
 export default async function BookInstallationPage({
   params,
@@ -21,12 +22,11 @@ export default async function BookInstallationPage({
     <div className="px-6 py-24">
       <h1 className="text-3xl font-bold text-foreground">{t("title")}</h1>
       <p className="mt-4 max-w-xl text-muted">{t("body")}</p>
-      <a
-        href={whatsappLink}
-        className="mt-8 inline-block rounded-full bg-accent px-6 py-3 font-bold text-background"
-      >
-        {t("whatsappCta")}
-      </a>
+      <div className="mt-8">
+        <Button href={whatsappLink} external variant="whatsapp">
+          {t("whatsappCta")}
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { buildWhatsAppLink, buildMailtoLink } from "@/lib/contact-links";
+import { Button } from "@/components/ui/Button";
 
 interface ContactFormProps {
   whatsappNumber: string;
@@ -43,18 +45,24 @@ export function ContactForm({
           onChange={(e) => setMessage(e.target.value)}
         />
       </label>
-      <div className="flex gap-4">
-        <a
+      <div className="mt-2 flex flex-wrap gap-4">
+        <Button
           href={whatsappLink}
+          external
           target="_blank"
           rel="noopener noreferrer"
-          className="text-accent font-bold"
+          variant="whatsapp"
         >
           {t("sendWhatsApp")}
-        </a>
-        <a href={mailtoLink} className="text-accent font-bold">
+        </Button>
+        <Button
+          href={mailtoLink}
+          external
+          variant="secondary"
+          iconLeading={<Mail className="h-4 w-4" aria-hidden="true" />}
+        >
           {t("sendEmail")}
-        </a>
+        </Button>
       </div>
     </form>
   );
