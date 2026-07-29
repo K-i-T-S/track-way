@@ -40,6 +40,13 @@ const PIN_DISTANCE_VH = 1.8;
 // constant here — Tailwind's JIT scanner needs the arbitrary value to
 // appear as source text to generate the class.
 const AMBIENT_FRAME_INTERVAL_MS = 66; // ~15fps
+// The pinned/scrub phase redraws the full world grid + every country polygon
+// every frame -- CPU-throttled load testing (4x slowdown, simulating a
+// modest/older laptop) measured 56% of frames over 50ms and 3+ seconds of
+// blocked main thread per ~3s of scrolling when this ran uncapped at 60fps.
+// Capped the same way ambient mode already is, just at a higher rate since
+// this phase is the active/foreground animation.
+const PINNED_FRAME_INTERVAL_MS = 33; // ~30fps
 
 interface Star {
   x: number;
@@ -95,7 +102,7 @@ export function GlobeHeroBackground({
     let geo: GeoJsonCollection | null = null;
     let rafId = 0;
     let last = performance.now();
-    let lastAmbientDraw = 0;
+    let lastDrawTime = 0;
 
     const stars: Star[] = Array.from({ length: 240 }, () => ({
       x: Math.random(),
@@ -797,14 +804,15 @@ export function GlobeHeroBackground({
     }
 
     function frame(now: number): void {
-      if (
-        currentMode === "ambient" &&
-        now - lastAmbientDraw < AMBIENT_FRAME_INTERVAL_MS
-      ) {
+      const interval =
+        currentMode === "ambient"
+          ? AMBIENT_FRAME_INTERVAL_MS
+          : PINNED_FRAME_INTERVAL_MS;
+      if (now - lastDrawTime < interval) {
         rafId = requestAnimationFrame(frame);
         return;
       }
-      lastAmbientDraw = now;
+      lastDrawTime = now;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       progress += (target - progress) * (1 - Math.pow(0.0008, dt));
