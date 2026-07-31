@@ -36,6 +36,16 @@ const GEO_DATA_URL = "/data/world-110m.json";
 // to be pinDistance + elementHeight tall, which leaves one viewport-height
 // of unused space after the pin ends; `pin:true` doesn't have that tax).
 const PIN_DISTANCE_VH = 1.8;
+// Mobile/coarse-pointer never gets GSAP `pin: true` (known mobile
+// viewport-resize jank as the browser's address bar hides/shows mid-scroll),
+// but `scrub` alone only reads scroll position -- it doesn't pin, fix, or
+// transform anything, so it's safe there. The canvas is already always
+// `position: fixed` regardless of mode (see the comment on the returned
+// portal below), so this scroll distance is independent of the hero
+// section's own layout height -- the section stays exactly 100svh
+// (headline/CTA visible immediately, scrolling away normally) while the
+// fixed background keeps scrubbing for this much scroll distance.
+const MOBILE_SCRUB_VH = 1.15;
 // Ambient opacity (0.08) is a literal in the JSX className below, not a
 // constant here — Tailwind's JIT scanner needs the arbitrary value to
 // appear as source text to generate the class.
@@ -93,6 +103,12 @@ export function GlobeHeroBackground({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Canvas fill/stroke cost scales roughly with pixel count, so touch
+    // devices (typically 2-3x DPR phones) cap lower than desktop/laptop --
+    // a ~4x reduction in per-pixel work that isn't perceptible on a small
+    // screen, confirmed via CPU-throttled load testing.
+    const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+
     let width = 1;
     let height = 1;
     let dpr = 1;
@@ -120,7 +136,7 @@ export function GlobeHeroBackground({
     }));
 
     function resize(): void {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, isCoarsePointer ? 1 : 2);
       width = Math.max(1, wrapper!.clientWidth);
       height = Math.max(1, wrapper!.clientHeight);
       canvas!.width = Math.floor(width * dpr);
@@ -245,7 +261,9 @@ export function GlobeHeroBackground({
       for (let lat = -75; lat <= 75; lat += 15) {
         ctx!.beginPath();
         let started = false;
-        for (let lon = -180; lon <= 180; lon += 3) {
+        // Sampling step doubled from 3deg -- halves per-frame trig calls for
+        // this decorative graticule, imperceptible at this line thickness.
+        for (let lon = -180; lon <= 180; lon += 6) {
           const pt = sphereProject(lon, lat, p);
           if (pt.z < 0) {
             started = false;
@@ -261,7 +279,8 @@ export function GlobeHeroBackground({
       for (let lon = -180; lon < 180; lon += 15) {
         ctx!.beginPath();
         let started = false;
-        for (let lat = -85; lat <= 85; lat += 2) {
+        // Sampling step doubled from 2deg, same rationale as above.
+        for (let lat = -85; lat <= 85; lat += 4) {
           const pt = sphereProject(lon, lat, p);
           if (pt.z < 0) {
             started = false;
@@ -503,7 +522,10 @@ export function GlobeHeroBackground({
       ctx!.lineWidth = 0.75;
       ctx!.strokeStyle = "rgba(141, 223, 255, .15)";
       ctx!.setLineDash([2, 7]);
-      for (let lon = -180; lon <= 180; lon += 5) {
+      // Line count doubled from a 5deg step -- each line is a single
+      // 2-point segment regardless of step, so this halves line count/draw
+      // calls with no change in per-line cost.
+      for (let lon = -180; lon <= 180; lon += 10) {
         const a = flatProject(lon, -72, p);
         const b = flatProject(lon, 75, p);
         if ((a.x < -60 && b.x < -60) || (a.x > width + 60 && b.x > width + 60))
@@ -513,7 +535,7 @@ export function GlobeHeroBackground({
         ctx!.lineTo(b.x, b.y);
         ctx!.stroke();
       }
-      for (let lat = -80; lat <= 80; lat += 5) {
+      for (let lat = -80; lat <= 80; lat += 10) {
         const a = flatProject(-180, lat, p);
         const b = flatProject(180, lat, p);
         if (
@@ -875,20 +897,20 @@ export function GlobeHeroBackground({
           },
         });
       } else {
-        const tweenTarget = { value: 0 };
+        // No `pin` (the mobile-jank risk), but `scrub` alone only reads
+        // scroll position -- it never pins/fixes/transforms anything, so
+        // it's safe here. Real scroll-linked scrubbing, same as desktop:
+        // the user's own scroll drags the globe through its phases, not a
+        // fixed-duration timer. See MOBILE_SCRUB_VH for why this distance
+        // is independent of the hero section's own (unchanged, 100svh)
+        // height.
         scrollTrigger = ScrollTrigger.create({
           trigger,
-          start: "top center",
-          end: "bottom bottom",
-          onEnter: () => {
-            gsap.to(tweenTarget, {
-              value: 1,
-              duration: 2,
-              ease: "power2.out",
-              onUpdate: () => {
-                target = tweenTarget.value;
-              },
-            });
+          start: "top top",
+          end: `+=${window.innerHeight * MOBILE_SCRUB_VH}`,
+          scrub: true,
+          onUpdate: (self) => {
+            target = self.progress;
           },
           onLeave: () => {
             currentMode = "ambient";
@@ -897,7 +919,6 @@ export function GlobeHeroBackground({
           onEnterBack: () => {
             currentMode = "pinned";
             setMode("pinned");
-            target = 1;
           },
         });
       }

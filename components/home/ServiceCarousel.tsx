@@ -52,6 +52,18 @@ function round(n: number, decimals = 3): number {
   return Math.round(n * factor) / factor;
 }
 
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+// Eased falloff (0 at/behind the far side, 1 dead-center) rather than a
+// linear ramp, so the centered card holds its "in-focus" look over a small
+// arc instead of visibly fading the instant it starts rotating away.
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
 function Particles({ count }: { count: number }) {
   const particles = useRef(
     Array.from({ length: count }, (_, i) => ({
@@ -140,11 +152,31 @@ function ServiceCard({
   const angle = (360 / total) * index;
   const totalAngle = rotation + angle;
 
-  /* compute how "facing front" the card is (0 = front, 1 = back) */
+  /* compute how "facing front" the card is (0 = front, 180 = directly behind) */
   const normalisedAngle = ((totalAngle % 360) + 360) % 360;
   const facingFront =
     normalisedAngle > 180 ? 360 - normalisedAngle : normalisedAngle;
-  const isFrontFacing = facingFront < 45;
+
+  // Continuous depth-of-field falloff (1 = dead-center/in-focus, 0 = fully
+  // receded) instead of a binary "front" cutoff. With typical card spacing
+  // (360/total, often 40-60deg) a binary threshold let 2-3 neighboring
+  // cards qualify as "front" at once, all styled identically -- which read
+  // as flat/uniform rather than having one clear focal card. Now exactly
+  // one card is ever unambiguously in focus, with a smooth handoff as
+  // rotation continues.
+  const focus = 1 - smoothstep(0, 100, facingFront);
+  const isCurrent = focus > 0.85;
+  const cardOpacity = lerp(0.35, 1, focus);
+  const cardScale =
+    lerp(0.82, 1.08, focus) * (isHovered && isCurrent ? 1.05 : 1);
+  const cardBlurPx = lerp(3, 0, focus);
+  const cardZ = lerp(0, 30, focus);
+  const cardFilter = [
+    cardBlurPx > 0.05 ? `blur(${cardBlurPx}px)` : "",
+    isHovered && isCurrent ? "brightness(1.25)" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <div
@@ -157,7 +189,7 @@ function ServiceCard({
         `,
         opacity: isVisible ? 1 : 0,
         transitionDelay: isVisible ? `${index * 80}ms` : "0ms",
-        zIndex: isFrontFacing ? 20 : 10,
+        zIndex: Math.round(focus * 100),
       }}
     >
       <div
@@ -167,11 +199,21 @@ function ServiceCard({
           bg-gradient-to-br ${palette.gradient}
           p-5 text-center backdrop-blur-xl
           transition-all duration-500 ease-out
-          ${isFrontFacing ? `shadow-2xl ${palette.glow} scale-105` : "shadow-lg scale-95 opacity-85"}
-          ${isHovered && isFrontFacing ? "brightness-125 !scale-110" : ""}
+          ${isCurrent ? `shadow-2xl ${palette.glow}` : "shadow-lg"}
         `}
         style={{
-          transform: isFrontFacing ? "translateZ(30px)" : "translateZ(0px)",
+          opacity: cardOpacity,
+          // translateZ + scale must live in the same inline `transform` --
+          // an inline style always wins over a class's `transform` (e.g.
+          // Tailwind's scale-*), so splitting them across className and
+          // style silently drops whichever one is class-based. That was
+          // the actual bug behind the "uniform" look: the old scale-105/
+          // scale-95 classes never rendered, clobbered by this element's
+          // own inline translateZ. Same reasoning applies to `filter`
+          // below (blur + brightness combined here, not brightness-125
+          // as a class).
+          transform: `translateZ(${cardZ}px) scale(${cardScale})`,
+          filter: cardFilter || "none",
           transition:
             "transform 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
         }}
