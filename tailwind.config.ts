@@ -7,7 +7,7 @@ const config: Config = {
       colors: {
         background: "#000000",
         accent: "#00E5D4",
-        accentWarm: "#FB923C",
+        accentWarm: "#FFC857",
         muted: "#5B6669",
         foreground: "#FFFFFF",
         trackway: {
@@ -75,6 +75,13 @@ const config: Config = {
           "20%": { opacity: "1" },
           "100%": { transform: "translateX(420%) skewX(-18deg)", opacity: "0" },
         },
+        // Flagship ring rotation (primary variant only). Animates the
+        // registered `--btn-angle` custom property (see globals.css), a
+        // compositor-cheap rotation of the conic-gradient's start angle --
+        // not a transform, so the pill's border-radius mask never tumbles.
+        "btn-angle-spin": {
+          to: { "--btn-angle": "360deg" },
+        },
       },
       animation: {
         "marquee-ltr": "marquee-ltr 20s linear infinite",
@@ -82,6 +89,7 @@ const config: Config = {
         "btn-trace": "btn-trace 3s linear infinite",
         "btn-sheen-loop": "btn-sheen-loop 3.5s ease-in-out infinite",
         "btn-sheen": "btn-sheen 0.6s ease-out",
+        "btn-angle-spin": "btn-angle-spin 6s linear infinite",
       },
     },
   },

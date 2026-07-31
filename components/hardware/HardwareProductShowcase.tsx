@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/Button";
 // Button tone so the quote CTA stays in step with its product's accent.
 const BRAND_TONES = [
   { accent: "#00E5D4", glow: "rgba(0,229,212,0.25)", button: "teal" },
-  { accent: "#FB923C", glow: "rgba(251,146,60,0.25)", button: "warm" },
+  { accent: "#FFC857", glow: "rgba(255,200,87,0.25)", button: "warm" },
 ] as const;
 
 interface HardwareProductShowcaseProps {

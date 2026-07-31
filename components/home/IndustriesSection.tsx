@@ -12,9 +12,9 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 /* Cycled across cards instead of one hue per industry — keeps the section on
-   TrackWay's single-accent identity (teal / warm orange / neutral ice) rather
+   TrackWay's single-accent identity (teal / warm gold / neutral ice) rather
    than a rainbow. Same treatment as components/home/ServiceCarousel.tsx. */
-const PALETTE = ["#00E5D4", "#FB923C", "#F4FFFE"] as const;
+const PALETTE = ["#00E5D4", "#FFC857", "#F4FFFE"] as const;
 
 interface IndustryCardProps {
   image?: string;

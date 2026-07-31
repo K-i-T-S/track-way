@@ -14,8 +14,12 @@ interface RowData {
   icon: CapabilityIconName;
 }
 
+/* Alternated per row so the list isn't a single flat teal wash. */
+const ROW_COLORS = ["#00E5D4", "#FFC857"] as const;
+
 function FeatureRow({ row, index }: { row: RowData; index: number }) {
   const isEven = index % 2 === 0;
+  const color = ROW_COLORS[index % ROW_COLORS.length]!;
 
   return (
     <motion.div
@@ -31,21 +35,29 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
       }}
     >
       <div
-        className="relative flex items-center gap-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition-all duration-300 hover:border-accent/30 hover:bg-white/[0.05]"
-        style={{ transformStyle: "preserve-3d" }}
+        className="relative flex items-center gap-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.05] hover:[border-color:var(--row-border)]"
+        style={
+          {
+            transformStyle: "preserve-3d",
+            "--row-border": `${color}4d`,
+            "--row-soft": `${color}4d`,
+            "--row-strong": `${color}99`,
+            "--row-color": color,
+          } as React.CSSProperties
+        }
       >
         {/* hover glow */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
           style={{
-            background: `radial-gradient(300px circle at ${isEven ? "20%" : "80%"} 50%, rgba(0,229,212,0.1), transparent 70%)`,
+            background: `radial-gradient(300px circle at ${isEven ? "20%" : "80%"} 50%, ${color}1a, transparent 70%)`,
           }}
         />
 
         {/* animated number */}
         <span
-          className="relative shrink-0 text-3xl font-black tabular-nums text-accent/30 transition-colors duration-300 group-hover:text-accent/60"
+          className="relative shrink-0 text-3xl font-black tabular-nums transition-colors duration-300 [color:var(--row-soft)] group-hover:[color:var(--row-strong)]"
           style={{ transform: "translateZ(30px)" }}
         >
           {String(index + 1).padStart(2, "0")}
@@ -67,7 +79,7 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
           className="relative flex-1"
           style={{ transform: "translateZ(20px)" }}
         >
-          <h3 className="text-lg font-bold text-foreground transition-colors group-hover:text-accent">
+          <h3 className="text-lg font-bold text-foreground transition-colors group-hover:[color:var(--row-color)]">
             {row.title}
           </h3>
           <p className="mt-1 text-sm text-muted">{row.description}</p>
@@ -82,7 +94,7 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
-          className="relative h-5 w-5 shrink-0 text-muted transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-accent"
+          className="relative h-5 w-5 shrink-0 text-muted transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:[color:var(--row-color)]"
           style={{ transform: "translateZ(25px)" }}
         >
           <path d="M7 17 17 7" />
@@ -92,7 +104,10 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
         {/* depth line accent */}
         <div
           aria-hidden="true"
-          className={`absolute ${isEven ? "left-0" : "right-0"} top-0 h-full w-0.5 bg-gradient-to-b from-accent/50 via-accent/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+          className={`absolute ${isEven ? "left-0" : "right-0"} top-0 h-full w-0.5 opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+          style={{
+            background: `linear-gradient(to bottom, ${color}80, ${color}33, transparent)`,
+          }}
         />
       </div>
     </motion.div>
@@ -129,17 +144,18 @@ export function ServicesFeatureList({
           className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 opacity-20"
           style={{
             background:
-              "linear-gradient(to bottom, transparent, rgba(0,229,212,0.4), transparent)",
+              "linear-gradient(to bottom, transparent, rgba(0,229,212,0.4), rgba(255,200,87,0.4), transparent)",
           }}
         />
-        {/* floating orbs */}
+        {/* floating orbs, alternating teal/gold instead of teal-only */}
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="absolute h-2 w-2 rounded-full bg-accent/30 blur-sm"
+            className="absolute h-2 w-2 rounded-full blur-sm"
             style={{
               left: `${15 + i * 15}%`,
               top: `${20 + (i % 3) * 25}%`,
+              background: `${ROW_COLORS[i % ROW_COLORS.length]}4d`,
               animation: `services-list-float-particle ${8 + i * 2}s ease-in-out ${i * -2}s infinite`,
             }}
           />

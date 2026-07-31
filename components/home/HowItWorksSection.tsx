@@ -25,6 +25,10 @@ const STEP_ICONS: ReactNode[] = [
   stepImage("/images/step-confirm.png", "confirm"),
 ];
 
+/* Rotated across the three steps so the timeline doesn't read as a single
+   flat teal block — same trio used by CoreValueSection's RING_COLORS. */
+const STEP_COLORS = ["#00E5D4", "#FFC857", "#F4FFFE"] as const;
+
 export function HowItWorksSection(): React.ReactElement {
   const t = useTranslations("homepage");
   const ref = useRef<HTMLDivElement>(null);
@@ -48,12 +52,13 @@ export function HowItWorksSection(): React.ReactElement {
       ref={ref}
       className="relative px-6 py-24 lg:px-10"
     >
-      {/* ambient glow */}
+      {/* ambient glow — dual-tone so the section isn't a single flat teal wash */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden="true"
       >
         <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-accent/5 blur-[120px]" />
+        <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-accentWarm/5 blur-[120px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl">
@@ -93,7 +98,8 @@ export function HowItWorksSection(): React.ReactElement {
               <defs>
                 <linearGradient id="trackGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#00E5D4" />
-                  <stop offset="100%" stopColor="#FB923C" />
+                  <stop offset="50%" stopColor="#FFC857" />
+                  <stop offset="100%" stopColor="#F4FFFE" />
                 </linearGradient>
               </defs>
             </svg>
@@ -119,6 +125,7 @@ export function HowItWorksSection(): React.ReactElement {
           <div className="flex flex-col gap-12 lg:col-start-2">
             {steps.map((step, i) => {
               const isEven = i % 2 === 0;
+              const color = STEP_COLORS[i % STEP_COLORS.length]!;
               return (
                 <motion.div
                   key={step.title}
@@ -126,27 +133,40 @@ export function HowItWorksSection(): React.ReactElement {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.6, delay: i * 0.1 }}
-                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur transition-colors duration-500 hover:border-accent/30"
+                  className="group relative overflow-hidden rounded-2xl border border-white/[0.12] bg-white/[0.045] p-8 backdrop-blur transition-colors duration-500 hover:[border-color:var(--step-border)]"
+                  style={
+                    { "--step-border": `${color}4d` } as React.CSSProperties
+                  }
                 >
                   {/* hover glow */}
                   <div
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                     style={{
-                      background: `radial-gradient(350px circle at ${isEven ? "80%" : "20%"} 50%, rgba(0,229,212,0.08), transparent 70%)`,
+                      background: `radial-gradient(350px circle at ${isEven ? "80%" : "20%"} 50%, ${color}1f, transparent 70%)`,
                     }}
+                  />
+
+                  {/* floating decorative orb, ties the card to its step color */}
+                  <div
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute -bottom-6 ${isEven ? "-right-6" : "-left-6"} h-20 w-20 rounded-full opacity-20 blur-2xl transition-all duration-700 group-hover:scale-125 group-hover:opacity-35`}
+                    style={{ background: color }}
                   />
 
                   <div className="relative mb-4 flex items-center gap-4">
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-sm font-bold text-background"
-                      style={{ boxShadow: "0 0 30px rgba(0,229,212,0.3)" }}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-background"
+                      style={{
+                        background: color,
+                        boxShadow: `0 0 30px ${color}4d`,
+                      }}
                     >
                       {i + 1}
                     </span>
                     <span
-                      className="text-accent"
                       style={{
+                        color,
                         animation: `step-icon-float 3s ease-in-out ${i * 0.5}s infinite`,
                       }}
                     >
@@ -164,8 +184,7 @@ export function HowItWorksSection(): React.ReactElement {
                     aria-hidden="true"
                     className={`absolute ${isEven ? "right-0 top-0" : "left-0 bottom-0"} h-16 w-0.5 opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
                     style={{
-                      background:
-                        "linear-gradient(to bottom, transparent, rgba(0,229,212,0.5), transparent)",
+                      background: `linear-gradient(to bottom, transparent, ${color}80, transparent)`,
                     }}
                   />
                 </motion.div>

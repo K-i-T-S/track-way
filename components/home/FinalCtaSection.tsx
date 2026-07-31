@@ -7,10 +7,10 @@ import { useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
 import { Button } from "@/components/ui/Button";
 
-/* ─── brand-only orbit palette (teal / warm orange / neutral ice) ─── */
+/* ─── brand-only orbit palette (teal / warm gold / neutral ice) ─── */
 const ORBIT_PARTICLES = [
   { size: 6, orbit: 200, speed: 10, color: "#00E5D4" },
-  { size: 4, orbit: 300, speed: 14, color: "#FB923C" },
+  { size: 4, orbit: 300, speed: 14, color: "#FFC857" },
   { size: 5, orbit: 140, speed: 8, color: "#F4FFFE" },
   { size: 3, orbit: 250, speed: 18, color: "#00E5D4" },
 ];

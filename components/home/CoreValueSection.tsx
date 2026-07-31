@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-const RING_COLORS = ["#00E5D4", "#FB923C", "#F4FFFE"] as const;
+const RING_COLORS = ["#00E5D4", "#FFC857", "#F4FFFE"] as const;
 
 interface CoreValueCardProps {
   image: string;

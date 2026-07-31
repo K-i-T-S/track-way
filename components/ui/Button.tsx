@@ -12,9 +12,16 @@ import { cn } from "@/lib/utils";
  * gradient rules, border-trace rings, sheen sweeps) is present on the buttons
  * too, instead of a flat pill.
  *
- * Palette is locked to the brand tokens: teal #00E5D4, warm #FB923C, black,
+ * Palette is locked to the brand tokens: teal #00E5D4, warm #FFC857, black,
  * white and ice #F4FFFE. Tones are expressed as alpha ramps of those two hues
  * so no new colour is ever introduced.
+ *
+ * `primary` gets the flagship treatment (see FLAGSHIP_VARS below): a richer
+ * teal+gold fill instead of a flat single hue, a slow ambient spinning
+ * border, and a live-ping dot. Reserved for the site's three highest-intent
+ * CTAs (nav "Book an Installation", hero "Request a Demo", final CTA) --
+ * still only the two locked hues, just used more richly than the flat fill
+ * other filled variants (`whatsapp`) keep.
  */
 
 export type ButtonVariant = "primary" | "secondary" | "whatsapp" | "link";
@@ -23,7 +30,7 @@ export type ButtonSize = "sm" | "md";
 
 const TONE_HEX: Record<ButtonTone, string> = {
   teal: "#00E5D4",
-  warm: "#FB923C",
+  warm: "#FFC857",
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -42,7 +49,9 @@ const PILL_BASE =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: "[background-image:var(--btn-fill)] text-background",
+  // Flagship fill (FLAGSHIP_VARS) is a dark navy base, so its text is light
+  // ice rather than the dark `text-background` the other filled variants use.
+  primary: "[background-image:var(--btn-fill)] text-trackway-ice",
   whatsapp: "[background-image:var(--btn-fill)] text-background",
   secondary:
     "border border-white/15 bg-white/5 text-foreground backdrop-blur hover:border-white/25 hover:bg-white/10",
@@ -79,6 +88,23 @@ function toneVars(variant: ButtonVariant, tone: ButtonTone): CSSProperties {
       : `0 12px 32px -12px ${hex}99`,
   } as CSSProperties;
 }
+
+/**
+ * Overrides for the `primary` variant's fill/glow (spread on top of
+ * toneVars() -- see the class-level doc comment). Deliberately not
+ * `tone`-dependent: the flagship look always blends both locked hues
+ * regardless of which `tone` prop a caller passes.
+ */
+const FLAGSHIP_VARS: CSSProperties = {
+  "--btn-fill":
+    "radial-gradient(130% 160% at 12% 10%, rgba(0,229,212,0.55), transparent 55%), " +
+    "radial-gradient(130% 160% at 92% 105%, rgba(255,200,87,0.5), transparent 55%), " +
+    "linear-gradient(160deg, #071019 0%, #0a1420 100%)",
+  "--btn-shadow":
+    "0 4px 20px -6px rgba(0,229,212,0.45), 0 4px 24px -10px rgba(255,200,87,0.35), 0 0 0 1px rgba(255,255,255,0.06)",
+  "--btn-shadow-hover":
+    "0 18px 46px -10px rgba(0,229,212,0.6), 0 18px 50px -14px rgba(255,200,87,0.5), 0 0 0 1px rgba(255,255,255,0.12)",
+} as CSSProperties;
 
 function WhatsAppGlyph(): React.ReactElement {
   return (
@@ -144,6 +170,7 @@ export function Button({
     tone ?? (variant === "whatsapp" ? "warm" : "teal");
   const isLink = variant === "link";
   const filled = isFilled(variant);
+  const isFlagship = variant === "primary";
 
   // WhatsApp CTAs carry the glyph by default so every "talk to a human"
   // action is recognisable at a glance; callers can still override it.
@@ -183,33 +210,58 @@ export function Button({
             <span className="absolute inset-y-0 left-0 w-1/3 -translate-x-[150%] bg-[linear-gradient(90deg,transparent,var(--btn-sheen),transparent)] motion-safe:animate-btn-sheen-loop motion-safe:group-hover/btn:animate-btn-sheen" />
           </span>
 
-          {/* animated border-trace ring, revealed on hover only -- this
-              animates stroke-dashoffset, a real scroll-jank contributor
-              (confirmed via CPU-throttled load testing) when many buttons
-              run it at once, so it's paused except on hover rather than
-              ambient/always-on. */}
-          <svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 h-full w-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
-          >
-            <rect
-              x="0.75"
-              y="0.75"
-              width="calc(100% - 1.5px)"
-              height="calc(100% - 1.5px)"
-              rx="999"
-              ry="999"
-              fill="none"
-              strokeWidth="1.5"
-              strokeDasharray="40 280"
-              strokeLinecap="round"
-              className="animate-btn-trace [animation-play-state:paused] [stroke:var(--btn-ring)] group-hover/btn:[animation-play-state:running]"
+          {isFlagship ? (
+            /* Flagship ring: a slow ambient conic-gradient spin (see
+               .btn-flagship-ring in globals.css + btn-angle-spin in
+               tailwind.config.ts), gated motion-safe so reduced-motion
+               users get a static ring instead. Kept ambient (not
+               hover-only like the dashed trace ring below) because it's a
+               compositor-cheap custom-property animation, not the
+               stroke-dashoffset one that caused the scroll jank noted
+               below -- if that changes, dial back to hover-only first. */
+            <span
+              aria-hidden="true"
+              className="btn-flagship-ring pointer-events-none absolute inset-0 motion-safe:animate-btn-angle-spin"
             />
-          </svg>
+          ) : (
+            /* animated border-trace ring, revealed on hover only -- this
+                animates stroke-dashoffset, a real scroll-jank contributor
+                (confirmed via CPU-throttled load testing) when many buttons
+                run it at once, so it's paused except on hover rather than
+                ambient/always-on. */
+            <svg
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 h-full w-full opacity-0 transition-opacity duration-500 group-hover/btn:opacity-100"
+            >
+              <rect
+                x="0.75"
+                y="0.75"
+                width="calc(100% - 1.5px)"
+                height="calc(100% - 1.5px)"
+                rx="999"
+                ry="999"
+                fill="none"
+                strokeWidth="1.5"
+                strokeDasharray="40 280"
+                strokeLinecap="round"
+                className="animate-btn-trace [animation-play-state:paused] [stroke:var(--btn-ring)] group-hover/btn:[animation-play-state:running]"
+              />
+            </svg>
+          )}
         </>
       )}
 
       <span className="relative z-[1] inline-flex items-center gap-2">
+        {isFlagship && (
+          /* live-ping dot: the flagship variant's signature "always on,
+             always live" marker. Tailwind's stock animate-ping (cheap,
+             already motion-safe-aware via the global reduced-motion
+             override in globals.css). */
+          <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-accent motion-safe:animate-ping" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent shadow-[0_0_6px_rgba(0,229,212,0.8)]" />
+          </span>
+        )}
         {leading && (
           <span className="inline-flex transition-transform duration-300 motion-safe:group-hover/btn:scale-110">
             {leading}
@@ -217,7 +269,13 @@ export function Button({
         )}
         {children}
         {iconTrailing && (
-          <span className="inline-flex transition-transform duration-300 rtl:rotate-180 group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1">
+          <span
+            className={cn(
+              "inline-flex items-center justify-center transition-transform duration-300 rtl:rotate-180 group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1",
+              isFlagship &&
+                "h-6 w-6 rounded-full border border-white/15 bg-white/10 transition-colors duration-300 group-hover/btn:bg-white/20",
+            )}
+          >
             {iconTrailing}
           </span>
         )}
@@ -232,7 +290,12 @@ export function Button({
     </>
   );
 
-  const style = isLink ? undefined : toneVars(variant, resolvedTone);
+  const style = isLink
+    ? undefined
+    : ({
+        ...toneVars(variant, resolvedTone),
+        ...(isFlagship ? FLAGSHIP_VARS : {}),
+      } as CSSProperties);
 
   if (external) {
     return (

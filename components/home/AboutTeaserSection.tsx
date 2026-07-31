@@ -40,7 +40,7 @@ export function AboutTeaserSection({
             className="pointer-events-none absolute inset-0 opacity-[0.15]"
             style={{
               background:
-                "linear-gradient(105deg, transparent 20%, rgba(0,229,212,0.3) 40%, rgba(244,255,254,0.3) 50%, rgba(251,146,60,0.3) 60%, transparent 80%)",
+                "linear-gradient(105deg, transparent 20%, rgba(0,229,212,0.3) 40%, rgba(244,255,254,0.3) 50%, rgba(255,200,87,0.3) 60%, transparent 80%)",
               animation: "holo-sweep 4s ease-in-out infinite",
             }}
           />

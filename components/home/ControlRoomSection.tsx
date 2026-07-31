@@ -45,10 +45,10 @@ const RING_SIZES = [320, 240, 160, 80];
 
 const ORBIT_DOTS = [
   { size: 10, orbit: 140, speed: 8, color: "#00E5D4" },
-  { size: 8, orbit: 100, speed: 12, color: "#FB923C" },
+  { size: 8, orbit: 100, speed: 12, color: "#FFC857" },
   { size: 6, orbit: 200, speed: 15, color: "#F4FFFE" },
   { size: 7, orbit: 170, speed: 10, color: "#00E5D4" },
-  { size: 5, orbit: 260, speed: 20, color: "#FB923C" },
+  { size: 5, orbit: 260, speed: 20, color: "#FFC857" },
 ];
 
 export function ControlRoomSection(): React.ReactElement {
