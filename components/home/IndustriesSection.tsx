@@ -1,8 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { useTranslations } from "next-intl";
+import { useState } from "react";
 
 /* Cycled across cards instead of one hue per industry — keeps the section on
    TrackWay's single-accent identity (teal / warm orange / neutral ice) rather
@@ -12,6 +19,7 @@ const PALETTE = ["#00E5D4", "#FB923C", "#F4FFFE"] as const;
 interface IndustryCardProps {
   image?: string;
   title: string;
+  description: string;
   index: number;
 }
 
@@ -39,9 +47,36 @@ function ConstructionIcon() {
   );
 }
 
-function IndustryCard({ image, title, index }: IndustryCardProps) {
+function IndustryCard({ image, title, description, index }: IndustryCardProps) {
   const color = PALETTE[index % PALETTE.length]!;
   const isEven = index % 2 === 0;
+  const prefersReducedMotion = useReducedMotion();
+  const [active, setActive] = useState(false);
+
+  /* Cursor-tracked 3D tilt, layered on top of the original resting tilt
+     (rotateX 4deg / rotateY 0). Motion values bypass React re-renders, so
+     tracking mousemove here is cheap even across a 6-card grid. Reduced
+     motion / touch (no mousemove) both simply stay at the resting values. */
+  const tiltX = useMotionValue(0.5);
+  const tiltY = useMotionValue(0.5);
+  const springConfig = { stiffness: 300, damping: 30, mass: 0.5 };
+  const rotateX = useSpring(
+    useTransform(tiltY, [0, 1], [12, -4]),
+    springConfig,
+  );
+  const rotateY = useSpring(useTransform(tiltX, [0, 1], [-8, 8]), springConfig);
+
+  function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (prefersReducedMotion || event.pointerType !== "mouse") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    tiltX.set((event.clientX - rect.left) / rect.width);
+    tiltY.set((event.clientY - rect.top) / rect.height);
+  }
+
+  function handlePointerLeave() {
+    tiltX.set(0.5);
+    tiltY.set(0.5);
+  }
 
   return (
     <div
@@ -64,9 +99,20 @@ function IndustryCard({ image, title, index }: IndustryCardProps) {
           ease: [0.16, 1, 0.3, 1],
         }}
       >
-        <div
-          className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm transition-all duration-500 group-hover:border-white/25 group-hover:bg-white/[0.06]"
-          style={{ transformStyle: "preserve-3d", transform: "rotateX(4deg)" }}
+        <motion.div
+          tabIndex={0}
+          onMouseEnter={() => setActive(true)}
+          onMouseLeave={() => setActive(false)}
+          onPointerMove={handlePointerMove}
+          onPointerLeave={handlePointerLeave}
+          onFocus={() => setActive(true)}
+          onBlur={() => setActive(false)}
+          className="relative cursor-default overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm transition-colors duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 group-hover:border-white/25 group-hover:bg-white/[0.06]"
+          style={{
+            transformStyle: "preserve-3d",
+            rotateX: prefersReducedMotion ? 4 : rotateX,
+            rotateY: prefersReducedMotion ? 0 : rotateY,
+          }}
         >
           {/* image area */}
           <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white/[0.02]">
@@ -119,10 +165,22 @@ function IndustryCard({ image, title, index }: IndustryCardProps) {
             />
           </div>
 
-          {/* text area — fixed min-height so 1- and 2-line names keep every
-              card the same overall height regardless of wrap */}
-          <div className="relative flex min-h-[4.5rem] items-center justify-center px-4 py-3 text-center">
+          {/* text area — title stays a fixed min-height so every card lines
+              up; the benefit line below expands into view on hover/focus */}
+          <div className="relative flex min-h-[4.5rem] flex-col items-center justify-center px-4 py-3 text-center">
             <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+            <motion.p
+              initial={false}
+              animate={{
+                height: active ? "auto" : 0,
+                opacity: active ? 1 : 0,
+                marginTop: active ? 6 : 0,
+              }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden text-xs leading-snug text-muted"
+            >
+              {description}
+            </motion.p>
           </div>
 
           {/* bottom shadow platform */}
@@ -131,7 +189,7 @@ function IndustryCard({ image, title, index }: IndustryCardProps) {
             className="absolute -bottom-2 left-1/2 h-4 w-3/4 -translate-x-1/2 rounded-full opacity-30 blur-md transition-all duration-500 group-hover:opacity-50"
             style={{ background: color }}
           />
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* idle bob on the outer wrapper only — respects the project-wide
@@ -162,22 +220,32 @@ export function IndustriesSection(): React.ReactElement {
     {
       image: "/images/who-we-serve-transportation.png",
       title: t("industriesFleets"),
+      description: t("industriesFleetsDesc"),
     },
-    { image: "/images/who-we-serve-rental.png", title: t("industriesRental") },
+    {
+      image: "/images/who-we-serve-rental.png",
+      title: t("industriesRental"),
+      description: t("industriesRentalDesc"),
+    },
     {
       image: "/images/who-we-serve-delivery.png",
       title: t("industriesDelivery"),
+      description: t("industriesDeliveryDesc"),
     },
-    { image: "/images/who-we-serve-school.png", title: t("industriesSchool") },
+    {
+      image: "/images/who-we-serve-school.png",
+      title: t("industriesSchool"),
+      description: t("industriesSchoolDesc"),
+    },
     {
       image: "/images/who-we-serve-private.png",
       title: t("industriesPrivate"),
+      description: t("industriesPrivateDesc"),
     },
     {
-      // TODO: swap in a real photo once one is generated — see
-      // ConstructionIcon fallback in IndustryCard above.
-      image: undefined,
+      image: "/images/who-we-serve-construction.jpg",
       title: t("industriesConstruction"),
+      description: t("industriesConstructionDesc"),
     },
   ];
 
