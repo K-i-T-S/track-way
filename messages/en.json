@@ -64,6 +64,11 @@
     "viewHardwareCta": "View Hardware",
     "getInTouchCta": "Get in Touch"
   },
+  "whatsappButton": {
+    "ariaLabel": "Contact us on WhatsApp",
+    "tooltip": "Chat with us",
+    "message": "Hi, I'd like to know more about TrackWay's GPS solutions."
+  },
   "hardware": {
     "requestQuote": "Request a Quote",
     "metaTitle": "GPS Hardware — TrackWay",

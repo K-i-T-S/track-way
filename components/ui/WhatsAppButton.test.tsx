@@ -3,9 +3,17 @@ import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { WhatsAppButton } from "./WhatsAppButton";
 
+const messages = {
+  whatsappButton: {
+    ariaLabel: "Contact us on WhatsApp",
+    tooltip: "Chat with us",
+    message: "Hi, I'd like to know more about TrackWay's GPS solutions.",
+  },
+};
+
 function renderWithLocale(locale: "en" | "ar") {
   return render(
-    <NextIntlClientProvider locale={locale} messages={{}}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <WhatsAppButton phoneNumber="+961 3 123 456" />
     </NextIntlClientProvider>,
   );

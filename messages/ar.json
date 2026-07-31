@@ -64,6 +64,11 @@
     "viewHardwareCta": "عرض الأجهزة",
     "getInTouchCta": "تواصل معنا"
   },
+  "whatsappButton": {
+    "ariaLabel": "تواصل معنا عبر واتساب",
+    "tooltip": "تحدث معنا",
+    "message": "مرحباً، أرغب في معرفة المزيد عن حلول TrackWay لتتبع GPS."
+  },
   "hardware": {
     "requestQuote": "اطلب عرض سعر",
     "metaTitle": "أجهزة تتبع GPS — TrackWay",
