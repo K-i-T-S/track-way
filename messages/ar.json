@@ -86,7 +86,8 @@
   "footer": {
     "quickLinks": "روابط سريعة",
     "servingLebanon": "نخدم العملاء في جميع أنحاء لبنان.",
-    "privacyPolicy": "سياسة الخصوصية"
+    "privacyPolicy": "سياسة الخصوصية",
+    "createdBy": "تصميم وصيانة"
   },
   "privacy": {
     "title": "سياسة الخصوصية",

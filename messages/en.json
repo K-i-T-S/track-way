@@ -86,7 +86,8 @@
   "footer": {
     "quickLinks": "Quick Links",
     "servingLebanon": "Serving customers throughout Lebanon.",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "createdBy": "Created and maintained by"
   },
   "privacy": {
     "title": "Privacy Policy",

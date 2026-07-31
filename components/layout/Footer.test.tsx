@@ -8,6 +8,7 @@ const messages = {
     quickLinks: "Quick Links",
     servingLebanon: "Serving customers throughout Lebanon.",
     privacyPolicy: "Privacy Policy",
+    createdBy: "Created and maintained by",
   },
 };
 
@@ -56,5 +57,25 @@ describe("Footer", () => {
     expect(
       screen.getByRole("link", { name: "Privacy Policy" }),
     ).toHaveAttribute("href", "/en/privacy");
+  });
+
+  it("renders the KiTS credit line with logo, WhatsApp, and email links", () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <Footer locale="en" siteSettings={siteSettings} />
+      </NextIntlClientProvider>,
+    );
+    const creditLink = screen.getByRole("link", {
+      name: /created and maintained by kits/i,
+    });
+    expect(creditLink).toHaveAttribute("href", "https://wa.me/96181290662");
+    expect(creditLink.querySelector("img")).toHaveAttribute("alt", "KiTS");
+
+    expect(
+      screen.getByRole("link", { name: "kits.tech.co@gmail.com" }),
+    ).toHaveAttribute("href", "mailto:kits.tech.co@gmail.com");
+    expect(
+      screen.getByRole("link", { name: "+961 81 290 662" }),
+    ).toHaveAttribute("href", "https://wa.me/96181290662");
   });
 });
