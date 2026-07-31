@@ -35,7 +35,7 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
       }}
     >
       <div
-        className="relative flex items-center gap-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.05] hover:[border-color:var(--row-border)]"
+        className="relative flex items-center gap-6 overflow-hidden rounded-2xl border border-white/[0.12] bg-white/[0.05] p-6 backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.07] hover:[border-color:var(--row-border)]"
         style={
           {
             transformStyle: "preserve-3d",
@@ -63,15 +63,23 @@ function FeatureRow({ row, index }: { row: RowData; index: number }) {
           {String(index + 1).padStart(2, "0")}
         </span>
 
-        {/* floating icon */}
+        {/* icon in a colored badge — the source PNGs are opaque tiles with a
+            near-black background, so they're cropped to a circle and given
+            a colored halo, otherwise they read as flat dark squares */}
         <div
-          className="relative shrink-0"
+          className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full border"
           style={{
+            borderColor: `${color}40`,
+            background: `${color}14`,
             transform: "translateZ(50px)",
             animation: `icon-float 3s ease-in-out ${index * 0.3}s infinite`,
           }}
         >
-          <CapabilityImage name={row.icon} size={28} className="h-7 w-7" />
+          <CapabilityImage
+            name={row.icon}
+            size={48}
+            className="h-12 w-12 rounded-full object-cover"
+          />
         </div>
 
         {/* text content */}
@@ -141,21 +149,24 @@ export function ServicesFeatureList({
       >
         {/* vertical light beam */}
         <div
-          className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 opacity-20"
+          className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 opacity-30"
           style={{
             background:
-              "linear-gradient(to bottom, transparent, rgba(0,229,212,0.4), rgba(255,200,87,0.4), transparent)",
+              "linear-gradient(to bottom, transparent, rgba(0,229,212,0.6), rgba(255,200,87,0.6), transparent)",
           }}
         />
+        {/* soft flanking glows so the list isn't a bare column on black */}
+        <div className="absolute -left-10 top-1/4 h-72 w-72 rounded-full bg-accent/8 blur-[110px]" />
+        <div className="absolute -right-10 bottom-1/4 h-72 w-72 rounded-full bg-accentWarm/8 blur-[110px]" />
         {/* floating orbs, alternating teal/gold instead of teal-only */}
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="absolute h-2 w-2 rounded-full blur-sm"
+            className="absolute h-2.5 w-2.5 rounded-full blur-sm"
             style={{
               left: `${15 + i * 15}%`,
               top: `${20 + (i % 3) * 25}%`,
-              background: `${ROW_COLORS[i % ROW_COLORS.length]}4d`,
+              background: `${ROW_COLORS[i % ROW_COLORS.length]}66`,
               animation: `services-list-float-particle ${8 + i * 2}s ease-in-out ${i * -2}s infinite`,
             }}
           />

@@ -5,6 +5,11 @@ import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
 
+/* Source icons are opaque 1024x1024 tiles with a near-black background
+   baked in (no alpha channel) — cropped to a circle here so the dark square
+   corners don't show as a visible edge against the colored badge behind
+   them; without this they read as flat dark squares that nearly disappear
+   into the black page. */
 function stepImage(src: string, key: string) {
   return (
     <Image
@@ -12,9 +17,9 @@ function stepImage(src: string, key: string) {
       src={src}
       alt=""
       aria-hidden="true"
-      width={24}
-      height={24}
-      className="h-6 w-6"
+      width={44}
+      height={44}
+      className="h-11 w-11 rounded-full object-cover"
     />
   );
 }
@@ -52,13 +57,14 @@ export function HowItWorksSection(): React.ReactElement {
       ref={ref}
       className="relative px-6 py-24 lg:px-10"
     >
-      {/* ambient glow — dual-tone so the section isn't a single flat teal wash */}
+      {/* ambient glow — dual-tone, brighter and tighter than the first pass so it actually reads as light */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden="true"
       >
-        <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-accent/5 blur-[120px]" />
-        <div className="absolute -bottom-20 right-1/4 h-80 w-80 rounded-full bg-accentWarm/5 blur-[120px]" />
+        <div className="absolute left-1/2 top-1/4 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-accent/10 blur-[100px]" />
+        <div className="absolute -bottom-16 right-[10%] h-96 w-96 rounded-full bg-accentWarm/10 blur-[100px]" />
+        <div className="absolute -top-10 left-[8%] h-64 w-64 rounded-full bg-trackway-ice/[0.06] blur-[90px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl">
@@ -109,14 +115,14 @@ export function HowItWorksSection(): React.ReactElement {
               style={{ top: truckTop }}
               className="absolute start-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-background shadow-[0_0_30px_rgba(0,229,212,0.5)]">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-accent/40 bg-background shadow-[0_0_36px_rgba(0,229,212,0.55)]">
                 <Image
                   src="/images/step-truck.png"
                   alt=""
                   aria-hidden="true"
-                  width={24}
-                  height={24}
-                  className="h-6 w-6"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 rounded-full object-cover"
                 />
               </div>
             </motion.div>
@@ -133,7 +139,7 @@ export function HowItWorksSection(): React.ReactElement {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.6, delay: i * 0.1 }}
-                  className="group relative overflow-hidden rounded-2xl border border-white/[0.12] bg-white/[0.045] p-8 backdrop-blur transition-colors duration-500 hover:[border-color:var(--step-border)]"
+                  className="group relative overflow-hidden rounded-2xl border border-white/[0.14] bg-white/[0.06] p-8 backdrop-blur transition-colors duration-500 hover:[border-color:var(--step-border)]"
                   style={
                     { "--step-border": `${color}4d` } as React.CSSProperties
                   }
@@ -156,7 +162,7 @@ export function HowItWorksSection(): React.ReactElement {
 
                   <div className="relative mb-4 flex items-center gap-4">
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold text-background"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-background"
                       style={{
                         background: color,
                         boxShadow: `0 0 30px ${color}4d`,
@@ -165,8 +171,10 @@ export function HowItWorksSection(): React.ReactElement {
                       {i + 1}
                     </span>
                     <span
+                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border"
                       style={{
-                        color,
+                        borderColor: `${color}40`,
+                        background: `${color}14`,
                         animation: `step-icon-float 3s ease-in-out ${i * 0.5}s infinite`,
                       }}
                     >

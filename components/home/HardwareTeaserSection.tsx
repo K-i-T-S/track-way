@@ -19,15 +19,15 @@ export function HardwareTeaserSection({
   const t = useTranslations("home");
 
   return (
-    <section className="relative px-6 py-16 lg:px-10">
+    <section className="relative px-6 py-20 lg:px-10">
       {/* ambient glow field — this section previously had no background
           atmosphere at all, reading flat next to the sections above/below it */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden="true"
       >
-        <div className="absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-accent/5 blur-[110px]" />
-        <div className="absolute -bottom-24 right-1/4 h-72 w-72 rounded-full bg-accentWarm/5 blur-[110px]" />
+        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-accent/10 blur-[100px]" />
+        <div className="absolute -bottom-24 right-1/4 h-80 w-80 rounded-full bg-accentWarm/10 blur-[100px]" />
       </div>
 
       <div className="relative mx-auto max-w-3xl">
@@ -42,11 +42,11 @@ export function HardwareTeaserSection({
             style={{ perspective: "800px" }}
           >
             <div
-              className="relative flex h-32 w-32 items-center justify-center rounded-2xl border border-accent/20 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-sm"
+              className="relative flex h-44 w-44 items-center justify-center rounded-2xl border border-accent/20 bg-gradient-to-br from-white/[0.1] to-white/[0.03] backdrop-blur-sm"
               style={{
                 transformStyle: "preserve-3d",
                 boxShadow:
-                  "0 20px 60px rgba(0,229,212,0.15), 0 0 0 1px rgba(0,229,212,0.1) inset",
+                  "0 20px 70px rgba(0,229,212,0.2), 0 0 0 1px rgba(0,229,212,0.12) inset",
               }}
             >
               {/* ambient border-trace ring — a single instance here, unlike
@@ -85,8 +85,8 @@ export function HardwareTeaserSection({
 
               {/* device icon */}
               <svg
-                width="56"
-                height="56"
+                width="80"
+                height="80"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -121,7 +121,7 @@ export function HardwareTeaserSection({
 
               {/* floating label — pulses teal/gold instead of a flat single hue */}
               <div
-                className="absolute -right-2 -top-2 rounded-full border border-accent/30 bg-background/90 px-2 py-0.5 text-[10px] font-bold text-accent backdrop-blur-sm motion-safe:animate-[hw-badge-pulse_3s_ease-in-out_infinite]"
+                className="absolute -right-3 -top-3 rounded-full border border-accent/30 bg-background/90 px-2.5 py-1 text-xs font-bold text-accent backdrop-blur-sm motion-safe:animate-[hw-badge-pulse_3s_ease-in-out_infinite]"
                 style={{ transform: "translateZ(40px)" }}
               >
                 GPS
@@ -132,7 +132,7 @@ export function HardwareTeaserSection({
                 <div
                   key={i}
                   aria-hidden="true"
-                  className="pointer-events-none absolute h-1 w-1 rounded-full"
+                  className="pointer-events-none absolute h-1.5 w-1.5 rounded-full"
                   style={{
                     background: p.color,
                     left: p.left,
