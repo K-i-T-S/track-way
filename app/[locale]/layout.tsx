@@ -1,5 +1,6 @@
 import "../globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
@@ -66,6 +67,7 @@ export default async function LocaleLayout({
           <WhatsAppButton phoneNumber={siteSettings.whatsappNumber} />
         </NextIntlClientProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
