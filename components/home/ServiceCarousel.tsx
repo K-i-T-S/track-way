@@ -11,8 +11,13 @@ import type { Feature } from "@/sanity/types";
 
 /* ─────────────────── brand card palette ───────────────────
    Cycled across cards instead of one hue per card — keeps the section on
-   TrackWay's single-accent identity (teal / warm orange / neutral ice)
-   rather than a rainbow that would clash with the rest of the site. */
+   TrackWay's single-accent identity (teal / sky-blue / neutral ice) rather
+   than a rainbow that would clash with the rest of the site. The middle
+   slot is a carousel-local sky-blue (not the sitewide `accentWarm` orange
+   token, which is still used elsewhere -- Hero/CoreValue/Hardware section
+   glows, ScrollProgressBar), same cool cyan-blue family already used
+   throughout the hero globe's routes/halo, no indigo per the project's
+   existing "no indigo" color rule (see AboutTeaserSection). */
 
 const PALETTE = [
   {
@@ -21,9 +26,9 @@ const PALETTE = [
     accentColor: "#00E5D4",
   },
   {
-    gradient: "from-accentWarm/60 to-accentWarm/15",
-    glow: "shadow-accentWarm/30",
-    accentColor: "#FB923C",
+    gradient: "from-[#38BDF8]/60 to-[#38BDF8]/15",
+    glow: "shadow-[#38BDF8]/30",
+    accentColor: "#38BDF8",
   },
   {
     gradient: "from-white/20 to-white/5",
@@ -167,8 +172,21 @@ function ServiceCard({
   const focus = 1 - smoothstep(0, 100, facingFront);
   const isCurrent = focus > 0.85;
   const cardOpacity = lerp(0.35, 1, focus);
+
+  // Extra zoom-in "hero moment" bump, narrower and sharper than the
+  // continuous focus falloff above -- peaks exactly at dead-center and
+  // eases back out as the card rotates away, same proximity window
+  // (fraction of the angle between neighboring cards) the auto rotation
+  // slowdown in ServiceCarousel uses, so the zoom and the pacing read as
+  // one synchronized beat instead of two independent effects.
+  const anglePerCard = 360 / total;
+  const heroZoom = 1 - smoothstep(0, anglePerCard * 0.35, facingFront);
+  const heroZoomBoost = 1 + heroZoom * 0.18;
+
   const cardScale =
-    lerp(0.82, 1.08, focus) * (isHovered && isCurrent ? 1.05 : 1);
+    lerp(0.82, 1.08, focus) *
+    heroZoomBoost *
+    (isHovered && isCurrent ? 1.05 : 1);
   const cardBlurPx = lerp(3, 0, focus);
   const cardZ = lerp(0, 30, focus);
   const cardFilter = [
@@ -194,7 +212,7 @@ function ServiceCard({
     >
       <div
         className={`
-          group relative flex h-64 w-52 flex-col items-center justify-center gap-3
+          group relative flex h-72 w-60 flex-col items-center justify-center gap-3
           rounded-2xl border border-white/15
           bg-gradient-to-br ${palette.gradient}
           p-5 text-center backdrop-blur-xl
@@ -214,22 +232,24 @@ function ServiceCard({
           // as a class).
           transform: `translateZ(${cardZ}px) scale(${cardScale})`,
           filter: cardFilter || "none",
+          // Same premium ease-out curve already used for this section's
+          // stage entrance below, reused here for the zoom-in/out beat.
           transition:
-            "transform 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
+            "transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
         }}
       >
         {/* icon */}
-        <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-          <CapabilityImage name={card.icon} size={56} className="h-14 w-14" />
+        <div className="flex h-24 w-24 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+          <CapabilityImage name={card.icon} size={64} className="h-16 w-16" />
         </div>
 
         {/* title */}
-        <h3 className="text-base font-bold tracking-wide text-foreground drop-shadow-md">
+        <h3 className="text-lg font-bold tracking-wide text-foreground drop-shadow-md">
           {card.title}
         </h3>
 
         {/* description */}
-        <p className="text-[11px] leading-snug text-foreground/75">
+        <p className="text-xs leading-snug text-foreground/75">
           {card.description}
         </p>
 
@@ -272,7 +292,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [cardWidth, setCardWidth] = useState(208); // 52 * 4 (w-52)
+  const [cardWidth, setCardWidth] = useState(240); // 60 * 4 (w-60)
   const [particleCount, setParticleCount] = useState(35);
   const animRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
@@ -287,22 +307,22 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
   const total = cards.length;
 
   /* responsive radius based on viewport */
-  const [radius, setRadius] = useState(420);
+  const [radius, setRadius] = useState(490);
 
   useEffect(() => {
     function onResize() {
       const vw = window.innerWidth;
       if (vw < 640) {
-        setRadius(200);
-        setCardWidth(148);
+        setRadius(240);
+        setCardWidth(170);
         setParticleCount(15);
       } else if (vw < 1024) {
-        setRadius(310);
-        setCardWidth(176);
+        setRadius(370);
+        setCardWidth(200);
         setParticleCount(24);
       } else {
-        setRadius(420);
-        setCardWidth(208);
+        setRadius(490);
+        setCardWidth(240);
         setParticleCount(35);
       }
     }
@@ -335,7 +355,27 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
       lastTimeRef.current = time;
 
       setRotation((prev) => {
-        const targetSpeed = hoveredIndex !== null ? 0.004 : 0.013;
+        const baseSpeed = 0.013;
+
+        // How far (in degrees) the nearest card is from being dead-center --
+        // periodic in `prev` with period `anglePerCard`, so this naturally
+        // repeats every card automatically without tracking "whose turn"
+        // explicitly. Same proximity concept ServiceCard uses for its own
+        // zoom-in bump (kept as two independent calculations off the same
+        // `rotation` value rather than threaded through props/state).
+        const anglePerCard = 360 / total;
+        const withinCard =
+          ((prev % anglePerCard) + anglePerCard) % anglePerCard;
+        const distFromCenter = Math.min(withinCard, anglePerCard - withinCard);
+        const nearCenter =
+          1 - smoothstep(0, anglePerCard * 0.35, distFromCenter);
+
+        // Auto slow-down as any card nears center (the "hero moment" beat),
+        // independent of hover -- hover still slows further on top of it.
+        const heroTargetSpeed = lerp(baseSpeed, baseSpeed * 0.22, nearCenter);
+        const hoverTargetSpeed = hoveredIndex !== null ? 0.004 : baseSpeed;
+        const targetSpeed = Math.min(heroTargetSpeed, hoverTargetSpeed);
+
         /* smoothly interpolate speed */
         speedRef.current += (targetSpeed - speedRef.current) * 0.05;
         return prev + speedRef.current * delta * spinDirection;
@@ -343,7 +383,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
 
       animRef.current = requestAnimationFrame(animate);
     },
-    [hoveredIndex, spinDirection],
+    [hoveredIndex, spinDirection, total],
   );
 
   useEffect(() => {
@@ -363,7 +403,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-[70vh] w-full flex-col items-center overflow-hidden bg-background"
+      className="relative flex min-h-[78vh] w-full flex-col items-center overflow-hidden bg-background"
     >
       {/* ── ambient background ── */}
       <div className="pointer-events-none absolute inset-0">
@@ -394,14 +434,14 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
       {/* ── 3D stage ── */}
       <div
         className="relative z-10 flex flex-1 items-center justify-center"
-        style={{ perspective: "1200px", minHeight: 380 }}
+        style={{ perspective: "1300px", minHeight: 460 }}
         onMouseLeave={() => setHoveredIndex(null)}
       >
         <div
           className="relative"
           style={{
             width: radius * 2 + cardWidth,
-            height: 320,
+            height: 380,
             transformStyle: "preserve-3d",
             transform: `rotateX(8deg) ${isVisible ? "translateY(0px)" : "translateY(60px) scale(0.7)"}`,
             opacity: isVisible ? 1 : 0,
