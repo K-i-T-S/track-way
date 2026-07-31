@@ -143,6 +143,7 @@ function ServiceCard({
   isVisible,
   isHovered,
   radius,
+  cardWidth,
 }: {
   card: CardData;
   paletteIndex: number;
@@ -152,6 +153,7 @@ function ServiceCard({
   isVisible: boolean;
   isHovered: boolean;
   radius: number;
+  cardWidth: number;
 }) {
   const palette = PALETTE[paletteIndex % PALETTE.length]!;
   const angle = (360 / total) * index;
@@ -212,7 +214,7 @@ function ServiceCard({
     >
       <div
         className={`
-          group relative flex h-72 w-60 flex-col items-center justify-center gap-3
+          group relative flex h-72 flex-col items-center justify-center gap-3
           rounded-2xl border border-white/15
           bg-gradient-to-br ${palette.gradient}
           p-5 text-center backdrop-blur-xl
@@ -220,6 +222,7 @@ function ServiceCard({
           ${isCurrent ? `shadow-2xl ${palette.glow}` : "shadow-lg"}
         `}
         style={{
+          width: cardWidth,
           opacity: cardOpacity,
           // translateZ + scale must live in the same inline `transform` --
           // an inline style always wins over a class's `transform` (e.g.
@@ -292,7 +295,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [cardWidth, setCardWidth] = useState(240); // 60 * 4 (w-60)
+  const [cardWidth, setCardWidth] = useState(240); // desktop card width in px, drives both stage geometry and the rendered card's actual size
   const [particleCount, setParticleCount] = useState(35);
   const animRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
@@ -460,6 +463,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
                 isVisible={isVisible}
                 isHovered={hoveredIndex === i}
                 radius={radius}
+                cardWidth={cardWidth}
               />
             </div>
           ))}
