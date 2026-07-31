@@ -92,11 +92,13 @@ function renderHomePage(jsx: React.ReactElement) {
 }
 
 describe("HomePage", () => {
-  it("renders the localized hero headline and at least one feature card", async () => {
+  it("renders the hero headline and at least one feature card", async () => {
     const jsx = await HomePage({ params: Promise.resolve({ locale: "en" }) });
     renderHomePage(jsx);
     expect(
-      screen.getByRole("heading", { name: "Track everything that moves" }),
+      screen.getByRole("heading", {
+        name: "GPS tracking and fleet management that keeps you in control.",
+      }),
     ).toBeInTheDocument();
     expect(
       screen.getAllByRole("heading", { name: "Live Tracking" }).length,
