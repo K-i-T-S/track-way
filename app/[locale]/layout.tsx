@@ -1,4 +1,5 @@
 import "../globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing, type Locale } from "@/i18n/routing";
@@ -46,7 +47,10 @@ export default async function LocaleLayout({
         <div id="ambient-bg-root" />
         <NextIntlClientProvider messages={messages}>
           <ScrollProgressBar />
-          <Header locale={typedLocale} logoUrl="/brand/svg/trackway-logo-primary-no-tagline.svg" />
+          <Header
+            locale={typedLocale}
+            logoUrl="/brand/svg/trackway-logo-primary-no-tagline.svg"
+          />
           <main className="pt-20">{children}</main>
           <Footer
             locale={typedLocale}
@@ -61,6 +65,7 @@ export default async function LocaleLayout({
           />
           <WhatsAppButton phoneNumber={siteSettings.whatsappNumber} />
         </NextIntlClientProvider>
+        <Analytics />
       </body>
     </html>
   );
