@@ -354,7 +354,9 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
   const animate = useCallback(
     (time: number) => {
       if (!lastTimeRef.current) lastTimeRef.current = time;
-      const delta = time - lastTimeRef.current;
+      // Clamped so a stalled tab/dropped-frame burst (backgrounding, scroll
+      // jank) can't produce one giant instantaneous jump on resume.
+      const delta = Math.min(time - lastTimeRef.current, 100);
       lastTimeRef.current = time;
 
       setRotation((prev) => {
@@ -379,8 +381,20 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
         const hoverTargetSpeed = hoveredIndex !== null ? 0.004 : baseSpeed;
         const targetSpeed = Math.min(heroTargetSpeed, hoverTargetSpeed);
 
-        /* smoothly interpolate speed */
-        speedRef.current += (targetSpeed - speedRef.current) * 0.05;
+        // Smoothly interpolate speed toward the target -- scaled by elapsed
+        // time (not by rAF call count) so convergence happens at the same
+        // real-world rate regardless of actual frame timing. A fixed
+        // per-call fraction (the previous version) only looks right at a
+        // steady frame rate; phones drop/delay frames under the render
+        // cost of 9 backdrop-blurred cards, and a stale speed value hitting
+        // an oversized delta after a skipped frame is what read as jitter,
+        // concentrated right where targetSpeed is actively changing (the
+        // center slow-down) rather than while it's flat at baseSpeed.
+        // Half-life chosen to match the old 0.05-per-16.7ms-frame feel.
+        const speedSmoothingHalfLifeMs = 225;
+        const speedSmoothing =
+          1 - Math.pow(0.5, delta / speedSmoothingHalfLifeMs);
+        speedRef.current += (targetSpeed - speedRef.current) * speedSmoothing;
         return prev + speedRef.current * delta * spinDirection;
       });
 
