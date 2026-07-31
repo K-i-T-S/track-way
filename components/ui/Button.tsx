@@ -253,13 +253,21 @@ export function Button({
 
       <span className="relative z-[1] inline-flex items-center gap-2">
         {isFlagship && (
-          /* live-ping dot: the flagship variant's signature "always on,
-             always live" marker. Tailwind's stock animate-ping (cheap,
-             already motion-safe-aware via the global reduced-motion
-             override in globals.css). */
-          <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-accent motion-safe:animate-ping" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent shadow-[0_0_6px_rgba(0,229,212,0.8)]" />
+          /* radar-sweep live indicator: the flagship variant's signature
+             "actively tracking" marker, echoing the hero globe's own
+             GPS-lock radar HUD. The sweep wedge rotates via `transform`
+             (compositor-only, cheap even ambient) -- range rings and the
+             center dot are static, only the dot's opacity breathes. */
+          <span
+            className="relative flex h-4 w-4 shrink-0 items-center justify-center"
+            aria-hidden="true"
+          >
+            <span className="absolute inset-0 rounded-full border border-accent/35" />
+            <span className="absolute inset-[3px] rounded-full border border-accent/25" />
+            <span className="absolute inset-0 overflow-hidden rounded-full motion-safe:animate-radar-sweep">
+              <span className="absolute inset-0 [background:conic-gradient(from_0deg,rgba(0,229,212,0.85)_0deg,transparent_75deg)]" />
+            </span>
+            <span className="relative h-1 w-1 rounded-full bg-accent shadow-[0_0_4px_rgba(0,229,212,0.9)] motion-safe:animate-pulse" />
           </span>
         )}
         {leading && (

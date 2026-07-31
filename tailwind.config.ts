@@ -82,6 +82,13 @@ const config: Config = {
         "btn-angle-spin": {
           to: { "--btn-angle": "360deg" },
         },
+        // Radar-sweep live indicator (primary variant only): a perfect
+        // circle, so unlike the pill ring above this can just rotate via
+        // `transform` -- cheaper than the --btn-angle trick and no
+        // @property registration needed.
+        "radar-sweep": {
+          to: { transform: "rotate(360deg)" },
+        },
       },
       animation: {
         "marquee-ltr": "marquee-ltr 20s linear infinite",
@@ -90,6 +97,7 @@ const config: Config = {
         "btn-sheen-loop": "btn-sheen-loop 3.5s ease-in-out infinite",
         "btn-sheen": "btn-sheen 0.6s ease-out",
         "btn-angle-spin": "btn-angle-spin 6s linear infinite",
+        "radar-sweep": "radar-sweep 2.4s linear infinite",
       },
     },
   },
