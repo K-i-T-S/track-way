@@ -11,6 +11,7 @@ import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { HeaderLogo } from "@/components/layout/HeaderLogo";
 
 function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggleTheme } = useTheme();
@@ -42,9 +43,16 @@ interface HeaderProps {
 }
 
 const FALLBACK_LOGO = "/brand/svg/trackway-logo-reversed.svg";
+const DEFAULT_BRAND_LOGO = "/brand/svg/trackway-logo-primary-no-tagline.svg";
 
 export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
   const logoSrc = logoUrl || FALLBACK_LOGO;
+  // The default brand mark is rendered inline (HeaderLogo) so its wordmark
+  // can follow the foreground theme token — the static SVG hardcodes white
+  // text and loses contrast in light mode (see HeaderLogo.tsx). A custom
+  // CMS-provided logoUrl still renders as a plain <Image>, since we can't
+  // theme an arbitrary uploaded asset.
+  const useInlineBrandLogo = logoSrc === DEFAULT_BRAND_LOGO;
   const t = useTranslations("nav");
   const pathnameWithoutLocale = usePathname();
   const enHref = `/en${pathnameWithoutLocale}`;
@@ -94,7 +102,11 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 lg:px-10">
         <Link href={`/${locale}`} className="shrink-0">
-          <Image src={logoSrc} alt="TrackWay" width={120} height={32} />
+          {useInlineBrandLogo ? (
+            <HeaderLogo />
+          ) : (
+            <Image src={logoSrc} alt="TrackWay" width={120} height={32} />
+          )}
         </Link>
         <div className="hidden items-center gap-6 md:flex">
           <Link
