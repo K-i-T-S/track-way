@@ -10,12 +10,21 @@ const messages = {
     privacyPolicy: "Privacy Policy",
     createdBy: "Created and maintained by",
   },
+  contactLabels: {
+    general: "General",
+    sales: "Sales",
+    support: "Support",
+  },
 };
 
 const siteSettings = {
   phoneNumbers: ["+961 3 123 456"],
   whatsappNumber: "+961 3 123 456",
-  email: "info@trackway.com",
+  emails: {
+    info: "info@trackway.com",
+    sales: "sales@trackway.com",
+    support: "support@trackway.com",
+  },
   socialLinks: [
     { platform: "facebook", url: "https://facebook.com/trackway" },
     { platform: "instagram", url: "https://instagram.com/trackway" },
@@ -34,10 +43,16 @@ describe("Footer", () => {
     );
     expect(
       screen.getByRole("link", { name: "+961 3 123 456" }),
-    ).toHaveAttribute("href", "tel:+961 3 123 456");
+    ).toHaveAttribute("href", "tel:+9613123456");
     expect(
       screen.getByRole("link", { name: "info@trackway.com" }),
     ).toHaveAttribute("href", "mailto:info@trackway.com");
+    expect(
+      screen.getByRole("link", { name: "sales@trackway.com" }),
+    ).toHaveAttribute("href", "mailto:sales@trackway.com");
+    expect(
+      screen.getByRole("link", { name: "support@trackway.com" }),
+    ).toHaveAttribute("href", "mailto:support@trackway.com");
     expect(screen.getByText("Beirut, Lebanon")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /facebook/i })).toHaveAttribute(
       "href",

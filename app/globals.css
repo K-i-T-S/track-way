@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme tokens, consumed via the Tailwind color functions in
+   tailwind.config.ts (e.g. `background`, `surface`, `border`). Light is the
+   default (`:root`, no attribute needed); `[data-theme="dark"]` on <html> —
+   set by the inline no-FOUC script in app/[locale]/layout.tsx and toggled at
+   runtime by components/providers/ThemeProvider.tsx — overrides to the
+   original all-black design. `--color-ink-rgb` backs three separate
+   Tailwind tokens (surface/border/particle): they're conceptually the same
+   "low-alpha ink used for glass panels, hairline borders and ambient dust
+   motes" value, just applied at different opacities per call site. accent /
+   accentWarm stay plain hex in tailwind.config.ts — confirmed unchanged
+   across both themes. */
+:root {
+  --color-background-rgb: 247 250 250;
+  --color-foreground-rgb: 10 26 31;
+  --color-muted-rgb: 91 102 105;
+  --color-ink-rgb: 10 26 31;
+}
+
+[data-theme="dark"] {
+  --color-background-rgb: 0 0 0;
+  --color-foreground-rgb: 255 255 255;
+  --color-muted-rgb: 91 102 105;
+  --color-ink-rgb: 255 255 255;
+}
+
 body {
   @apply bg-background text-foreground;
 }

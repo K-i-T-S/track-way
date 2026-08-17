@@ -38,7 +38,7 @@ function SpecRow({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: 0.8 + index * 0.08 }}
-      className="rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 transition-all duration-300 hover:border-white/15 hover:bg-white/[0.05]"
+      className="rounded-xl border border-border/5 bg-surface/[0.02] px-4 py-3 transition-all duration-300 hover:border-border/15 hover:bg-surface/[0.05]"
     >
       <dt className="text-xs font-medium uppercase tracking-wider text-muted/70">
         {label}
@@ -116,7 +116,7 @@ function ProductShowcase({
               transition: "transform 0.2s ease-out",
             }}
           >
-            <div className="absolute inset-0 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-sm" />
+            <div className="absolute inset-0 rounded-3xl border border-border/10 bg-gradient-to-br from-surface/[0.06] to-surface/[0.02] backdrop-blur-sm" />
 
             {image && (
               <div
@@ -221,7 +221,7 @@ function ProductShowcase({
       </div>
 
       {!isLast && (
-        <div className="mx-auto mt-20 h-px max-w-xs bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="mx-auto mt-20 h-px max-w-xs bg-gradient-to-r from-transparent via-border/10 to-transparent" />
       )}
     </section>
   );

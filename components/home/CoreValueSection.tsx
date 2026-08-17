@@ -73,7 +73,7 @@ function CoreValueCard({
           rotateY: springY,
           transformStyle: "preserve-3d",
         }}
-        className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur transition-colors hover:border-white/20"
+        className="group relative overflow-hidden rounded-2xl border border-border/10 bg-surface/[0.03] backdrop-blur transition-colors hover:border-border/20"
       >
         {/* animated border-trace ring, revealed on hover */}
         <svg

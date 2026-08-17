@@ -107,7 +107,7 @@ function IndustryCard({ image, title, description, index }: IndustryCardProps) {
           onPointerLeave={handlePointerLeave}
           onFocus={() => setActive(true)}
           onBlur={() => setActive(false)}
-          className="relative cursor-default overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-sm transition-colors duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 group-hover:border-white/25 group-hover:bg-white/[0.06]"
+          className="relative cursor-default overflow-hidden rounded-2xl border border-border/10 bg-surface/[0.03] backdrop-blur-sm transition-colors duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 group-hover:border-border/25 group-hover:bg-surface/[0.06]"
           style={{
             transformStyle: "preserve-3d",
             rotateX: prefersReducedMotion ? 4 : rotateX,
@@ -115,13 +115,13 @@ function IndustryCard({ image, title, description, index }: IndustryCardProps) {
           }}
         >
           {/* image area */}
-          <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white/[0.02]">
+          <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-surface/[0.02]">
             {image ? (
               <Image
                 src={image}
                 alt={title}
                 fill
-                sizes="(min-width: 1024px) 16vw, (min-width: 640px) 33vw, 50vw"
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
               />
             ) : (
@@ -278,7 +278,7 @@ export function IndustriesSection(): React.ReactElement {
           </h2>
         </div>
 
-        <div className="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((item, i) => (
             <IndustryCard key={item.title} {...item} index={i} />
           ))}

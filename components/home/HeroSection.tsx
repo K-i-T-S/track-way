@@ -126,7 +126,7 @@ export function HeroSection({
           <span className="text-[11px] uppercase tracking-widest">
             {t("scrollHint")}
           </span>
-          <div className="h-8 w-5 rounded-full border border-white/20 p-1">
+          <div className="h-8 w-5 rounded-full border border-border/20 p-1">
             <div className="h-1.5 w-1.5 rounded-full bg-accent" />
           </div>
         </div>

@@ -27,10 +27,10 @@ export function AboutTeaserSection({
       <div className="relative mx-auto max-w-3xl">
         {/* holographic card wrapper */}
         <div
-          className="relative overflow-hidden rounded-3xl border border-white/[0.14] p-10 sm:p-12"
+          className="relative overflow-hidden rounded-3xl border border-border/[0.14] p-10 sm:p-12"
           style={{
             background:
-              "linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))",
+              "linear-gradient(135deg, rgb(var(--color-ink-rgb)/0.07), rgb(var(--color-ink-rgb)/0.02))",
           }}
         >
           {/* large watermark mark — fills the otherwise-empty card space */}

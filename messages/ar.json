@@ -7,7 +7,9 @@
     "contactCta": "اتصل بنا",
     "bookInstallation": "احجز موعد تركيب",
     "openMenu": "فتح القائمة",
-    "closeMenu": "إغلاق القائمة"
+    "closeMenu": "إغلاق القائمة",
+    "switchToLight": "التبديل إلى الوضع الفاتح",
+    "switchToDark": "التبديل إلى الوضع الداكن"
   },
   "homepage": {
     "heroBadge": "اعرف كل حركة.",
@@ -57,7 +59,45 @@
     "howItWorksStep3Desc": "نقوم بتركيب أجهزة GPS ونشرح لك كيفية استخدام لوحة التحكم الحية.",
     "finalCtaTitle": "هل أنتم مستعدون للسيطرة الكاملة على مركباتكم؟",
     "finalCtaPrimary": "احجز موعد تركيب",
-    "finalCtaSecondary": "تواصل معنا"
+    "finalCtaSecondary": "تواصل معنا",
+    "trustIndicator1": "تتبع GPS مباشر",
+    "trustIndicator2": "تغطية شاملة في لبنان",
+    "trustIndicator3": "دعم عبر واتساب على مدار الساعة",
+    "platformDemoEyebrow": "المنصة",
+    "platformDemoTitle": "منصة واحدة. رؤية كاملة.",
+    "platformDemoSubtitle": "تجمع TrackWay أسطولكم وسائقيكم وعملياتكم في رؤية واحدة متصلة — بيانات مباشرة، ورؤى قابلة للتنفيذ، وتحكم أفضل.",
+    "platformDemoPoint1Title": "وعي لحظي",
+    "platformDemoPoint1Desc": "التتبع المباشر والتنبيهات الفورية والسياج الجغرافي يبقونكم في السيطرة على كل حركة.",
+    "platformDemoPoint2Title": "قرارات أذكى",
+    "platformDemoPoint2Desc": "رؤى وتقارير قابلة للتنفيذ تساعدكم على تحسين الأداء وخفض التكاليف التشغيلية.",
+    "platformDemoPoint3Title": "نتائج أفضل",
+    "platformDemoPoint3Desc": "سائقون أكثر أمانًا، وعمليات أكثر كفاءة، وعملاء أكثر رضًا — كل يوم.",
+    "platformDemoMockNavOverview": "نظرة عامة",
+    "platformDemoMockNavLiveMap": "الخريطة المباشرة",
+    "platformDemoMockNavVehicles": "المركبات",
+    "platformDemoMockNavDrivers": "السائقون",
+    "platformDemoMockNavAlerts": "التنبيهات",
+    "platformDemoMockNavSettings": "الإعدادات",
+    "platformDemoMockLive": "مباشر",
+    "platformDemoMockVehicle1Name": "شاحنة 23",
+    "platformDemoMockVehicle1Location": "أوتوستراد بيروت–دمشق",
+    "platformDemoMockVehicle2Name": "فان 12",
+    "platformDemoMockVehicle2Location": "طرابلس",
+    "platformDemoMockVehicle3Name": "سيارة 07",
+    "platformDemoMockVehicle3Location": "الأشرفية، بيروت",
+    "platformDemoMockVehicle4Name": "شاحنة 18",
+    "platformDemoMockVehicle4Location": "طريق صيدا",
+    "platformDemoMockVehicle5Name": "فان 05",
+    "platformDemoMockVehicle5Location": "قرب بعلبك",
+    "platformDemoMockTripPlayback": "تشغيل الرحلة",
+    "platformDemoMockRecentAlert": "تنبيه أخير",
+    "platformDemoMockAlertOverspeed": "تجاوز السرعة",
+    "platformDemoMockReportsSummary": "التقارير (هذا الأسبوع)",
+    "platformDemoMockLiveStatus": "الحالة المباشرة",
+    "platformDemoMockTodaySummary": "ملخص اليوم",
+    "platformDemoMockDistance": "المسافة",
+    "platformDemoMockTrips": "الرحلات",
+    "platformDemoMockRecentAlerts": "التنبيهات الأخيرة"
   },
   "home": {
     "hardwareTeaser": "استكشف أجهزة تتبع GPS المصممة للأساطيل والأفراد.",
@@ -89,15 +129,14 @@
     "privacyPolicy": "سياسة الخصوصية",
     "createdBy": "تصميم وصيانة"
   },
+  "contactLabels": {
+    "general": "عام",
+    "sales": "المبيعات",
+    "support": "الدعم الفني"
+  },
   "privacy": {
     "title": "سياسة الخصوصية",
     "body": "يجري حاليًا إعداد سياسة الخصوصية الكاملة لشركة TrackWay وسيتم نشرها هنا قريبًا. لأي استفسار حول كيفية التعامل مع بياناتكم، يُرجى التواصل معنا عبر واتساب أو البريد الإلكتروني."
-  },
-  "bookInstallationStub": {
-    "title": "احجز موعد تركيب",
-    "body": "الحجز عبر الإنترنت متوفر قريبًا. في الوقت الحالي، راسلونا عبر واتساب وسيقوم فريقنا بتحديد موعد التركيب مباشرة.",
-    "whatsappCta": "المتابعة عبر واتساب",
-    "whatsappMessage": "مرحباً، أرغب في حجز موعد لتركيب جهاز GPS."
   },
   "booking": {
     "pageTitle": "احجز موعد تركيب",
@@ -119,6 +158,10 @@
     "sendByEmail": "إرسال الطلب بالبريد الإلكتروني",
     "whatsappSuccess": "تم حفظ طلبكم. لقد فتحنا واتساب مع تفاصيلكم جاهزة — يرجى الضغط على إرسال للتواصل مع فريقنا.",
     "emailSuccess": "تم استلام طلبك. التاريخ المفضل غير مؤكّد بعد. سيتواصل معك فريق TrackWay عبر واتساب لتأكيد الموعد.",
-    "genericError": "تعذّر معالجة طلبكم. يرجى المحاولة مرة أخرى."
+    "genericError": "تعذّر معالجة طلبكم. يرجى المحاولة مرة أخرى.",
+    "whatsappPreviewTitle": "التأكيد عبر واتساب",
+    "whatsappPreviewIntro": "بمجرد المتابعة، سيتواصل معكم فريقنا عبر واتساب لتأكيد تفاصيلكم وتحديد موعد التركيب.",
+    "whatsappPreviewLabel": "معاينة رسالة واتساب الخاصة بكم",
+    "whatsappPreviewPlaceholder": "املأوا النموذج لمعاينة رسالتكم."
   }
 }

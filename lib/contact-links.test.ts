@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildWhatsAppLink, buildMailtoLink } from "./contact-links";
+import {
+  buildWhatsAppLink,
+  buildMailtoLink,
+  buildTelLink,
+} from "./contact-links";
 
 describe("buildWhatsAppLink", () => {
   it("strips non-digit characters from the phone number and URL-encodes the message", () => {
@@ -7,6 +11,12 @@ describe("buildWhatsAppLink", () => {
     expect(link).toBe(
       "https://wa.me/9613123456?text=Hi%2C%20I%20need%20a%20quote",
     );
+  });
+});
+
+describe("buildTelLink", () => {
+  it("strips everything but the leading + and digits", () => {
+    expect(buildTelLink("+961 70 857 877")).toBe("tel:+96170857877");
   });
 });
 

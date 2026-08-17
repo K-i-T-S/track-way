@@ -7,11 +7,26 @@ vi.mock("@/sanity/queries", () => ({
   getSiteSettings: vi.fn().mockResolvedValue({
     phoneNumbers: ["+961 3 123 456"],
     whatsappNumber: "+961 3 123 456",
-    email: "info@trackway.com",
+    emails: {
+      info: "info@trackway.com",
+      sales: "sales@trackway.com",
+      support: "support@trackway.com",
+    },
     socialLinks: [
       { platform: "instagram", url: "https://instagram.com/trackway" },
     ],
     address: { en: "Beirut, Lebanon", ar: "بيروت، لبنان" },
+  }),
+}));
+
+vi.mock("next-intl/server", () => ({
+  getTranslations: vi.fn().mockResolvedValue((key: string) => {
+    const translations: Record<string, string> = {
+      general: "General",
+      sales: "Sales",
+      support: "Support",
+    };
+    return translations[key] ?? key;
   }),
 }));
 
@@ -28,7 +43,7 @@ const messages = {
 };
 
 describe("ContactPage", () => {
-  it("renders the phone number, email, and the contact form", async () => {
+  it("renders the phone number, all three emails, and the contact form", async () => {
     const jsx = await ContactPage({
       params: Promise.resolve({ locale: "en" }),
     });
@@ -39,7 +54,16 @@ describe("ContactPage", () => {
     );
     expect(
       screen.getByRole("link", { name: "+961 3 123 456" }),
-    ).toHaveAttribute("href", "tel:+961 3 123 456");
+    ).toHaveAttribute("href", "tel:+9613123456");
+    expect(
+      screen.getByRole("link", { name: "info@trackway.com" }),
+    ).toHaveAttribute("href", "mailto:info@trackway.com");
+    expect(
+      screen.getByRole("link", { name: "sales@trackway.com" }),
+    ).toHaveAttribute("href", "mailto:sales@trackway.com");
+    expect(
+      screen.getByRole("link", { name: "support@trackway.com" }),
+    ).toHaveAttribute("href", "mailto:support@trackway.com");
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
   });
 });

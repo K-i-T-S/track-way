@@ -14,7 +14,7 @@ export function FeatureCard({
   icon,
 }: FeatureCardProps): React.ReactElement {
   return (
-    <div className="group flex items-center gap-6 border-b border-white/10 py-8 first:border-t">
+    <div className="group flex items-center gap-6 border-b border-border/10 py-8 first:border-t">
       <span className="text-2xl font-bold text-accent">{number}</span>
       {icon && (
         <CapabilityIcon

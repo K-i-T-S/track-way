@@ -12,7 +12,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     "logoUrl": logo.asset->url,
     phoneNumbers,
     whatsappNumber,
-    email,
+    emails,
     socialLinks,
     address,
     footerText

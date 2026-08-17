@@ -1,15 +1,14 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
 import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 
 /* Source icons are opaque 1024x1024 tiles with a near-black background
    baked in (no alpha channel) — cropped to a circle here so the dark square
    corners don't show as a visible edge against the colored badge behind
    them; without this they read as flat dark squares that nearly disappear
-   into the black page. */
+   into the page. */
 function stepImage(src: string, key: string) {
   return (
     <Image
@@ -24,26 +23,18 @@ function stepImage(src: string, key: string) {
   );
 }
 
-const STEP_ICONS: ReactNode[] = [
+const STEP_ICONS = [
   stepImage("/images/step-submit.png", "submit"),
   stepImage("/images/step-communication.png", "communication"),
   stepImage("/images/step-confirm.png", "confirm"),
 ];
 
-/* Rotated across the three steps so the timeline doesn't read as a single
-   flat teal block — same trio used by CoreValueSection's RING_COLORS. */
+/* Rotated across the three steps so the row doesn't read as a single flat
+   teal block — same trio used by CoreValueSection's RING_COLORS. */
 const STEP_COLORS = ["#00E5D4", "#FFC857", "#F4FFFE"] as const;
 
 export function HowItWorksSection(): React.ReactElement {
   const t = useTranslations("homepage");
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end end"],
-  });
-
-  const pathLength = useTransform(scrollYProgress, [0.05, 0.95], [0, 1]);
-  const truckTop = useTransform(scrollYProgress, [0.05, 0.95], ["2%", "94%"]);
 
   const steps = [
     { title: t("howItWorksStep1Title"), desc: t("howItWorksStep1Desc") },
@@ -52,12 +43,8 @@ export function HowItWorksSection(): React.ReactElement {
   ];
 
   return (
-    <section
-      id="how-it-works"
-      ref={ref}
-      className="relative px-6 py-24 lg:px-10"
-    >
-      {/* ambient glow — dual-tone, brighter and tighter than the first pass so it actually reads as light */}
+    <section id="how-it-works" className="relative px-6 py-24 lg:px-10">
+      {/* ambient glow — dual-tone, brighter and tighter than a single wash so it actually reads as light */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden="true"
@@ -75,130 +62,78 @@ export function HowItWorksSection(): React.ReactElement {
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {t("howItWorksTitle")}
           </h2>
-          <p className="mt-4 text-sm text-muted">{t("howItWorksNotice")}</p>
         </div>
 
-        <div className="relative mt-20 grid grid-cols-1 gap-y-16 lg:grid-cols-[80px_1fr]">
-          <div className="relative hidden lg:block">
-            <svg
-              aria-hidden="true"
-              width="80"
-              height="100%"
-              viewBox="0 0 80 600"
-              preserveAspectRatio="none"
-              className="absolute inset-0 h-full w-full"
-            >
-              <path
-                d="M40 0 V600"
-                stroke="rgba(160,160,160,0.15)"
-                strokeWidth="3"
-                fill="none"
-              />
-              <motion.path
-                d="M40 0 V600"
-                stroke="url(#trackGradient)"
-                strokeWidth="3"
-                fill="none"
-                style={{ pathLength }}
-              />
-              <defs>
-                <linearGradient id="trackGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#00E5D4" />
-                  <stop offset="50%" stopColor="#FFC857" />
-                  <stop offset="100%" stopColor="#F4FFFE" />
-                </linearGradient>
-              </defs>
-            </svg>
+        <div className="relative mt-16 grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-6">
+          {/* connecting line between cards, desktop only */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-[52px] hidden h-px md:block"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, #00E5D466 16%, #FFC85766 50%, #F4FFFE66 84%, transparent)",
+            }}
+          />
 
-            <motion.div
-              aria-hidden="true"
-              style={{ top: truckTop }}
-              className="absolute start-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-            >
-              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-accent/40 bg-background shadow-[0_0_36px_rgba(0,229,212,0.55)]">
-                <Image
-                  src="/images/step-truck.png"
-                  alt=""
+          {steps.map((step, i) => {
+            const color = STEP_COLORS[i % STEP_COLORS.length]!;
+            return (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.6, delay: i * 0.15 }}
+                className="group relative overflow-hidden rounded-2xl border border-border/[0.14] bg-surface/[0.06] p-8 backdrop-blur transition-colors duration-500 hover:[border-color:var(--step-border)]"
+                style={{ "--step-border": `${color}4d` } as React.CSSProperties}
+              >
+                {/* hover glow */}
+                <div
                   aria-hidden="true"
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 rounded-full object-cover"
+                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  style={{
+                    background: `radial-gradient(300px circle at 50% 0%, ${color}1f, transparent 70%)`,
+                  }}
                 />
-              </div>
-            </motion.div>
-          </div>
 
-          <div className="flex flex-col gap-12 lg:col-start-2">
-            {steps.map((step, i) => {
-              const isEven = i % 2 === 0;
-              const color = STEP_COLORS[i % STEP_COLORS.length]!;
-              return (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, delay: i * 0.1 }}
-                  className="group relative overflow-hidden rounded-2xl border border-white/[0.14] bg-white/[0.06] p-8 backdrop-blur transition-colors duration-500 hover:[border-color:var(--step-border)]"
-                  style={
-                    { "--step-border": `${color}4d` } as React.CSSProperties
-                  }
-                >
-                  {/* hover glow */}
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                <div className="relative mb-5 flex items-center gap-4">
+                  {/* Fixed black, not the theme-aware `text-background`: this
+                      badge's fill is always one of STEP_COLORS (a fixed
+                      bright teal/gold/ice, unrelated to theme), and the
+                      "ice" step is near-white -- `text-background` would go
+                      near-white too in light mode and disappear on it. */}
+                  <span
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-trackway-black"
                     style={{
-                      background: `radial-gradient(350px circle at ${isEven ? "80%" : "20%"} 50%, ${color}1f, transparent 70%)`,
+                      background: color,
+                      boxShadow: `0 0 30px ${color}4d`,
                     }}
-                  />
-
-                  {/* floating decorative orb, ties the card to its step color */}
-                  <div
-                    aria-hidden="true"
-                    className={`pointer-events-none absolute -bottom-6 ${isEven ? "-right-6" : "-left-6"} h-20 w-20 rounded-full opacity-20 blur-2xl transition-all duration-700 group-hover:scale-125 group-hover:opacity-35`}
-                    style={{ background: color }}
-                  />
-
-                  <div className="relative mb-4 flex items-center gap-4">
-                    <span
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-background"
-                      style={{
-                        background: color,
-                        boxShadow: `0 0 30px ${color}4d`,
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <span
-                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border"
-                      style={{
-                        borderColor: `${color}40`,
-                        background: `${color}14`,
-                        animation: `step-icon-float 3s ease-in-out ${i * 0.5}s infinite`,
-                      }}
-                    >
-                      {STEP_ICONS[i]}
-                    </span>
-                    <h3 className="text-xl font-semibold text-foreground">
-                      {step.title}
-                    </h3>
-                  </div>
-
-                  <p className="relative max-w-xl text-muted">{step.desc}</p>
-
-                  {/* decorative corner line */}
-                  <div
-                    aria-hidden="true"
-                    className={`absolute ${isEven ? "right-0 top-0" : "left-0 bottom-0"} h-16 w-0.5 opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
+                  >
+                    {i + 1}
+                  </span>
+                  <span
+                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border"
                     style={{
-                      background: `linear-gradient(to bottom, transparent, ${color}80, transparent)`,
+                      borderColor: `${color}40`,
+                      background: `${color}14`,
+                      animation: `step-icon-float 3s ease-in-out ${i * 0.5}s infinite`,
                     }}
-                  />
-                </motion.div>
-              );
-            })}
-          </div>
+                  >
+                    {STEP_ICONS[i]}
+                  </span>
+                </div>
+
+                <h3 className="relative text-lg font-semibold text-foreground">
+                  {step.title}
+                </h3>
+                <p className="relative mt-2 text-sm text-muted">{step.desc}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        <div className="relative mx-auto mt-8 max-w-2xl rounded-xl border border-border/10 bg-surface/[0.03] px-5 py-3 text-center text-sm text-muted">
+          {t("howItWorksNotice")}
         </div>
       </div>
 

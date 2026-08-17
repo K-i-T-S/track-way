@@ -4,12 +4,37 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { useTheme } from "@/components/providers/ThemeProvider";
+
+function ThemeToggle({ className }: { className?: string }) {
+  const { theme, toggleTheme } = useTheme();
+  const t = useTranslations("nav");
+  const isDark = theme === "dark";
+
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={isDark ? t("switchToLight") : t("switchToDark")}
+      className={cn(
+        "flex h-9 w-9 items-center justify-center rounded-full border border-border/15 bg-surface/5 text-foreground transition-colors hover:bg-surface/10",
+        className,
+      )}
+    >
+      {isDark ? (
+        <Sun className="h-4 w-4" aria-hidden="true" />
+      ) : (
+        <Moon className="h-4 w-4" aria-hidden="true" />
+      )}
+    </button>
+  );
+}
 
 interface HeaderProps {
   locale: Locale;
@@ -63,7 +88,7 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
         scrolled
-          ? "border-b border-white/10 bg-background/80 backdrop-blur-xl"
+          ? "border-b border-border/10 bg-background/80 backdrop-blur-xl"
           : "bg-transparent",
       )}
     >
@@ -77,12 +102,6 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
             className="text-sm font-medium text-muted transition-colors hover:text-foreground"
           >
             {t("home")}
-          </Link>
-          <Link
-            href={`/${locale}/hardware`}
-            className="text-sm font-medium text-muted transition-colors hover:text-foreground"
-          >
-            {t("hardware")}
           </Link>
           <Link
             href={`/${locale}/about`}
@@ -122,6 +141,7 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
           >
             {t("contactCta")}
           </Link>
+          <ThemeToggle />
         </div>
         <div className="flex shrink-0 items-center gap-3">
           <Button
@@ -137,7 +157,7 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
             aria-expanded={menuOpen}
             aria-controls="mobile-nav-menu"
             aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-foreground transition-colors hover:bg-white/10 md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border/15 bg-surface/5 text-foreground transition-colors hover:bg-surface/10 md:hidden"
           >
             {menuOpen ? (
               <X className="h-5 w-5" aria-hidden="true" />
@@ -156,17 +176,11 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="border-b border-white/10 bg-background/95 backdrop-blur-xl md:hidden"
+            className="border-b border-border/10 bg-background/95 backdrop-blur-xl md:hidden"
           >
             <nav className="flex flex-col gap-1 px-6 py-6">
               <Link href={`/${locale}`} className={mobileNavLinkClass}>
                 {t("home")}
-              </Link>
-              <Link
-                href={`/${locale}/hardware`}
-                className={cn(mobileNavLinkClass, "mt-4")}
-              >
-                {t("hardware")}
               </Link>
               <Link
                 href={`/${locale}/about`}
@@ -180,7 +194,7 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
               >
                 {t("contactCta")}
               </Link>
-              <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-6 text-sm">
+              <div className="mt-6 flex items-center gap-3 border-t border-border/10 pt-6 text-sm">
                 {locale === "en" ? (
                   <span
                     className="font-bold text-foreground"
@@ -214,6 +228,7 @@ export function Header({ locale, logoUrl }: HeaderProps): React.ReactElement {
                     العربية
                   </Link>
                 )}
+                <ThemeToggle className="ms-auto" />
               </div>
             </nav>
           </motion.div>

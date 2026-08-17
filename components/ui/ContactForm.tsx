@@ -32,7 +32,7 @@ export function ContactForm({
       <label className="flex flex-col gap-1">
         {t("nameLabel")}
         <input
-          className="border border-white/10 bg-transparent p-2 text-foreground"
+          className="border border-border/10 bg-transparent p-2 text-foreground"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -40,7 +40,7 @@ export function ContactForm({
       <label className="flex flex-col gap-1">
         {t("messageLabel")}
         <textarea
-          className="border border-white/10 bg-transparent p-2 text-foreground"
+          className="border border-border/10 bg-transparent p-2 text-foreground"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />

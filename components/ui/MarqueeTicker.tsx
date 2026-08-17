@@ -22,9 +22,12 @@ export function MarqueeTicker({ items }: MarqueeTickerProps) {
         )}
       >
         {doubled.map((item, i) => (
+          // Fixed black, not the theme-aware `text-background` token: this
+          // sits on `bg-accent`, a fixed bright teal in both themes, so the
+          // text needs to stay dark regardless of which theme is active.
           <span
             key={`${item}-${i}`}
-            className="font-bold uppercase text-background"
+            className="font-bold uppercase text-trackway-black"
           >
             {item}
           </span>

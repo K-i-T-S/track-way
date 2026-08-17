@@ -50,11 +50,14 @@ const PILL_BASE =
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   // Flagship fill (FLAGSHIP_VARS) is a dark navy base, so its text is light
-  // ice rather than the dark `text-background` the other filled variants use.
+  // ice. `whatsapp`'s fill is a fixed bright accent/warm gradient (toneVars)
+  // in both themes, so its text stays fixed dark (`text-trackway-black`,
+  // not the theme-aware `text-background`, which would go near-white in
+  // light mode and lose contrast against that same bright fill).
   primary: "[background-image:var(--btn-fill)] text-trackway-ice",
-  whatsapp: "[background-image:var(--btn-fill)] text-background",
+  whatsapp: "[background-image:var(--btn-fill)] text-trackway-black",
   secondary:
-    "border border-white/15 bg-white/5 text-foreground backdrop-blur hover:border-white/25 hover:bg-white/10",
+    "border border-border/15 bg-surface/5 text-foreground backdrop-blur hover:border-border/25 hover:bg-surface/10",
   link:
     "group/btn relative inline-flex select-none items-center gap-2 rounded-sm font-bold text-accent " +
     "transition-colors duration-300 hover:text-trackway-ice " +
@@ -201,7 +204,7 @@ export function Button({
             <span
               className={cn(
                 "absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent",
-                filled ? "via-white/70" : "via-white/40",
+                filled ? "via-white/70" : "via-border/40",
               )}
             />
             {/* ambient sheen sweep -- runs continuously at low intensity;

@@ -34,9 +34,22 @@ describe("GlobeHeroBackground", () => {
   it("renders as a decorative, non-interactive full-bleed layer, animated by default", async () => {
     stubMatchMedia(false);
     vi.resetModules();
+    // Imported dynamically, after resetModules, alongside GlobeHeroBackground
+    // itself -- a statically-imported ThemeProvider would resolve to a
+    // stale pre-reset module instance holding a different React Context
+    // object identity, so its <ThemeProvider> wouldn't satisfy
+    // GlobeHeroBackground's (freshly re-imported) useContext(ThemeContext)
+    // call and useTheme() would throw "must be used within a ThemeProvider"
+    // even though a provider is present in the tree.
     const { GlobeHeroBackground } = await import("./GlobeHeroBackground");
+    const { ThemeProvider } =
+      await import("@/components/providers/ThemeProvider");
     const trackRef = createRef<HTMLElement>();
-    render(<GlobeHeroBackground trackRef={trackRef} />);
+    render(
+      <ThemeProvider>
+        <GlobeHeroBackground trackRef={trackRef} />
+      </ThemeProvider>,
+    );
     const el = screen.getByTestId("globe-hero-background");
     expect(el).toHaveAttribute("aria-hidden", "true");
     expect(el).toHaveAttribute("data-motion-mode", "animated");

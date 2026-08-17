@@ -1,5 +1,7 @@
+import { getTranslations } from "next-intl/server";
 import { getSiteSettings } from "@/sanity/queries";
 import { getLocalized } from "@/lib/i18n-utils";
+import { buildTelLink } from "@/lib/contact-links";
 import type { Locale } from "@/i18n/routing";
 import { ContactForm } from "@/components/ui/ContactForm";
 
@@ -10,7 +12,10 @@ export default async function ContactPage({
 }): Promise<React.ReactElement> {
   const { locale } = await params;
   const typedLocale = locale as Locale;
-  const siteSettings = await getSiteSettings();
+  const [siteSettings, t] = await Promise.all([
+    getSiteSettings(),
+    getTranslations("contactLabels"),
+  ]);
 
   return (
     <section className="px-6 py-24">
@@ -19,11 +24,30 @@ export default async function ContactPage({
       </p>
       <div className="mt-2 flex flex-col gap-1">
         {siteSettings.phoneNumbers.map((phone) => (
-          <a key={phone} href={`tel:${phone}`}>
+          <a key={phone} href={buildTelLink(phone)}>
             {phone}
           </a>
         ))}
-        <a href={`mailto:${siteSettings.email}`}>{siteSettings.email}</a>
+      </div>
+      <div className="mt-2 flex flex-col gap-1">
+        <span>
+          {t("general")}:{" "}
+          <a href={`mailto:${siteSettings.emails.info}`}>
+            {siteSettings.emails.info}
+          </a>
+        </span>
+        <span>
+          {t("sales")}:{" "}
+          <a href={`mailto:${siteSettings.emails.sales}`}>
+            {siteSettings.emails.sales}
+          </a>
+        </span>
+        <span>
+          {t("support")}:{" "}
+          <a href={`mailto:${siteSettings.emails.support}`}>
+            {siteSettings.emails.support}
+          </a>
+        </span>
       </div>
       <div className="mt-2 flex gap-4">
         {siteSettings.socialLinks.map((link) => (
@@ -35,7 +59,7 @@ export default async function ContactPage({
       <div className="mt-8 max-w-md">
         <ContactForm
           whatsappNumber={siteSettings.whatsappNumber}
-          email={siteSettings.email}
+          email={siteSettings.emails.info}
         />
       </div>
     </section>

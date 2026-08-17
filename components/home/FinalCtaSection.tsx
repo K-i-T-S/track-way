@@ -114,7 +114,7 @@ export function FinalCtaSection({
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-transparent px-8 py-16 text-center backdrop-blur-sm"
+          className="relative overflow-hidden rounded-3xl border border-border/10 bg-gradient-to-br from-surface/[0.06] to-transparent px-8 py-16 text-center backdrop-blur-sm"
         >
           <div
             aria-hidden="true"

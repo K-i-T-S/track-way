@@ -9,7 +9,8 @@ export const siteSettings = defineType({
       name: "logo",
       title: "Logo",
       type: "image",
-      description: "Upload the TrackWay logo (SVG preferred). Fallback: /brand/svg/trackway-logo-primary-no-tagline.svg",
+      description:
+        "Upload the TrackWay logo (SVG preferred). Fallback: /brand/svg/trackway-logo-primary-no-tagline.svg",
     }),
     defineField({
       name: "phoneNumbers",
@@ -22,7 +23,31 @@ export const siteSettings = defineType({
       title: "WhatsApp Number",
       type: "string",
     }),
-    defineField({ name: "email", title: "Email", type: "string" }),
+    defineField({
+      name: "emails",
+      title: "Emails",
+      type: "object",
+      fields: [
+        defineField({
+          name: "info",
+          title: "General / Info",
+          type: "string",
+          validation: (Rule) => Rule.required().email(),
+        }),
+        defineField({
+          name: "sales",
+          title: "Sales",
+          type: "string",
+          validation: (Rule) => Rule.required().email(),
+        }),
+        defineField({
+          name: "support",
+          title: "Support",
+          type: "string",
+          validation: (Rule) => Rule.required().email(),
+        }),
+      ],
+    }),
     defineField({
       name: "socialLinks",
       title: "Social Links",

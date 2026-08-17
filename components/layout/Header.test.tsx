@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { Header } from "./Header";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const mockUsePathname = vi.fn();
 
@@ -26,15 +27,19 @@ const messages = {
     contact: "Contact",
     contactCta: "Contact Us",
     bookInstallation: "Book an Installation",
+    switchToLight: "Switch to light theme",
+    switchToDark: "Switch to dark theme",
   },
 };
 
 function renderHeader(locale: "en" | "ar", pathnameWithoutLocale: string) {
   mockUsePathname.mockReturnValue(pathnameWithoutLocale);
   return render(
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <Header locale={locale} logoUrl="https://cdn.sanity.io/logo.png" />
-    </NextIntlClientProvider>,
+    <ThemeProvider>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <Header locale={locale} logoUrl="https://cdn.sanity.io/logo.png" />
+      </NextIntlClientProvider>
+    </ThemeProvider>,
   );
 }
 
@@ -45,10 +50,9 @@ describe("Header", () => {
       "href",
       "/en",
     );
-    expect(screen.getByRole("link", { name: "Hardware" })).toHaveAttribute(
-      "href",
-      "/en/hardware",
-    );
+    expect(
+      screen.queryByRole("link", { name: "Hardware" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "About" })).toHaveAttribute(
       "href",
       "/en/about",

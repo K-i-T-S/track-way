@@ -8,4 +8,10 @@ test-results
 next-env.d.ts
 *.tsbuildinfo
 3d-scrollable-landing-animations
+new-hardware-page
+trackway-design-rehaul
+trackway_devin_handoff
+edit2
+reel-generator
+.playwright-mcp/
 .claude/

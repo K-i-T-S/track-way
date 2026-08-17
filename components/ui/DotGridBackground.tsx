@@ -15,7 +15,7 @@ export function DotGridBackground({
       data-variant={variant}
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 bg-[radial-gradient(circle,#ffffff14_1px,transparent_1px)] bg-[length:16px_16px]",
+        "pointer-events-none absolute inset-0 bg-[radial-gradient(circle,rgb(var(--color-ink-rgb)/0.08)_1px,transparent_1px)] bg-[length:16px_16px]",
         className,
       )}
     />

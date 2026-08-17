@@ -32,6 +32,13 @@ const messages = {
     emailSuccess:
       "Your request has been received. Your preferred date is not yet confirmed. TrackWay will contact you through WhatsApp to confirm your appointment.",
     genericError: "We couldn't process your request. Please try again.",
+    confirmationNotice:
+      "Submitting a preferred date does not automatically confirm the appointment.",
+    whatsappPreviewTitle: "Confirmation via WhatsApp",
+    whatsappPreviewIntro:
+      "Once you continue, our team will contact you on WhatsApp to confirm your details and schedule the installation.",
+    whatsappPreviewLabel: "Your WhatsApp message preview",
+    whatsappPreviewPlaceholder: "Fill in the form to preview your message.",
   },
   footer: { privacyPolicy: "Privacy Policy" },
 };
@@ -72,14 +79,7 @@ describe("BookingForm", () => {
     expect(screen.getByLabelText("Number of Vehicles")).toHaveValue(1);
   });
 
-  it("opens WhatsApp only after a successful save", async () => {
-    submitBookingRequestMock.mockResolvedValue({
-      success: true,
-      data: { id: "1" },
-    });
-    const user = userEvent.setup();
-    renderForm();
-
+  async function fillValidForm(user: ReturnType<typeof userEvent.setup>) {
     await user.type(screen.getByLabelText("Full Name"), "Nadia Khoury");
     await user.type(screen.getByLabelText("Phone Number"), "+961 3 123 456");
     await user.type(
@@ -96,6 +96,16 @@ describe("BookingForm", () => {
       "Beirut",
     );
     await user.type(screen.getByLabelText("Preferred Date"), "2099-01-01");
+  }
+
+  it("opens WhatsApp once validation passes, after a successful save", async () => {
+    submitBookingRequestMock.mockResolvedValue({
+      success: true,
+      data: { id: "1" },
+    });
+    const user = userEvent.setup();
+    renderForm();
+    await fillValidForm(user);
     await user.click(
       screen.getByRole("button", { name: "Continue on WhatsApp" }),
     );
@@ -108,32 +118,36 @@ describe("BookingForm", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows the server's honest error and does not open WhatsApp when the save fails", async () => {
+  it("still opens WhatsApp when server-side persistence fails (e.g. Supabase not configured yet) -- the WhatsApp message itself carries all the details", async () => {
     submitBookingRequestMock.mockResolvedValue({
       success: false,
       error: "We couldn't save your request. Please try again.",
     });
     const user = userEvent.setup();
     renderForm();
-
-    await user.type(screen.getByLabelText("Full Name"), "Nadia Khoury");
-    await user.type(screen.getByLabelText("Phone Number"), "+961 3 123 456");
-    await user.type(
-      screen.getByLabelText("Email Address"),
-      "nadia@khourylogistics.com",
-    );
-    await user.selectOptions(
-      screen.getByLabelText("Customer Type"),
-      "Private Vehicle Owner",
-    );
-    await user.selectOptions(screen.getByLabelText("Vehicle Type"), "Cars");
-    await user.type(
-      screen.getByLabelText("Preferred Installation Area"),
-      "Beirut",
-    );
-    await user.type(screen.getByLabelText("Preferred Date"), "2099-01-01");
+    await fillValidForm(user);
     await user.click(
       screen.getByRole("button", { name: "Continue on WhatsApp" }),
+    );
+
+    await waitFor(() => expect(window.open).toHaveBeenCalled());
+    expect(
+      await screen.findByText(
+        "Your request has been saved. We've opened WhatsApp with your details pre-filled — please tap send to reach our team.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("shows the server's honest error and does not claim success when the email channel's save fails", async () => {
+    submitBookingRequestMock.mockResolvedValue({
+      success: false,
+      error: "We couldn't save your request. Please try again.",
+    });
+    const user = userEvent.setup();
+    renderForm();
+    await fillValidForm(user);
+    await user.click(
+      screen.getByRole("button", { name: "Send Request by Email" }),
     );
 
     expect(

@@ -3,11 +3,17 @@ export type LocalizedString = {
   ar: string;
 };
 
+export interface SiteSettingsEmails {
+  info: string;
+  sales: string;
+  support: string;
+}
+
 export interface SiteSettings {
   logoUrl: string;
   phoneNumbers: string[];
   whatsappNumber: string;
-  email: string;
+  emails: SiteSettingsEmails;
   socialLinks: { platform: string; url: string }[];
   address: LocalizedString;
   footerText: LocalizedString;

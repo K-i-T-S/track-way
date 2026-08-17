@@ -92,12 +92,12 @@ function renderHomePage(jsx: React.ReactElement) {
 }
 
 describe("HomePage", () => {
-  it("renders the hero headline and at least one feature card", async () => {
+  it("renders the localized hero headline and at least one feature card", async () => {
     const jsx = await HomePage({ params: Promise.resolve({ locale: "en" }) });
     renderHomePage(jsx);
     expect(
       screen.getByRole("heading", {
-        name: "GPS tracking and fleet management that keeps you in control.",
+        name: "Track everything that moves",
       }),
     ).toBeInTheDocument();
     expect(
@@ -105,11 +105,12 @@ describe("HomePage", () => {
     ).toBeGreaterThan(0);
   });
 
-  it("renders a hardware teaser link to /hardware and the final CTA linking to booking and contact", async () => {
+  it("renders the final CTA linking to booking and contact, with no hardware link", async () => {
     const jsx = await HomePage({ params: Promise.resolve({ locale: "en" }) });
     renderHomePage(jsx);
-    const hardwareLink = screen.getByRole("link", { name: "View Hardware" });
-    expect(hardwareLink).toHaveAttribute("href", "/en/hardware");
+    expect(
+      screen.queryByRole("link", { name: "View Hardware" }),
+    ).not.toBeInTheDocument();
 
     expect(screen.getByText("Get in touch")).toBeInTheDocument();
     const bookingLinks = screen.getAllByRole("link", {
@@ -131,7 +132,7 @@ describe("HomePage", () => {
       name: "Live Tracking",
     });
     const hasIcon = featureHeadings.some((heading) =>
-      heading.closest("div.group")?.querySelector("svg"),
+      heading.closest("div.group")?.querySelector("img"),
     );
     expect(hasIcon).toBe(true);
   });

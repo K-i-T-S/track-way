@@ -87,7 +87,7 @@ function Particles({ count }: { count: number }) {
       {particles.map((p) => (
         <span
           key={p.id}
-          className="absolute rounded-full bg-white"
+          className="absolute rounded-full bg-particle"
           style={{
             left: `${p.x}%`,
             top: `${p.y}%`,
@@ -215,7 +215,7 @@ function ServiceCard({
       <div
         className={`
           group relative flex h-72 flex-col items-center justify-center gap-3
-          rounded-2xl border border-white/15
+          rounded-2xl border border-border/15
           bg-gradient-to-br ${palette.gradient}
           p-5 text-center backdrop-blur-xl
           transition-all duration-500 ease-out
@@ -241,9 +241,19 @@ function ServiceCard({
             "transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
         }}
       >
-        {/* icon */}
-        <div className="flex h-24 w-24 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
-          <CapabilityImage name={card.icon} size={64} className="h-16 w-16" />
+        {/* icon -- source PNGs are opaque 1024x1024 tiles with a lot of
+            near-black padding baked in around a small centered glyph (no
+            alpha channel); shown at natural size that padding reads as a
+            dark, oddly "zoomed into empty space" square. `overflow-hidden`
+            + `scale-125` crops in past the padding so the glyph itself
+            fills the badge, the same fix HowItWorksSection/FeatureRow
+            already apply to this same icon set via a circular crop. */}
+        <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-white/15 backdrop-blur-sm">
+          <CapabilityImage
+            name={card.icon}
+            size={64}
+            className="h-16 w-16 scale-125 object-cover"
+          />
         </div>
 
         {/* title */}
@@ -502,7 +512,9 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
                 setRotation(currentBase + targetAngle);
               }}
               className={`h-2 rounded-full transition-all duration-500 ${
-                isFront ? "w-8 bg-accent" : "w-2 bg-white/25 hover:bg-white/40"
+                isFront
+                  ? "w-8 bg-accent"
+                  : "w-2 bg-particle/25 hover:bg-particle/40"
               }`}
               aria-label={card.title}
             />

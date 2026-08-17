@@ -12,8 +12,8 @@ function badgeImage(src: string) {
         src={src}
         alt=""
         aria-hidden="true"
-        width={24}
-        height={24}
+        width={40}
+        height={40}
         className={className}
       />
     );
@@ -173,10 +173,17 @@ export function ControlRoomSection(): React.ReactElement {
             opacity: { duration: 0.6, delay },
             y: { duration: 5, repeat: Infinity, ease: "easeInOut", delay },
           }}
-          className="absolute hidden h-14 w-14 items-center justify-center rounded-2xl border border-accent/30 bg-background/70 text-accent shadow-[0_0_30px_rgba(0,229,212,0.25)] backdrop-blur sm:flex"
+          className="absolute hidden h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-accent/30 bg-background/70 text-accent shadow-[0_0_30px_rgba(0,229,212,0.25)] backdrop-blur sm:flex"
           style={{ top, insetInlineStart: start }}
         >
-          <Icon className="h-6 w-6" />
+          {/* badge-*.png source tiles have the same near-black padding
+              issue as the CapabilityImage icon set (see ServiceCarousel) --
+              scale-125 + the parent's overflow-hidden crops past it. Sized
+              close to the h-14 w-14 badge box itself (was h-6 w-6, a tiny
+              icon adrift in a much bigger box, which made the padding
+              problem read even worse than in ServiceCarousel's tighter
+              icon/box ratio). */}
+          <Icon className="h-10 w-10 scale-125 object-cover" />
         </motion.div>
       ))}
 

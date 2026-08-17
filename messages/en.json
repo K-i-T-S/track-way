@@ -7,7 +7,9 @@
     "contactCta": "Contact Us",
     "bookInstallation": "Book an Installation",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
   },
   "homepage": {
     "heroBadge": "Know Every Move.",
@@ -57,7 +59,45 @@
     "howItWorksStep3Desc": "We install your GPS hardware and walk you through your live dashboard.",
     "finalCtaTitle": "Ready to take control of your vehicles?",
     "finalCtaPrimary": "Book an Installation",
-    "finalCtaSecondary": "Talk to Us"
+    "finalCtaSecondary": "Talk to Us",
+    "trustIndicator1": "Live GPS Tracking",
+    "trustIndicator2": "Lebanon-Wide Coverage",
+    "trustIndicator3": "24/7 WhatsApp Support",
+    "platformDemoEyebrow": "The Platform",
+    "platformDemoTitle": "One platform. Complete visibility.",
+    "platformDemoSubtitle": "TrackWay brings your fleet, drivers, and operations together in one connected view — live data, actionable insights, better control.",
+    "platformDemoPoint1Title": "Real-time awareness",
+    "platformDemoPoint1Desc": "Live tracking, instant alerts, and geofencing keep you in control of every move.",
+    "platformDemoPoint2Title": "Smarter decisions",
+    "platformDemoPoint2Desc": "Actionable insights and reports help you optimize performance and reduce operational costs.",
+    "platformDemoPoint3Title": "Better outcomes",
+    "platformDemoPoint3Desc": "Safer drivers, efficient operations, and happier customers — every day.",
+    "platformDemoMockNavOverview": "Overview",
+    "platformDemoMockNavLiveMap": "Live Map",
+    "platformDemoMockNavVehicles": "Vehicles",
+    "platformDemoMockNavDrivers": "Drivers",
+    "platformDemoMockNavAlerts": "Alerts",
+    "platformDemoMockNavSettings": "Settings",
+    "platformDemoMockLive": "Live",
+    "platformDemoMockVehicle1Name": "Truck 23",
+    "platformDemoMockVehicle1Location": "Beirut–Damascus Hwy",
+    "platformDemoMockVehicle2Name": "Van 12",
+    "platformDemoMockVehicle2Location": "Tripoli",
+    "platformDemoMockVehicle3Name": "Car 07",
+    "platformDemoMockVehicle3Location": "Ashrafieh, Beirut",
+    "platformDemoMockVehicle4Name": "Truck 18",
+    "platformDemoMockVehicle4Location": "Sidon Road",
+    "platformDemoMockVehicle5Name": "Van 05",
+    "platformDemoMockVehicle5Location": "Near Baalbek",
+    "platformDemoMockTripPlayback": "Trip Playback",
+    "platformDemoMockRecentAlert": "Recent Alert",
+    "platformDemoMockAlertOverspeed": "Overspeed",
+    "platformDemoMockReportsSummary": "Reports (This Week)",
+    "platformDemoMockLiveStatus": "Live Status",
+    "platformDemoMockTodaySummary": "Today's Summary",
+    "platformDemoMockDistance": "Distance",
+    "platformDemoMockTrips": "Trips",
+    "platformDemoMockRecentAlerts": "Recent Alerts"
   },
   "home": {
     "hardwareTeaser": "Explore our GPS tracking hardware built for fleets and individuals.",
@@ -89,15 +129,14 @@
     "privacyPolicy": "Privacy Policy",
     "createdBy": "Created and maintained by"
   },
+  "contactLabels": {
+    "general": "General",
+    "sales": "Sales",
+    "support": "Support"
+  },
   "privacy": {
     "title": "Privacy Policy",
     "body": "TrackWay's full Privacy Policy is being finalized and will be published here shortly. For questions about how your information is handled, please contact us via WhatsApp or email."
-  },
-  "bookInstallationStub": {
-    "title": "Book an Installation",
-    "body": "Online booking is coming soon. In the meantime, message us on WhatsApp and our team will schedule your installation directly.",
-    "whatsappCta": "Continue on WhatsApp",
-    "whatsappMessage": "Hi, I'd like to book a GPS installation."
   },
   "booking": {
     "pageTitle": "Book an Installation",
@@ -119,6 +158,10 @@
     "sendByEmail": "Send Request by Email",
     "whatsappSuccess": "Your request has been saved. We've opened WhatsApp with your details pre-filled — please tap send to reach our team.",
     "emailSuccess": "Your request has been received. Your preferred date is not yet confirmed. TrackWay will contact you through WhatsApp to confirm your appointment.",
-    "genericError": "We couldn't process your request. Please try again."
+    "genericError": "We couldn't process your request. Please try again.",
+    "whatsappPreviewTitle": "Confirmation via WhatsApp",
+    "whatsappPreviewIntro": "Once you continue, our team will contact you on WhatsApp to confirm your details and schedule the installation.",
+    "whatsappPreviewLabel": "Your WhatsApp message preview",
+    "whatsappPreviewPlaceholder": "Fill in the form to preview your message."
   }
 }

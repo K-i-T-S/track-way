@@ -1,15 +1,41 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Backs a Tailwind color token with a `<r> <g> <b>` CSS custom property
+ * (set per-theme in app/globals.css) instead of a literal hex value, so the
+ * token can still support Tailwind's `/opacity` modifier (e.g.
+ * `bg-background/80`) via the `rgb(var(...) / <alpha>)` syntax -- a plain
+ * `var(--x)` string can't do this because Tailwind resolves opacity
+ * modifiers at build time and can't see through an opaque CSS variable.
+ *
+ * This is Tailwind's own documented CSS-variable dark-mode pattern
+ * (tailwindcss.com/docs/customizing-colors#using-css-variables) and works
+ * correctly at runtime; the `as unknown as string` below exists only
+ * because @types/tailwindcss's `colors` type doesn't model per-key
+ * functions (only the whole theme can be a function of `PluginUtils`), not
+ * because the value is actually a string.
+ */
+function withOpacity(cssVar: string): string {
+  const resolver = ({ opacityValue }: { opacityValue?: string }) =>
+    opacityValue === undefined
+      ? `rgb(var(${cssVar}))`
+      : `rgb(var(${cssVar}) / ${opacityValue})`;
+  return resolver as unknown as string;
+}
+
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        background: "#000000",
+        background: withOpacity("--color-background-rgb"),
         accent: "#00E5D4",
         accentWarm: "#FFC857",
-        muted: "#5B6669",
-        foreground: "#FFFFFF",
+        muted: withOpacity("--color-muted-rgb"),
+        foreground: withOpacity("--color-foreground-rgb"),
+        surface: withOpacity("--color-ink-rgb"),
+        border: withOpacity("--color-ink-rgb"),
+        particle: withOpacity("--color-ink-rgb"),
         trackway: {
           black: "#000000",
           teal: "#00E5D4",

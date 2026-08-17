@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { useReducedMotion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import {
   LEBANON,
   BEIRUT,
@@ -58,6 +59,172 @@ const AMBIENT_FRAME_INTERVAL_MS = 66; // ~15fps
 // this phase is the active/foreground animation.
 const PINNED_FRAME_INTERVAL_MS = 33; // ~30fps
 
+// Two full color scripts for the canvas-drawn globe/map scene, keyed by
+// theme. The dark script is the original design (deep-space navy ocean,
+// neon cyan/gold accents). The light script matches hero-light.jpeg: a
+// pale, airy sphere with no starfield, teal-filled MENA landmass, and
+// enough contrast bumped into every accent color (routes, marker, labels)
+// since the neon dark-theme values would nearly disappear against a light
+// background.
+const PALETTES = {
+  dark: {
+    bgGlow: [
+      "rgba(22,242,207,.12)",
+      "rgba(21,67,111,.17)",
+      "rgba(0,0,0,0)",
+    ] as const,
+    showStars: true,
+    starColor: "#dffbff",
+    globeGrid: "rgba(162, 235, 255, .16)",
+    countryMenaFill: "rgba(24,242,207,.30)",
+    countryMenaStroke: "rgba(255, 209, 102, .42)",
+    countryOtherFill: "rgba(96, 205, 190, .20)",
+    countryOtherStroke: "rgba(180, 235, 255, .18)",
+    routeGold: "rgba(255,209,102,.45)",
+    routeGreen: "rgba(109,255,172,.45)",
+    routeCyan: "rgba(100,244,255,.45)",
+    markerRing: (a: number) => `rgba(109,255,172,${a})`,
+    markerCore: "#ffffff",
+    markerDot: "#6dffac",
+    markerCrosshair: "rgba(255,255,255,.72)",
+    markerLabel: "rgba(230,255,252,.96)",
+    sphereHalo: [
+      "rgba(100,244,255,0)",
+      "rgba(100,244,255,.10)",
+      "rgba(100,244,255,0)",
+    ] as const,
+    sphereOcean: [
+      "rgba(94, 247, 255,.35)",
+      "rgba(36, 107, 154,.48)",
+      "rgba(8, 34, 64,.86)",
+      "rgba(2, 8, 24,.96)",
+    ] as const,
+    sphereEdge: "rgba(170,245,255,.46)",
+    sphereLimb: "rgba(100,244,255,.22)",
+    flatBackdrop: [
+      "rgba(8,26,46,.28)",
+      "rgba(3,18,31,.62)",
+      "rgba(2,9,21,.46)",
+    ] as const,
+    flatBorder: (fold: number) => `rgba(120, 225, 255, ${0.1 + 0.22 * fold})`,
+    flatSheenMid: (a: number) => `rgba(100,244,255,${a})`,
+    flatCrease: (a: number) => `rgba(255,255,255,${a})`,
+    flatGrid: "rgba(141, 223, 255, .15)",
+    flatLebFill: (a: number) => `rgba(109,255,172,${a})`,
+    flatLebStroke: "rgba(255,255,255,.92)",
+    flatMenaFill: (a: number) => `rgba(28, 219, 207, ${a})`,
+    flatMenaStroke: "rgba(186, 247, 255, .36)",
+    flatOtherFill: "rgba(93,124,163,.12)",
+    flatOtherStroke: "rgba(142, 180, 205, .14)",
+    routeLine: (color: string) =>
+      color === "#ffd166"
+        ? "#ffd166"
+        : color === "#6dffac"
+          ? "#6dffac"
+          : "#64f4ff",
+    routeLabel: "rgba(231,251,255,.82)",
+    satelliteColor: "rgba(100,244,255,.85)",
+    satelliteOrbit: "rgba(100,244,255,.07)",
+    labelImportant: "rgba(255,255,255,.96)",
+    labelImportantShadow: "rgba(109,255,172,.75)",
+    labelCity: "rgba(226,251,255,.78)",
+    labelWater: "rgba(117,206,255,.36)",
+    labelLand: "rgba(205,228,235,.45)",
+    overlayRing: (a: number) => `rgba(109,255,172,${a})`,
+    overlayCrosshair: "rgba(255,255,255,.84)",
+    overlayPin: "#6dffac",
+    overlayPinShadow: "rgba(109,255,172,.88)",
+    overlayBeirutCore: "#fff",
+    overlayBeirutDot: "#ff5a77",
+    overlayBoxBg: "rgba(4, 16, 30, .72)",
+    overlayBoxBorder: "rgba(109,255,172,.34)",
+    overlayLabel: "#6dffac",
+    overlayTitle: "#ffffff",
+    overlayCoords: "rgba(203,230,238,.72)",
+    unfoldStroke: "rgba(100,244,255,.18)",
+    unfoldFill: "rgba(255,209,102,.10)",
+  },
+  light: {
+    bgGlow: [
+      "rgba(19,242,207,.10)",
+      "rgba(214,241,238,.4)",
+      "rgba(255,255,255,0)",
+    ] as const,
+    showStars: false,
+    starColor: "#bfe9e3",
+    globeGrid: "rgba(70, 150, 142, .12)",
+    countryMenaFill: "rgba(45, 178, 163, .55)",
+    countryMenaStroke: "rgba(21, 122, 110, .35)",
+    countryOtherFill: "rgba(120, 190, 183, .16)",
+    countryOtherStroke: "rgba(94, 170, 163, .22)",
+    routeGold: "rgba(184,124,10,.55)",
+    routeGreen: "rgba(14,140,86,.55)",
+    routeCyan: "rgba(18,116,158,.55)",
+    markerRing: (a: number) => `rgba(14,140,86,${a})`,
+    markerCore: "#0e2f34",
+    markerDot: "#1f9d6f",
+    markerCrosshair: "rgba(15,58,54,.6)",
+    markerLabel: "rgba(13,42,40,.92)",
+    sphereHalo: [
+      "rgba(45,170,155,0)",
+      "rgba(45,170,155,.08)",
+      "rgba(45,170,155,0)",
+    ] as const,
+    sphereOcean: [
+      "rgba(255,255,255,.95)",
+      "rgba(224,247,244,.92)",
+      "rgba(198,235,230,.72)",
+      "rgba(176,224,217,.58)",
+    ] as const,
+    sphereEdge: "rgba(63,158,148,.42)",
+    sphereLimb: "rgba(45,170,155,.16)",
+    flatBackdrop: [
+      "rgba(255,255,255,.55)",
+      "rgba(226,247,244,.68)",
+      "rgba(210,238,234,.5)",
+    ] as const,
+    flatBorder: (fold: number) => `rgba(45, 150, 138, ${0.14 + 0.2 * fold})`,
+    flatSheenMid: (a: number) => `rgba(45,170,155,${a})`,
+    flatCrease: (a: number) => `rgba(20,60,55,${a})`,
+    flatGrid: "rgba(70, 150, 142, .14)",
+    flatLebFill: (a: number) => `rgba(16,150,90,${a})`,
+    flatLebStroke: "rgba(11,64,46,.85)",
+    flatMenaFill: (a: number) => `rgba(35, 160, 148, ${a})`,
+    flatMenaStroke: "rgba(24, 110, 102, .38)",
+    flatOtherFill: "rgba(140,170,185,.14)",
+    flatOtherStroke: "rgba(110,145,160,.18)",
+    routeLine: (color: string) =>
+      color === "#ffd166"
+        ? "#b87c0a"
+        : color === "#6dffac"
+          ? "#0e8c56"
+          : "#12749e",
+    routeLabel: "rgba(20,48,46,.82)",
+    satelliteColor: "rgba(18,116,158,.85)",
+    satelliteOrbit: "rgba(18,116,158,.09)",
+    labelImportant: "rgba(13,40,38,.95)",
+    labelImportantShadow: "rgba(14,140,86,.5)",
+    labelCity: "rgba(24,58,55,.75)",
+    labelWater: "rgba(24,110,150,.42)",
+    labelLand: "rgba(60,95,92,.5)",
+    overlayRing: (a: number) => `rgba(14,140,86,${a})`,
+    overlayCrosshair: "rgba(15,58,54,.72)",
+    overlayPin: "#0e8c56",
+    overlayPinShadow: "rgba(14,140,86,.55)",
+    overlayBeirutCore: "#fff",
+    overlayBeirutDot: "#d6304f",
+    overlayBoxBg: "rgba(255, 255, 255, .82)",
+    overlayBoxBorder: "rgba(14,140,86,.3)",
+    overlayLabel: "#0e8c56",
+    overlayTitle: "#0d2a26",
+    overlayCoords: "rgba(60,88,85,.75)",
+    unfoldStroke: "rgba(18,116,158,.16)",
+    unfoldFill: "rgba(184,124,10,.10)",
+  },
+} as const satisfies Record<"dark" | "light", Record<string, unknown>>;
+
+type Palette = (typeof PALETTES)[keyof typeof PALETTES];
+
 interface Star {
   x: number;
   y: number;
@@ -94,6 +261,17 @@ export function GlobeHeroBackground({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState<"pinned" | "ambient">("pinned");
   const reducedMotion = useReducedMotion();
+  const { theme } = useTheme();
+  // Read via ref inside the rAF loop rather than putting `theme` in the
+  // main effect's dependency array -- that effect owns the ScrollTrigger,
+  // the star/satellite field, and `progress`, so restarting it on every
+  // theme toggle would reset scroll-linked progress and re-randomize the
+  // decorative fields. A ref lets color choice update every frame without
+  // touching any of that.
+  const themeRef = useRef(theme);
+  useEffect(() => {
+    themeRef.current = theme;
+  }, [theme]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -119,6 +297,7 @@ export function GlobeHeroBackground({
     let rafId = 0;
     let last = performance.now();
     let lastDrawTime = 0;
+    let pal: Palette = PALETTES[themeRef.current];
 
     const stars: Star[] = Array.from({ length: 240 }, () => ({
       x: Math.random(),
@@ -236,28 +415,31 @@ export function GlobeHeroBackground({
         height * 0.48,
         Math.max(width, height) * 0.8,
       );
-      grd.addColorStop(0, "rgba(22,242,207,.12)");
-      grd.addColorStop(0.28, "rgba(21,67,111,.17)");
-      grd.addColorStop(1, "rgba(0,0,0,0)");
+      grd.addColorStop(0, pal.bgGlow[0]);
+      grd.addColorStop(0.28, pal.bgGlow[1]);
+      grd.addColorStop(1, pal.bgGlow[2]);
       ctx!.fillStyle = grd;
       ctx!.fillRect(0, 0, width, height);
-      for (const s of stars) {
-        const x =
-          ((s.x + Math.sin(time * s.drift + s.phase) * 0.008) % 1) * width;
-        const y = ((s.y + time * s.drift * 0.03) % 1) * height;
-        ctx!.globalAlpha = s.a * (0.55 + 0.45 * Math.sin(time * 1.5 + s.phase));
-        ctx!.fillStyle = "#dffbff";
-        ctx!.beginPath();
-        ctx!.arc(x, y, s.r, 0, Math.PI * 2);
-        ctx!.fill();
+      if (pal.showStars) {
+        for (const s of stars) {
+          const x =
+            ((s.x + Math.sin(time * s.drift + s.phase) * 0.008) % 1) * width;
+          const y = ((s.y + time * s.drift * 0.03) % 1) * height;
+          ctx!.globalAlpha =
+            s.a * (0.55 + 0.45 * Math.sin(time * 1.5 + s.phase));
+          ctx!.fillStyle = pal.starColor;
+          ctx!.beginPath();
+          ctx!.arc(x, y, s.r, 0, Math.PI * 2);
+          ctx!.fill();
+        }
+        ctx!.globalAlpha = 1;
       }
-      ctx!.globalAlpha = 1;
     }
 
     function drawGlobeGrid(p: GlobeDrawParams): void {
       ctx!.save();
       ctx!.lineWidth = 0.8;
-      ctx!.strokeStyle = "rgba(162, 235, 255, .16)";
+      ctx!.strokeStyle = pal.globeGrid;
       for (let lat = -75; lat <= 75; lat += 15) {
         ctx!.beginPath();
         let started = false;
@@ -303,12 +485,10 @@ export function GlobeHeroBackground({
         const name = countryName(feat);
         if (name === "Antarctica") continue;
         const mena = isMena(feat);
-        ctx!.fillStyle = mena
-          ? "rgba(24,242,207,.30)"
-          : "rgba(96, 205, 190, .20)";
+        ctx!.fillStyle = mena ? pal.countryMenaFill : pal.countryOtherFill;
         ctx!.strokeStyle = mena
-          ? "rgba(255, 209, 102, .42)"
-          : "rgba(180, 235, 255, .18)";
+          ? pal.countryMenaStroke
+          : pal.countryOtherStroke;
         ctx!.lineWidth = mena ? 1.15 : 0.55;
         eachRing(feat, (ring) => {
           ctx!.beginPath();
@@ -349,10 +529,10 @@ export function GlobeHeroBackground({
         const my = (a.y + dest.y) / 2 - p.r * 0.14;
         ctx!.strokeStyle =
           r.color === "#ffd166"
-            ? "rgba(255,209,102,.45)"
+            ? pal.routeGold
             : r.color === "#6dffac"
-              ? "rgba(109,255,172,.45)"
-              : "rgba(100,244,255,.45)";
+              ? pal.routeGreen
+              : pal.routeCyan;
         ctx!.lineWidth = 1.25;
         ctx!.beginPath();
         ctx!.moveTo(a.x, a.y);
@@ -377,21 +557,21 @@ export function GlobeHeroBackground({
       const pulse = (time * 1.4) % 1;
       for (let i = 0; i < 3; i++) {
         const rr = (9 + pulse * 26 + i * 11) * s;
-        ctx!.strokeStyle = `rgba(109,255,172,${(1 - pulse) * (0.34 - i * 0.08)})`;
+        ctx!.strokeStyle = pal.markerRing((1 - pulse) * (0.34 - i * 0.08));
         ctx!.lineWidth = 1.3;
         ctx!.beginPath();
         ctx!.arc(0, 0, rr, 0, Math.PI * 2);
         ctx!.stroke();
       }
-      ctx!.fillStyle = "#ffffff";
+      ctx!.fillStyle = pal.markerCore;
       ctx!.beginPath();
       ctx!.arc(0, 0, 4.6 * s, 0, Math.PI * 2);
       ctx!.fill();
-      ctx!.fillStyle = "#6dffac";
+      ctx!.fillStyle = pal.markerDot;
       ctx!.beginPath();
       ctx!.arc(0, 0, 2.3 * s, 0, Math.PI * 2);
       ctx!.fill();
-      ctx!.strokeStyle = "rgba(255,255,255,.72)";
+      ctx!.strokeStyle = pal.markerCrosshair;
       ctx!.lineWidth = 1;
       ctx!.beginPath();
       ctx!.moveTo(-18 * s, 0);
@@ -406,7 +586,7 @@ export function GlobeHeroBackground({
       if (progress > 0.25) {
         ctx!.globalAlpha = smoothstep(0.25, 0.5, progress);
         ctx!.font = `800 ${11 * s}px Inter, system-ui, sans-serif`;
-        ctx!.fillStyle = "rgba(230,255,252,.96)";
+        ctx!.fillStyle = pal.markerLabel;
         ctx!.fillText("LEBANON", 13 * s, -12 * s);
       }
       ctx!.restore();
@@ -424,9 +604,9 @@ export function GlobeHeroBackground({
         p.cy,
         p.r * 1.45,
       );
-      halo.addColorStop(0, "rgba(100,244,255,0)");
-      halo.addColorStop(0.58, "rgba(100,244,255,.10)");
-      halo.addColorStop(1, "rgba(100,244,255,0)");
+      halo.addColorStop(0, pal.sphereHalo[0]);
+      halo.addColorStop(0.58, pal.sphereHalo[1]);
+      halo.addColorStop(1, pal.sphereHalo[2]);
       ctx!.fillStyle = halo;
       ctx!.beginPath();
       ctx!.arc(p.cx, p.cy, p.r * 1.45, 0, Math.PI * 2);
@@ -440,15 +620,15 @@ export function GlobeHeroBackground({
         p.cy,
         p.r,
       );
-      ocean.addColorStop(0, "rgba(94, 247, 255,.35)");
-      ocean.addColorStop(0.2, "rgba(36, 107, 154,.48)");
-      ocean.addColorStop(0.68, "rgba(8, 34, 64,.86)");
-      ocean.addColorStop(1, "rgba(2, 8, 24,.96)");
+      ocean.addColorStop(0, pal.sphereOcean[0]);
+      ocean.addColorStop(0.2, pal.sphereOcean[1]);
+      ocean.addColorStop(0.68, pal.sphereOcean[2]);
+      ocean.addColorStop(1, pal.sphereOcean[3]);
       ctx!.fillStyle = ocean;
       ctx!.beginPath();
       ctx!.arc(p.cx, p.cy, p.r, 0, Math.PI * 2);
       ctx!.fill();
-      ctx!.strokeStyle = "rgba(170,245,255,.46)";
+      ctx!.strokeStyle = pal.sphereEdge;
       ctx!.lineWidth = 1.4;
       ctx!.stroke();
       ctx!.clip();
@@ -462,7 +642,7 @@ export function GlobeHeroBackground({
         p.r,
       );
       limb.addColorStop(0.72, "rgba(255,255,255,0)");
-      limb.addColorStop(1, "rgba(100,244,255,.22)");
+      limb.addColorStop(1, pal.sphereLimb);
       ctx!.fillStyle = limb;
       ctx!.fillRect(p.cx - p.r, p.cy - p.r, p.r * 2, p.r * 2);
 
@@ -481,13 +661,13 @@ export function GlobeHeroBackground({
       const rh = height - ry * 2;
       ctx!.save();
       const bg = ctx!.createLinearGradient(rx, ry, rx + rw, ry + rh);
-      bg.addColorStop(0, "rgba(8,26,46,.28)");
-      bg.addColorStop(0.5, "rgba(3,18,31,.62)");
-      bg.addColorStop(1, "rgba(2,9,21,.46)");
+      bg.addColorStop(0, pal.flatBackdrop[0]);
+      bg.addColorStop(0.5, pal.flatBackdrop[1]);
+      bg.addColorStop(1, pal.flatBackdrop[2]);
       roundRect(rx, ry, rw, rh, 34);
       ctx!.fillStyle = bg;
       ctx!.fill();
-      ctx!.strokeStyle = `rgba(120, 225, 255, ${0.1 + 0.22 * fold})`;
+      ctx!.strokeStyle = pal.flatBorder(fold);
       ctx!.lineWidth = 1.2;
       ctx!.stroke();
       const creaseX = lerp(width * 0.78, width * 0.18, fold);
@@ -500,13 +680,15 @@ export function GlobeHeroBackground({
       sheen.addColorStop(0, "rgba(255,255,255,0)");
       sheen.addColorStop(
         0.5,
-        `rgba(100,244,255,${0.2 * (1 - Math.abs(fold - 0.55))})`,
+        pal.flatSheenMid(0.2 * (1 - Math.abs(fold - 0.55))),
       );
       sheen.addColorStop(1, "rgba(255,255,255,0)");
       ctx!.fillStyle = sheen;
       roundRect(rx, ry, rw, rh, 34);
       ctx!.fill();
-      ctx!.strokeStyle = `rgba(255,255,255,${0.08 * (1 - fold) + 0.08 * Math.sin(time * 2)})`;
+      ctx!.strokeStyle = pal.flatCrease(
+        0.08 * (1 - fold) + 0.08 * Math.sin(time * 2),
+      );
       for (let i = 1; i < 5; i++) {
         const x = lerp(rx + rw * 0.5, rx + (rw * i) / 5, fold);
         ctx!.beginPath();
@@ -520,7 +702,7 @@ export function GlobeHeroBackground({
     function drawFlatGrid(p: FlatDrawParams): void {
       ctx!.save();
       ctx!.lineWidth = 0.75;
-      ctx!.strokeStyle = "rgba(141, 223, 255, .15)";
+      ctx!.strokeStyle = pal.flatGrid;
       ctx!.setLineDash([2, 7]);
       // Line count doubled from a 5deg step -- each line is a single
       // 2-point segment regardless of step, so this halves line count/draw
@@ -562,15 +744,15 @@ export function GlobeHeroBackground({
         const leb = name === "Lebanon";
         const alpha = mena ? 0.31 + 0.2 * p.zoom : 0.08;
         ctx!.fillStyle = leb
-          ? `rgba(109,255,172,${0.45 + 0.26 * p.zoom})`
+          ? pal.flatLebFill(0.45 + 0.26 * p.zoom)
           : mena
-            ? `rgba(28, 219, 207, ${alpha})`
-            : "rgba(93,124,163,.12)";
+            ? pal.flatMenaFill(alpha)
+            : pal.flatOtherFill;
         ctx!.strokeStyle = leb
-          ? "rgba(255,255,255,.92)"
+          ? pal.flatLebStroke
           : mena
-            ? "rgba(186, 247, 255, .36)"
-            : "rgba(142, 180, 205, .14)";
+            ? pal.flatMenaStroke
+            : pal.flatOtherStroke;
         ctx!.lineWidth = leb ? 2.6 : mena ? 0.9 : 0.45;
         eachRing(feat, (ring) => {
           ctx!.beginPath();
@@ -607,7 +789,7 @@ export function GlobeHeroBackground({
         const a = flatProject(r.lon, r.lat, p);
         const active = smoothstep(0.58, 0.86, progress);
         ctx!.globalAlpha = active * (0.52 + 0.28 * Math.sin(time * 2 + i));
-        ctx!.strokeStyle = r.color;
+        ctx!.strokeStyle = pal.routeLine(r.color);
         ctx!.lineWidth = 1.8;
         ctx!.setLineDash([10, 12]);
         ctx!.lineDashOffset = -time * 55 - i * 12;
@@ -621,13 +803,13 @@ export function GlobeHeroBackground({
         ctx!.stroke();
         ctx!.setLineDash([]);
         ctx!.globalAlpha = active;
-        ctx!.fillStyle = r.color;
+        ctx!.fillStyle = pal.routeLine(r.color);
         ctx!.beginPath();
         ctx!.arc(a.x, a.y, 3.2, 0, Math.PI * 2);
         ctx!.fill();
         if (progress > 0.82 && inView(a.x, a.y, 90)) {
           ctx!.font = "700 10px Inter, system-ui, sans-serif";
-          ctx!.fillStyle = "rgba(231,251,255,.82)";
+          ctx!.fillStyle = pal.routeLabel;
           ctx!.fillText(r.name, a.x + 7, a.y - 6);
         }
       }
@@ -649,8 +831,8 @@ export function GlobeHeroBackground({
         ctx!.save();
         ctx!.translate(x, y);
         ctx!.rotate(a + Math.PI / 2);
-        ctx!.fillStyle = "rgba(100,244,255,.85)";
-        ctx!.shadowColor = "rgba(100,244,255,.85)";
+        ctx!.fillStyle = pal.satelliteColor;
+        ctx!.shadowColor = pal.satelliteColor;
         ctx!.shadowBlur = 16;
         ctx!.beginPath();
         ctx!.moveTo(0, -7);
@@ -660,7 +842,7 @@ export function GlobeHeroBackground({
         ctx!.closePath();
         ctx!.fill();
         ctx!.restore();
-        ctx!.strokeStyle = "rgba(100,244,255,.07)";
+        ctx!.strokeStyle = pal.satelliteOrbit;
         ctx!.lineWidth = 0.8;
         ctx!.beginPath();
         ctx!.ellipse(l.x, l.y, rx, ry, 0, 0, Math.PI * 2);
@@ -679,22 +861,20 @@ export function GlobeHeroBackground({
         if (!inView(pt.x, pt.y, 80)) continue;
         if (lab.important) {
           ctx!.font = "900 18px Inter, system-ui, sans-serif";
-          ctx!.fillStyle = "rgba(255,255,255,.96)";
-          ctx!.shadowColor = "rgba(109,255,172,.75)";
+          ctx!.fillStyle = pal.labelImportant;
+          ctx!.shadowColor = pal.labelImportantShadow;
           ctx!.shadowBlur = 22;
           ctx!.fillText(lab.name, pt.x + 18, pt.y - 20);
           ctx!.shadowBlur = 0;
         } else if (lab.city) {
           ctx!.font = "750 11px Inter, system-ui, sans-serif";
-          ctx!.fillStyle = "rgba(226,251,255,.78)";
+          ctx!.fillStyle = pal.labelCity;
           ctx!.fillText(lab.name, pt.x + 8, pt.y + 3);
         } else {
           ctx!.font = lab.water
             ? "italic 700 12px Inter, system-ui, sans-serif"
             : "800 12px Inter, system-ui, sans-serif";
-          ctx!.fillStyle = lab.water
-            ? "rgba(117,206,255,.36)"
-            : "rgba(205,228,235,.45)";
+          ctx!.fillStyle = lab.water ? pal.labelWater : pal.labelLand;
           ctx!.fillText(lab.name, pt.x, pt.y);
         }
       }
@@ -710,13 +890,13 @@ export function GlobeHeroBackground({
       const pulse = (time * 1.28) % 1;
       for (let i = 0; i < 4; i++) {
         const r = 18 + i * 19 + pulse * 32;
-        ctx!.strokeStyle = `rgba(109,255,172,${(1 - pulse) * (0.4 - i * 0.07)})`;
+        ctx!.strokeStyle = pal.overlayRing((1 - pulse) * (0.4 - i * 0.07));
         ctx!.lineWidth = i === 0 ? 1.7 : 1.0;
         ctx!.beginPath();
         ctx!.arc(l.x, l.y, r, 0, Math.PI * 2);
         ctx!.stroke();
       }
-      ctx!.strokeStyle = "rgba(255,255,255,.84)";
+      ctx!.strokeStyle = pal.overlayCrosshair;
       ctx!.lineWidth = 1.2;
       ctx!.beginPath();
       ctx!.moveTo(l.x - 54, l.y);
@@ -731,8 +911,8 @@ export function GlobeHeroBackground({
       ctx!.save();
       ctx!.translate(l.x, l.y);
       ctx!.rotate(-0.68 + 0.05 * Math.sin(time * 2));
-      ctx!.fillStyle = "#6dffac";
-      ctx!.shadowColor = "rgba(109,255,172,.88)";
+      ctx!.fillStyle = pal.overlayPin;
+      ctx!.shadowColor = pal.overlayPinShadow;
       ctx!.shadowBlur = 26;
       ctx!.beginPath();
       ctx!.moveTo(0, -17);
@@ -743,11 +923,11 @@ export function GlobeHeroBackground({
       ctx!.fill();
       ctx!.restore();
       ctx!.shadowBlur = 0;
-      ctx!.fillStyle = "#fff";
+      ctx!.fillStyle = pal.overlayBeirutCore;
       ctx!.beginPath();
       ctx!.arc(b.x, b.y, 4, 0, Math.PI * 2);
       ctx!.fill();
-      ctx!.fillStyle = "#ff5a77";
+      ctx!.fillStyle = pal.overlayBeirutDot;
       ctx!.beginPath();
       ctx!.arc(b.x, b.y, 2, 0, Math.PI * 2);
       ctx!.fill();
@@ -755,19 +935,19 @@ export function GlobeHeroBackground({
       const boxH = 72;
       const bx = Math.min(width - boxW - 22, Math.max(22, l.x + 38));
       const by = Math.max(22, Math.min(height - boxH - 22, l.y - 92));
-      ctx!.fillStyle = "rgba(4, 16, 30, .72)";
+      ctx!.fillStyle = pal.overlayBoxBg;
       roundRect(bx, by, boxW, boxH, 18);
       ctx!.fill();
-      ctx!.strokeStyle = "rgba(109,255,172,.34)";
+      ctx!.strokeStyle = pal.overlayBoxBorder;
       ctx!.stroke();
       ctx!.font = "900 12px Inter, system-ui, sans-serif";
-      ctx!.fillStyle = "#6dffac";
+      ctx!.fillStyle = pal.overlayLabel;
       ctx!.fillText("GPS LOCK ACQUIRED", bx + 16, by + 24);
       ctx!.font = "900 21px Inter, system-ui, sans-serif";
-      ctx!.fillStyle = "#ffffff";
+      ctx!.fillStyle = pal.overlayTitle;
       ctx!.fillText("Lebanon", bx + 16, by + 49);
       ctx!.font = "700 11px Inter, system-ui, sans-serif";
-      ctx!.fillStyle = "rgba(203,230,238,.72)";
+      ctx!.fillStyle = pal.overlayCoords;
       ctx!.fillText("33.8547°N  ·  35.8623°E", bx + 112, by + 49);
       ctx!.restore();
     }
@@ -794,7 +974,7 @@ export function GlobeHeroBackground({
       const cx = width * 0.5;
       const cy = height * (height > 720 ? 0.53 : 0.58);
       const maxR = Math.min(width, height) * lerp(0.36, 0.64, u);
-      ctx!.strokeStyle = "rgba(100,244,255,.18)";
+      ctx!.strokeStyle = pal.unfoldStroke;
       ctx!.lineWidth = 1;
       ctx!.setLineDash([5, 11]);
       ctx!.lineDashOffset = -time * 42;
@@ -808,7 +988,7 @@ export function GlobeHeroBackground({
         ctx!.stroke();
       }
       ctx!.setLineDash([]);
-      ctx!.fillStyle = "rgba(255,209,102,.10)";
+      ctx!.fillStyle = pal.unfoldFill;
       ctx!.beginPath();
       ctx!.ellipse(cx, cy, maxR * 1.05, maxR * 0.38, 0, 0, Math.PI * 2);
       ctx!.fill();
@@ -816,6 +996,7 @@ export function GlobeHeroBackground({
     }
 
     function drawOneFrame(now: number): void {
+      pal = PALETTES[themeRef.current];
       const time = now / 1000;
       drawBackground(time);
       const gp = globeParams(time);
@@ -979,7 +1160,9 @@ export function GlobeHeroBackground({
       }
       style={{
         background:
-          "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.22), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.18), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.12), transparent 25%), linear-gradient(135deg,#030712 0%,#071426 43%,#03101d 100%)",
+          theme === "dark"
+            ? "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.22), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.18), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.12), transparent 25%), linear-gradient(135deg,#030712 0%,#071426 43%,#03101d 100%)"
+            : "radial-gradient(circle at 72% 48%, rgba(19, 242, 207,.16), transparent 30%), radial-gradient(circle at 41% 19%, rgba(96, 165, 250,.12), transparent 28%), radial-gradient(circle at 15% 78%, rgba(255, 209, 102,.1), transparent 25%), linear-gradient(135deg,#eef7f6 0%,#f5fbfa 43%,#eef6f5 100%)",
       }}
     >
       <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
@@ -987,7 +1170,9 @@ export function GlobeHeroBackground({
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(1,5,12,.42) 76%, rgba(0,0,0,.84) 100%)",
+            theme === "dark"
+              ? "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(1,5,12,.42) 76%, rgba(0,0,0,.84) 100%)"
+              : "radial-gradient(circle at 59% 51%, transparent 0 48%, rgba(238,247,246,.5) 76%, rgba(238,247,246,.88) 100%)",
         }}
       />
       <div

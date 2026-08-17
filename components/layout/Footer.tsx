@@ -2,11 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
+import type { SiteSettingsEmails } from "@/sanity/types";
+import { buildTelLink } from "@/lib/contact-links";
 
 interface FooterSiteSettings {
   phoneNumbers: string[];
   whatsappNumber: string;
-  email: string;
+  emails: SiteSettingsEmails;
   socialLinks: { platform: string; url: string }[];
   addressText: string;
   footerText: string;
@@ -68,9 +70,10 @@ export function Footer({
   siteSettings,
 }: FooterProps): React.ReactElement {
   const t = useTranslations("footer");
+  const tContact = useTranslations("contactLabels");
 
   return (
-    <footer className="border-t border-white/10 px-6 py-10">
+    <footer className="border-t border-border/10 px-6 py-10">
       <Link href={`/${locale}`} className="mb-6 inline-block">
         <Image
           src="/brand/svg/trackway-logo-reversed.svg"
@@ -86,11 +89,30 @@ export function Footer({
       <p className="mt-2 text-muted">{t("servingLebanon")}</p>
       <div className="mt-4 flex flex-col gap-2">
         {siteSettings.phoneNumbers.map((phone) => (
-          <a key={phone} href={`tel:${phone}`}>
+          <a key={phone} href={buildTelLink(phone)}>
             {phone}
           </a>
         ))}
-        <a href={`mailto:${siteSettings.email}`}>{siteSettings.email}</a>
+        <div className="mt-2 flex flex-col gap-1">
+          <span>
+            {tContact("general")}:{" "}
+            <a href={`mailto:${siteSettings.emails.info}`}>
+              {siteSettings.emails.info}
+            </a>
+          </span>
+          <span>
+            {tContact("sales")}:{" "}
+            <a href={`mailto:${siteSettings.emails.sales}`}>
+              {siteSettings.emails.sales}
+            </a>
+          </span>
+          <span>
+            {tContact("support")}:{" "}
+            <a href={`mailto:${siteSettings.emails.support}`}>
+              {siteSettings.emails.support}
+            </a>
+          </span>
+        </div>
       </div>
       <div className="mt-4 flex gap-4">
         {siteSettings.socialLinks.map((link) => (
@@ -112,7 +134,7 @@ export function Footer({
         {t("privacyPolicy")}
       </Link>
 
-      <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-white/10 pt-6 text-xs text-muted">
+      <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-border/10 pt-6 text-xs text-muted">
         <a
           href={KITS_WHATSAPP_URL}
           target="_blank"
