@@ -16,3 +16,13 @@ reel-generator
 .playwright-mcp/
 .claude/
 .env*
+
+# Local scratch/prototype files — never meant to ship. The zip in
+# particular would be publicly downloadable at track-way.com/images/ if it
+# were ever committed by mistake.
+/*.html
+/*.png
+/*.jpeg
+/*.jpg
+/*.txt
+public/images/*.zip
