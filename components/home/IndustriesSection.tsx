@@ -218,27 +218,27 @@ export function IndustriesSection(): React.ReactElement {
 
   const items = [
     {
-      image: "/images/who-we-serve-transportation.png",
+      image: "/images/who-we-serve-transportation.jpg",
       title: t("industriesFleets"),
       description: t("industriesFleetsDesc"),
     },
     {
-      image: "/images/who-we-serve-rental.png",
+      image: "/images/who-we-serve-rental.jpg",
       title: t("industriesRental"),
       description: t("industriesRentalDesc"),
     },
     {
-      image: "/images/who-we-serve-delivery.png",
+      image: "/images/who-we-serve-delivery.jpg",
       title: t("industriesDelivery"),
       description: t("industriesDeliveryDesc"),
     },
     {
-      image: "/images/who-we-serve-school.png",
+      image: "/images/who-we-serve-school.jpg",
       title: t("industriesSchool"),
       description: t("industriesSchoolDesc"),
     },
     {
-      image: "/images/who-we-serve-private.png",
+      image: "/images/who-we-serve-private.jpg",
       title: t("industriesPrivate"),
       description: t("industriesPrivateDesc"),
     },

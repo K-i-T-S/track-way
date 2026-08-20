@@ -35,6 +35,7 @@ export interface Feature {
   title: LocalizedString;
   description: LocalizedString;
   icon?: string;
+  photoUrl?: string;
 }
 
 export interface HardwareSpec {

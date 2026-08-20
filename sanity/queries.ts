@@ -37,7 +37,8 @@ export async function getFeatures(): Promise<Feature[]> {
     order,
     title,
     description,
-    icon
+    icon,
+    "photoUrl": photo.asset->url
   }`);
 }
 

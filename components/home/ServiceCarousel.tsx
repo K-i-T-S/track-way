@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useReducedMotion } from "framer-motion";
 import type { CapabilityIconName } from "@/components/ui/CapabilityIcon";
@@ -132,6 +133,7 @@ interface CardData {
   title: string;
   description: string;
   icon: CapabilityIconName;
+  photoUrl?: string;
 }
 
 function ServiceCard({
@@ -214,12 +216,17 @@ function ServiceCard({
     >
       <div
         className={`
-          group relative flex h-72 flex-col items-center justify-center gap-3
+          group relative flex h-72 flex-col
           rounded-2xl border border-border/15
           bg-gradient-to-br ${palette.gradient}
-          p-5 text-center backdrop-blur-xl
+          text-center backdrop-blur-xl
           transition-all duration-500 ease-out
           ${isCurrent ? `shadow-2xl ${palette.glow}` : "shadow-lg"}
+          ${
+            card.photoUrl
+              ? "overflow-hidden"
+              : "items-center justify-center gap-3 p-5"
+          }
         `}
         style={{
           width: cardWidth,
@@ -241,30 +248,68 @@ function ServiceCard({
             "transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.5s ease, opacity 0.5s ease, filter 0.5s ease",
         }}
       >
-        {/* icon -- source PNGs are opaque 1024x1024 tiles with a lot of
-            near-black padding baked in around a small centered glyph (no
-            alpha channel); shown at natural size that padding reads as a
-            dark, oddly "zoomed into empty space" square. `overflow-hidden`
-            + `scale-125` crops in past the padding so the glyph itself
-            fills the badge, the same fix HowItWorksSection/FeatureRow
-            already apply to this same icon set via a circular crop. */}
-        <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-white/15 backdrop-blur-sm">
-          <CapabilityImage
-            name={card.icon}
-            size={64}
-            className="h-16 w-16 scale-125 object-cover"
-          />
-        </div>
+        {card.photoUrl ? (
+          <>
+            {/* real marketing photo -- these features ship with cinematic
+                photography rather than the abstract 3D icon set, so they get
+                a wide banner slot up top instead of the small circular
+                badge the rest of the deck uses (that badge crops a real
+                photo down to near-nothing and reads badly next to it). */}
+            <div className="relative h-28 w-full shrink-0 overflow-hidden sm:h-32">
+              <Image
+                src={card.photoUrl}
+                alt=""
+                aria-hidden="true"
+                fill
+                sizes="240px"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-px opacity-70"
+                style={{
+                  background: `linear-gradient(90deg, transparent, ${palette.accentColor}b3, transparent)`,
+                }}
+              />
+            </div>
 
-        {/* title */}
-        <h3 className="text-lg font-bold tracking-wide text-foreground drop-shadow-md">
-          {card.title}
-        </h3>
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-3">
+              <h3 className="text-base font-bold tracking-wide text-foreground drop-shadow-md">
+                {card.title}
+              </h3>
+              <p className="line-clamp-4 text-[11px] leading-snug text-foreground/75">
+                {card.description}
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* icon -- source PNGs are opaque 1024x1024 tiles with a lot of
+                near-black padding baked in around a small centered glyph (no
+                alpha channel); shown at natural size that padding reads as a
+                dark, oddly "zoomed into empty space" square. `overflow-hidden`
+                + `scale-125` crops in past the padding so the glyph itself
+                fills the badge, the same fix HowItWorksSection/FeatureRow
+                already apply to this same icon set via a circular crop. */}
+            <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl bg-white/15 backdrop-blur-sm">
+              <CapabilityImage
+                name={card.icon}
+                size={64}
+                className="h-16 w-16 scale-125 object-cover"
+              />
+            </div>
 
-        {/* description */}
-        <p className="text-xs leading-snug text-foreground/75">
-          {card.description}
-        </p>
+            {/* title */}
+            <h3 className="text-lg font-bold tracking-wide text-foreground drop-shadow-md">
+              {card.title}
+            </h3>
+
+            {/* description */}
+            <p className="text-xs leading-snug text-foreground/75">
+              {card.description}
+            </p>
+          </>
+        )}
 
         {/* subtle inner glow */}
         <div
@@ -316,6 +361,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
     title: getLocalized(feature.title, locale),
     description: getLocalized(feature.description, locale),
     icon: (feature.icon as CapabilityIconName | undefined) ?? "live-tracking",
+    photoUrl: feature.photoUrl,
   }));
   const total = cards.length;
 
