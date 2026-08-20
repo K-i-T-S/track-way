@@ -4,9 +4,19 @@ import { getSiteSettings } from "@/sanity/queries";
 import type { Locale } from "@/i18n/routing";
 import { BookingForm } from "@/components/ui/BookingForm";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
   const t = await getTranslations("booking");
-  return { title: t("pageTitle") };
+  return {
+    title: t("pageTitle"),
+    alternates: {
+      canonical: `/${locale}/book-installation`,
+    },
+  };
 }
 
 export default async function BookInstallationPage({

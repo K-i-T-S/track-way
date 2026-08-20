@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://trackwaylb.com";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://track-way.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -20,7 +20,6 @@ export const metadata: Metadata = {
     title: "TrackWay | GPS Tracking & Fleet Management in Lebanon",
     description:
       "TrackWay provides GPS tracking hardware and fleet management software for businesses and asset owners in Lebanon. Know every move with live tracking, alerts, reports, and fleet control.",
-    url: "https://trackwaylb.com",
     siteName: "TrackWay",
     images: [
       {

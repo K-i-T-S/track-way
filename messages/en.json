@@ -111,13 +111,15 @@
   },
   "hardware": {
     "requestQuote": "Request a Quote",
-    "metaTitle": "GPS Hardware — TrackWay",
+    "metaTitle": "GPS Hardware",
     "metaDescription": "Explore TrackWay's GPS tracking hardware for fleets and individuals.",
     "heroBadge": "Teltonika-Grade Devices",
     "heroTitle": "GPS Tracking Hardware",
     "heroSubtitle": "Professional-grade GPS trackers engineered for continuous operation across Lebanon — from private vehicles to heavy-duty fleets."
   },
   "contact": {
+    "metaTitle": "Contact Us",
+    "metaDescription": "Reach TrackWay by phone, WhatsApp, or email for GPS tracking hardware, fleet management, or installation support in Lebanon.",
     "sendWhatsApp": "Send via WhatsApp",
     "sendEmail": "Send via Email",
     "nameLabel": "Name",
@@ -136,6 +138,7 @@
   },
   "privacy": {
     "title": "Privacy Policy",
+    "metaDescription": "How TrackWay collects, uses, and protects your information.",
     "body": "TrackWay's full Privacy Policy is being finalized and will be published here shortly. For questions about how your information is handled, please contact us via WhatsApp or email."
   },
   "booking": {
