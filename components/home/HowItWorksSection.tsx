@@ -16,9 +16,9 @@ function stepImage(src: string, key: string) {
       src={src}
       alt=""
       aria-hidden="true"
-      width={44}
-      height={44}
-      className="h-11 w-11 rounded-full object-cover"
+      width={56}
+      height={56}
+      className="h-14 w-14 rounded-full object-cover"
     />
   );
 }
@@ -103,7 +103,7 @@ export function HowItWorksSection(): React.ReactElement {
                       "ice" step is near-white -- `text-background` would go
                       near-white too in light mode and disappear on it. */}
                   <span
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-trackway-black"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-trackway-black"
                     style={{
                       background: color,
                       boxShadow: `0 0 30px ${color}4d`,
@@ -112,7 +112,7 @@ export function HowItWorksSection(): React.ReactElement {
                     {i + 1}
                   </span>
                   <span
-                    className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border"
+                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border"
                     style={{
                       borderColor: `${color}40`,
                       background: `${color}14`,
