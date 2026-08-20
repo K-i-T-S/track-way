@@ -5,43 +5,39 @@ import Image from "next/image";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useTranslations } from "next-intl";
 
-function badgeImage(src: string) {
-  return function BadgeImage({ className }: { className?: string }) {
-    return (
-      <Image
-        src={src}
-        alt=""
-        aria-hidden="true"
-        width={40}
-        height={40}
-        className={className}
-      />
-    );
-  };
-}
-
-const CARDS = [
-  {
-    icon: badgeImage("/images/badge-gauge.png"),
-    top: "18%",
-    start: "12%",
-    delay: 0,
-  },
-  {
-    icon: badgeImage("/images/badge-map-pin.png"),
-    top: "55%",
-    start: "62%",
-    delay: 0.4,
-  },
-  {
-    icon: badgeImage("/images/badge-shield-alert.png"),
-    top: "32%",
-    start: "78%",
-    delay: 0.8,
-  },
-];
-
 const RING_SIZES = [320, 240, 160, 80];
+
+// Decorative side parallax panels, framing the centered headline on wide
+// screens. Staggered vertically (not mirrored) and drifting in opposite
+// directions on scroll for a less matchy, more layered feel. The headline
+// column is `max-w-3xl` (768px / 384px half-width) -- PANEL_OFFSET_CSS keeps
+// the panel's inner edge a fixed gap clear of that, never closer to the
+// panel than a small viewport-edge margin. Only shows from `xl` up: below
+// that there isn't room for a 768px text column plus two panels without
+// crowding or overlap (see PANEL_WIDTH_CSS's own comment).
+const SIDE_PANEL_MASK =
+  "linear-gradient(to bottom, transparent, black 14%, black 86%, transparent)";
+// The 15vw rate (vs. gridY's steeper growth) is chosen so that even at the
+// narrowest width the panels appear (xl, 1280px), PANEL_OFFSET_CSS's calc
+// alone already clears the text gap with room to spare -- verified by hand:
+// at 1280px this resolves to a ~32px gap, well past PANEL_GAP_PX, so the
+// `max()` edge-margin term below is a dormant safety net, not the normal
+// path. If either number here changes, re-check that inequality still holds.
+const PANEL_WIDTH_CSS = "clamp(200px, 15vw, 300px)";
+const PANEL_HEIGHT_CSS = "clamp(280px, 18vw, 384px)";
+const PANEL_GAP_PX = 24;
+const PANEL_OFFSET_CSS = `max(1rem, calc(50% - 384px - ${PANEL_GAP_PX}px - ${PANEL_WIDTH_CSS}))`;
+
+// Below `xl`, the side panels are replaced by a pair of soft, blurred image
+// bands along the top and bottom edges of the section -- ambient texture
+// rather than a framed photo, so they never compete with the centered text
+// for attention. Each fades out toward the vertical center (where the text
+// sits) and stays put (no scroll-linked motion) to keep mobile scrolling
+// cheap.
+const MOBILE_BAND_TOP_MASK =
+  "linear-gradient(to bottom, black, black 45%, transparent)";
+const MOBILE_BAND_BOTTOM_MASK =
+  "linear-gradient(to bottom, transparent, black 55%, black)";
 
 const ORBIT_DOTS = [
   { size: 10, orbit: 140, speed: 8, color: "#00E5D4" },
@@ -59,12 +55,21 @@ export function ControlRoomSection(): React.ReactElement {
     offset: ["start end", "end start"],
   });
   const gridY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  // Narrower input range than gridY's so the swing plays out mostly while
+  // the section is actually on screen, not spent entering/exiting -- makes
+  // the drift read as noticeably dynamic rather than a barely-there nudge.
+  const leftPanelY = useTransform(scrollYProgress, [0.1, 0.9], ["-24%", "24%"]);
+  const rightPanelY = useTransform(
+    scrollYProgress,
+    [0.1, 0.9],
+    ["24%", "-24%"],
+  );
   const radarInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
     <section
       ref={ref}
-      className="relative h-[70vh] min-h-[480px] overflow-hidden"
+      className="relative h-[70vh] min-h-[480px] overflow-hidden xl:h-[78vh] xl:min-h-[640px]"
     >
       <motion.div
         style={{ y: gridY }}
@@ -75,6 +80,40 @@ export function ControlRoomSection(): React.ReactElement {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/10 blur-[140px]"
       />
+
+      {/* mobile/tablet ambient bands -- see MOBILE_BAND_*_MASK comment above */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-3/5 overflow-hidden opacity-25 blur-2xl xl:hidden"
+        style={{
+          maskImage: MOBILE_BAND_TOP_MASK,
+          WebkitMaskImage: MOBILE_BAND_TOP_MASK,
+        }}
+      >
+        <Image
+          src="/images/realistic-images/trucks-on-the-road.jpeg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-3/5 overflow-hidden opacity-25 blur-2xl xl:hidden"
+        style={{
+          maskImage: MOBILE_BAND_BOTTOM_MASK,
+          WebkitMaskImage: MOBILE_BAND_BOTTOM_MASK,
+        }}
+      >
+        <Image
+          src="/images/realistic-images/route-optimization-manager.jpeg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+      </div>
 
       {/* radar rings + orbiting vehicle dots */}
       <div
@@ -162,30 +201,63 @@ export function ControlRoomSection(): React.ReactElement {
         </div>
       </div>
 
-      {CARDS.map(({ icon: Icon, top, start, delay }, i) => (
+      {/* side parallax panels -- see SIDE_PANEL_MASK comment above */}
+      <div
+        aria-hidden="true"
+        className="absolute top-[8%] hidden overflow-hidden rounded-2xl border border-accent/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] xl:block"
+        style={{
+          insetInlineStart: PANEL_OFFSET_CSS,
+          width: PANEL_WIDTH_CSS,
+          height: PANEL_HEIGHT_CSS,
+          maskImage: SIDE_PANEL_MASK,
+          WebkitMaskImage: SIDE_PANEL_MASK,
+        }}
+      >
         <motion.div
-          key={i}
-          aria-hidden="true"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: [0, -10, 0] }}
-          viewport={{ once: true }}
-          transition={{
-            opacity: { duration: 0.6, delay },
-            y: { duration: 5, repeat: Infinity, ease: "easeInOut", delay },
-          }}
-          className="absolute hidden h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-accent/30 bg-background/70 text-accent shadow-[0_0_30px_rgba(0,229,212,0.25)] backdrop-blur sm:flex"
-          style={{ top, insetInlineStart: start }}
+          style={{ y: leftPanelY, top: "-50%" }}
+          className="absolute inset-x-0 h-[200%] w-full"
         >
-          {/* badge-*.png source tiles have the same near-black padding
-              issue as the CapabilityImage icon set (see ServiceCarousel) --
-              scale-125 + the parent's overflow-hidden crops past it. Sized
-              close to the h-14 w-14 badge box itself (was h-6 w-6, a tiny
-              icon adrift in a much bigger box, which made the padding
-              problem read even worse than in ServiceCarousel's tighter
-              icon/box ratio). */}
-          <Icon className="h-10 w-10 scale-125 object-cover" />
+          {/* sizes is ~4x the box's own width (208-240px), not a typo: the
+              wrapper is a 200%-tall landscape photo object-cover'd into a
+              narrow portrait box, so object-cover scales it by height, not
+              width -- fetching only box-width-sized source would upscale
+              and look pixelated. */}
+          <Image
+            src="/images/realistic-images/trucks-on-the-road.jpeg"
+            alt=""
+            fill
+            sizes="960px"
+            className="object-cover"
+          />
         </motion.div>
-      ))}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/10" />
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="absolute top-[32%] hidden overflow-hidden rounded-2xl border border-accent/20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5)] xl:block"
+        style={{
+          insetInlineEnd: PANEL_OFFSET_CSS,
+          width: PANEL_WIDTH_CSS,
+          height: PANEL_HEIGHT_CSS,
+          maskImage: SIDE_PANEL_MASK,
+          WebkitMaskImage: SIDE_PANEL_MASK,
+        }}
+      >
+        <motion.div
+          style={{ y: rightPanelY, top: "-50%" }}
+          className="absolute inset-x-0 h-[200%] w-full"
+        >
+          <Image
+            src="/images/realistic-images/route-optimization-manager.jpeg"
+            alt=""
+            fill
+            sizes="960px"
+            className="object-cover"
+          />
+        </motion.div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/10" />
+      </div>
 
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center">
         <motion.span
