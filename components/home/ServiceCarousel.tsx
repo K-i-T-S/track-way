@@ -38,6 +38,10 @@ const PALETTE = [
   },
 ] as const;
 
+// Rotation tick rate cap for touch devices -- see the `isCoarsePointer`
+// check in the `animate` loop below.
+const MOBILE_TICK_INTERVAL_MS = 1000 / 30;
+
 /* ─────────────────── floating particles ─────────────────── */
 
 /* Deterministic pseudo-random in [0, 1), seeded by index — using
@@ -146,6 +150,7 @@ function ServiceCard({
   isHovered,
   radius,
   cardWidth,
+  isCoarsePointer,
 }: {
   card: CardData;
   paletteIndex: number;
@@ -156,6 +161,7 @@ function ServiceCard({
   isHovered: boolean;
   radius: number;
   cardWidth: number;
+  isCoarsePointer: boolean;
 }) {
   const palette = PALETTE[paletteIndex % PALETTE.length]!;
   const angle = (360 / total) * index;
@@ -219,7 +225,7 @@ function ServiceCard({
           group relative flex h-72 flex-col
           rounded-2xl border border-border/15
           bg-gradient-to-br ${palette.gradient}
-          text-center backdrop-blur-xl
+          text-center ${isCoarsePointer ? "backdrop-blur-sm" : "backdrop-blur-xl"}
           transition-all duration-500 ease-out
           ${isCurrent ? `shadow-2xl ${palette.glow}` : "shadow-lg"}
           ${
@@ -352,8 +358,16 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [cardWidth, setCardWidth] = useState(240); // desktop card width in px, drives both stage geometry and the rendered card's actual size
   const [particleCount, setParticleCount] = useState(35);
+  // Full re-render of every card happens on each rotation tick (see
+  // `animate` below) -- backdrop-blur-xl on ~9-11 overlapping, transforming
+  // cards is one of the most expensive things a mobile GPU can composite,
+  // and doing it at native refresh rate is what read as "choppy" on phones.
+  // Capped to backdrop-blur-sm + a lower tick rate there; desktop GPUs
+  // handle the full effect at full rate fine.
+  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
   const animRef = useRef<number>(0);
   const lastTimeRef = useRef<number>(0);
+  const lastTickRef = useRef<number>(0);
   const speedRef = useRef(0.02); // degrees per ms
 
   const cards: CardData[] = features.map((feature) => ({
@@ -390,6 +404,10 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  useEffect(() => {
+    setIsCoarsePointer(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
+
   /* intersection observer for scroll entry */
   useEffect(() => {
     const el = sectionRef.current;
@@ -409,6 +427,18 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
      the user prefers reduced motion */
   const animate = useCallback(
     (time: number) => {
+      // Touch devices: cap the tick rate rather than updating on every
+      // native rAF frame (often 60-120Hz). Skipped frames don't touch
+      // lastTimeRef, so the elapsed-time-based speed smoothing below still
+      // converges correctly across the resulting larger gaps -- it's
+      // already time-based rather than per-call, not frame-count-based.
+      if (isCoarsePointer) {
+        if (time - lastTickRef.current < MOBILE_TICK_INTERVAL_MS) {
+          animRef.current = requestAnimationFrame(animate);
+          return;
+        }
+        lastTickRef.current = time;
+      }
       if (!lastTimeRef.current) lastTimeRef.current = time;
       // Clamped so a stalled tab/dropped-frame burst (backgrounding, scroll
       // jank) can't produce one giant instantaneous jump on resume.
@@ -456,7 +486,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
 
       animRef.current = requestAnimationFrame(animate);
     },
-    [hoveredIndex, spinDirection, total],
+    [hoveredIndex, spinDirection, total, isCoarsePointer],
   );
 
   useEffect(() => {
@@ -534,6 +564,7 @@ export function ServiceCarousel({ features, locale }: ServiceCarouselProps) {
                 isHovered={hoveredIndex === i}
                 radius={radius}
                 cardWidth={cardWidth}
+                isCoarsePointer={isCoarsePointer}
               />
             </div>
           ))}
