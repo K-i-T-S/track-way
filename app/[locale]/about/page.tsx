@@ -16,6 +16,9 @@ export async function generateMetadata({
   return {
     title: getLocalized(aboutPage.seoTitle, typedLocale),
     description: getLocalized(aboutPage.seoDescription, typedLocale),
+    alternates: {
+      canonical: `/${locale}/about`,
+    },
   };
 }
 

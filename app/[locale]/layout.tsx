@@ -38,6 +38,27 @@ export default async function LocaleLayout({
   const dir = typedLocale === "ar" ? "rtl" : "ltr";
   const siteSettings = await getSiteSettings();
 
+  // Organization schema — no rich results depend on the visitor's locale,
+  // so this always uses the English address regardless of `typedLocale`.
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "TrackWay",
+    url: "https://track-way.com",
+    logo: siteSettings.logoUrl,
+    description:
+      "GPS tracking hardware and fleet management software for businesses and asset owners in Lebanon.",
+    email: siteSettings.emails.info,
+    telephone: siteSettings.phoneNumbers[0],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: getLocalized(siteSettings.address, "en"),
+      addressCountry: "LB",
+    },
+    areaServed: "LB",
+    sameAs: siteSettings.socialLinks.map((link) => link.url),
+  };
+
   return (
     <html
       lang={typedLocale}
@@ -55,6 +76,12 @@ export default async function LocaleLayout({
             synchronously, before first paint, to avoid a flash of the wrong
             theme; see NO_FLASH_THEME_SCRIPT above. */}
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
       </head>
       <body>
         {/* Dedicated portal target for GlobeHeroBackground's ambient layer.

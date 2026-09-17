@@ -1,9 +1,26 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getSiteSettings } from "@/sanity/queries";
 import { getLocalized } from "@/lib/i18n-utils";
 import { buildTelLink } from "@/lib/contact-links";
 import type { Locale } from "@/i18n/routing";
 import { ContactForm } from "@/components/ui/ContactForm";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations("contact");
+  return {
+    title: t("metaTitle"),
+    description: t("metaDescription"),
+    alternates: {
+      canonical: `/${locale}/contact`,
+    },
+  };
+}
 
 export default async function ContactPage({
   params,

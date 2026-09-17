@@ -18,16 +18,23 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  await params;
+  const { locale } = await params;
 
   return {
-    title: "TrackWay | GPS Tracking & Fleet Management in Lebanon",
+    // No `title` here on purpose: the homepage uses the root layout's
+    // brand-first default ("TrackWay | GPS Tracking & ...") verbatim.
+    // Setting one here would get the root's "%s | TrackWay" template
+    // applied on top of it, doubling "TrackWay" in the tab/SERP title.
     description:
       "TrackWay provides GPS tracking hardware and fleet management software for businesses and asset owners in Lebanon. Know every move with live tracking, alerts, reports, and fleet control.",
+    alternates: {
+      canonical: `/${locale}`,
+    },
     openGraph: {
       title: "TrackWay | GPS Tracking & Fleet Management in Lebanon",
       description:
         "TrackWay provides GPS tracking hardware and fleet management software for businesses and asset owners in Lebanon. Know every move with live tracking, alerts, reports, and fleet control.",
+      url: `/${locale}`,
       images: [
         {
           url: "/og-image.png",
